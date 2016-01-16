@@ -1,0 +1,9 @@
+Build scripts for linux knime packages
+=============
+
+Directory content
+-------------
+
+ * README - This readme file
+ * build.sh - a build script that triggers a build of the `prepare_knime_package` target of OpenMS. The build package is synced to a predefined target.
+ * config.sh - a script containing all path information required by `build.sh`
