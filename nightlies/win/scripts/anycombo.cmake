@@ -18,11 +18,11 @@ set(CTEST_SITE @site@)
 
 ## Path to a valid checkout corresponding to the above selected
 ## branch
-set(CTEST_SOURCE_DIRECTORY "C:/dev/NIGHTLY/OpenMS" )
-set(CTEST_GIT_COMMAND "C:\Program Files (x86)\Git\bin\git.exe")
+set(CTEST_SOURCE_DIRECTORY @source_dir@ )
+set(CTEST_GIT_COMMAND @git_command@)
 set(CTEST_UPDATE_COMMAND ${CTEST_GIT_COMMAND})
-set(CTEST_COMMAND "C:/Program Files/CMake/bin/ctest.exe")
-set(CMAKE_COMMAND "C:/Program Files/CMake/bin/cmake.exe")
+set(CTEST_COMMAND @ctest_command@)
+set(CMAKE_COMMAND @cmake_command@)
 
 select_vs_version(@vs@ @arch@)
 set(CONTRIB @contrib@)
