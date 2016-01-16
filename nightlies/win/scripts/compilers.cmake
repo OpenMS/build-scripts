@@ -21,14 +21,14 @@ set(VS12_x86_QT "C:/dev/qt-4.8.4_vs12_32bit")
 set(VS12_x86_GENERATOR "Visual Studio 11")
 
 ## VS 2013 x64
-set(VS12_x64_CONTRIB "C:/dev/contrib_vs13_64bit")
-set(VS12_x64_QT "C:/dev/qt-4.8.7_vs13_64bit")
-set(VS12_x64_GENERATOR "Visual Studio 12 Win64")
+set(VS13_x64_CONTRIB "C:/dev/contrib_vs13_64bit")
+set(VS13_x64_QT "C:/dev/qt-4.8.7_vs13_64bit")
+set(VS13_x64_GENERATOR "Visual Studio 12 Win64")
 
 ## VS 2013 x86
-set(VS12_x86_CONTRIB "C:/dev/contrib_vs13_32bit")
-set(VS12_x86_QT "C:/dev/qt-4.8.7_vs13_32bit")
-set(VS12_x86_GENERATOR "Visual Studio 12")
+set(VS13_x86_CONTRIB "C:/dev/contrib_vs13_32bit")
+set(VS13_x86_QT "C:/dev/qt-4.8.7_vs13_32bit")
+set(VS13_x86_GENERATOR "Visual Studio 12")
 
 ## Search Engine test binaries 
 set(x64_MYRIMATCH_PATH "C:/dev/SEARCHENGINES/64bit/MyriMatch")
