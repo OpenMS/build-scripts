@@ -61,7 +61,7 @@ macro(select_vs_version version arch)
     endif()  
   endforeach()
 	
-	set(arch_variables "MYRIMATCH_PATH;OMSSA_PATH;XTANDEM_PATH")
+	set(arch_variables "MYRIMATCH_PATH;OMSSA_PATH;XTANDEM_PATH;FIDO_PATH")
 	foreach(arch_var IN LISTS arch_variables)
 		if(DEFINED ${arch}_${arch_var})
 			set( ${arch_var} "${${arch}_${arch_var}}")
