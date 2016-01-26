@@ -107,20 +107,20 @@ if(UNIX)
 elseif(WIN32)
 	## The compiler is defined by the command line environment you are using to call
 	## this script e.g. "C:\Program Files (x86)\Microsoft Visual Studio %vs_version%.0\VC\vcvarsall.bat"
-#	select_vs_version(@vs@ @arch@)
+	select_vs_version(@vs@ @arch@)
 	############# If not using the selectors you have to set the following: #############
 	# Searchengines have to be in path.
 	#set (QT @qmake@ )
 	#set (GENERATOR @generator@ )
 	#set (CONTRIB @contrib_dir@ )
 	######################################################################################
-	message (${QT})
-	set (QT_QMAKE_BIN_PATH "${QT}\bin\" )
-	message (${QT_QMAKE_BIN_PATH})
+	if(DEFINED QT)
+		set (QT_QMAKE_BIN_PATH "${QT}\bin\" )
+	endif(DEFINED QT)
 	# setup the environment variables for windows
-#	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
-#	set (ENV{PATH} "${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
-#	set (ENV{Path} "${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
+	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
+	set (ENV{PATH} "${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
+	set (ENV{Path} "${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
 else(UNIX)
 endif(UNIX)
 
