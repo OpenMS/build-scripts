@@ -117,6 +117,9 @@ else() #WIN32
 	#set (GENERATOR @generator@ )
 	#set (CONTRIB @contrib_dir@ )
 	######################################################################################
+
+	set (QT_QMAKE_BIN_PATH ${QT}/bin\ )
+	
 	# setup the environment variables for windows
 	set ( CTEST_ENVIRONMENT
 		"PATH=${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}"
@@ -126,7 +129,7 @@ else() #WIN32
 
 	set (ENV{Path} "${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
 
-	set (QT_QMAKE_BIN_PATH ${QT}/bin\ )
+
 endif()
 
 
