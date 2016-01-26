@@ -117,7 +117,7 @@ else(UNIX) #WIN32
 	#set (CONTRIB @contrib_dir@ )
 	######################################################################################
 
-	set (QT_QMAKE_BIN_PATH ${QT}/bin\ )
+	set (QT_QMAKE_BIN_PATH "${QT}/bin\" )
 	
 	# setup the environment variables for windows
 	set ( CTEST_ENVIRONMENT
