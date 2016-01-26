@@ -64,12 +64,11 @@ endif(WIN32)
 macro(prepare_notes)
   list(APPEND CTEST_NOTES_FILES
     "${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}"
-    "${CTEST_SCRIPT_DIRECTORY}/global.cmake"
     "${SCRIPT_PATH}/test_macros.cmake"
   )
 endmacro(prepare_notes)
 
-macro(run_nightly)
+macro(run_tests)
 	safe_message("Starting tests!!")
   include ( ${SCRIPT_PATH}/run_tests.cmake)
 endmacro()
