@@ -139,7 +139,7 @@ if(NOT RERUN)
 	ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
 
   if(WIN32)
-    # So that windows uses the correct .sln file
+    # So that windows uses the correct sln file
     set(CTEST_PROJECT_NAME "OpenMS_host")
   endif(WIN32)
 

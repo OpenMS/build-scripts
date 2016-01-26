@@ -57,8 +57,8 @@ if(UNIX)
 # Use the chosen settings
 	set (PACKAGE_TEST @package_test@ )
 	set (RUN_CHECKER @run_checker@ )
-	set (TEST_COVERAGE @coverage_test@)
-else() 
+	set (TEST_COVERAGE @coverage_test@ )
+else(UNIX) 
 # On windows default to Off
 	set (PACKAGE_TEST Off )
 	set (RUN_CHECKER Off )
@@ -72,7 +72,6 @@ if(TEST_COVERAGE) #Currently Unix-only
 	include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
 endif(TEST_COVERAGE)
 
-# TODO make generic
 if(PACKAGE_TEST)
 	# e.g. "OpenMS-1.10.0-Linux.deb"
 	SET (BUNDLE_NAME @bundle_name@ )
@@ -105,7 +104,7 @@ if(UNIX)
 	#set (CXX_COMPILER @cxx_compiler@ )
 	######################################################################################
 
-else() #WIN32
+else(UNIX) #WIN32
 	## The compiler is defined by the command line environment you are using to call
 	## this script e.g. "C:\Program Files (x86)\Microsoft Visual Studio %vs_version%.0\VC\vcvarsall.bat"
 
@@ -129,8 +128,7 @@ else() #WIN32
 
 	set (ENV{Path} "${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
 
-
-endif()
+endif(UNIX)
 
 
 
