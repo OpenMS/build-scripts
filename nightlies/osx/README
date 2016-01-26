@@ -1,0 +1,10 @@
+Nightly builds on mac os x should be executed as LaunchAgent to enable GUI tests. 
+
+Simply edit the accompanying de.openms.NightlyDashboard.plist file to match 
+your configuration and copy it to $HOME/Library/LaunchAgents/
+
+Execute 
+
+$ launchctl load $HOME/Library/LaunchAgents/de.openms.NightlyDashboard.plist
+
+to enable the LaunchAgent. After a reboot it will be automatically reloaded.
