@@ -24,17 +24,14 @@ set (MAKE_COMMAND @make_path@ )
 set (CTEST_GIT_COMMAND   @git_command@ )
 set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
 
-# path to qmake executable
-set (QT @qmake@ )
-
 # compiler versions (TODO might be able to remove)
 include( "${SCRIPT_PATH}/compilers.cmake" )
 
-# description of this system
-set (SYSTEM_IDENTIFIER @sys_id@ )
+# description of this system (e.g. OS version: Win8, Ubuntu15.10)
+set (SYSTEM_IDENTIFIER @system_identifier@ )
 
 # contrib folder definition
-set (OPENMS_CONTRIB @contrib_dir@ )
+set (CONTRIB @contrib_dir@ )
 
 # usually the branch or other description about the state of the sources e.g. release2.0.0, develop
 set (OPENMS_BUILDNAME_PREFIX @buildname_prefix@ )
@@ -50,13 +47,6 @@ set ( PACKAGE_TARGET_PATH "${FTP_LOCATION}nightly_binaries/" )
 set ( DOCU_TARGET_PATH    "${FTP_LOCATION}" )
 
 set (CTEST_CHECK_HTTP_ERROR ON )
-
-# Path to compilers
-set (C_COMPILER @c_compiler@ )
-set (CXX_COMPILER @cxx_compiler@ )
-
-# define generator (e.g., Unix Makefiles, Visual Studio 10 Win64)
-set (GENERATOR @generator@ )
 
 # Describe type of build/tests
 # e.g. Default, Release
@@ -79,8 +69,9 @@ else()
 endif(UNIX)
 
 # Set coverage test specific binaries/includes
-if(TEST_COVERAGE)
+if(TEST_COVERAGE) #Currently Unix-only
 	set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov")
+	# Holds additional excluding tests for coverage
 	include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
 endif(TEST_COVERAGE)
 
@@ -103,11 +94,45 @@ set (RERUN Off)
 # For Unix we used "test_macros.cmake -> select_compiler"
 # For Win we used "selector.cmake -> select_vs_version"
 # Together with compilers and paths to already compiled contribs/thirdparty binaries set in "compilers.cmake"
+
 if(UNIX)
 	select_compiler(@compiler_id@ )
+	set (GENERATOR "Unix Makefiles" )
+	set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
+
+	############# If not using the selector you have to set the following: #############
+	# Path to compilers
+	#set (C_COMPILER @c_compiler@ )
+	#set (CXX_COMPILER @cxx_compiler@ )
+	######################################################################################
+
 else() #WIN32
+	## The compiler is defined by the command line environment you are using to call
+	## this script e.g. "C:\Program Files (x86)\Microsoft Visual Studio %vs_version%.0\VC\vcvarsall.bat"
+
 	select_vs_version(@vs@ @arch@)
+
+	############# If not using the selectors you have to set the following: #############
+	# Searchengines have to be in path.
+	#set (QT @qmake@ )
+	#set (GENERATOR @generator@ )
+	######################################################################################
+	# setup the environment variables for windows
+	set ( CTEST_ENVIRONMENT
+		"PATH=${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}"
+		"Path=${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
+
+	set (ENV{PATH} "${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
+
+	set (ENV{Path} "${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
+
+	set (QT_QMAKE_BIN_PATH ${QT}/bin\ )
 endif()
+
+
+
+# define generator (e.g., Unix Makefiles, Visual Studio 10 Win64)
+#set (GENERATOR @generator@ )
 
 # Next steps (found in test_macros.cmake/selector.cmake)
 prepare_notes()
