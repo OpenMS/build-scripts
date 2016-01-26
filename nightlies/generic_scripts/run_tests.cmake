@@ -132,7 +132,8 @@ endif(UNIX)
 # do the dashboard/testings steps
 ctest_start  (Nightly)
 
-# TODO Do we need update if Jenkins does the pulling for us?
+# TODO Do we need update if Jenkins does the pulling for us beforehand?
+# We can even get rid of the git command specification then
 if(NOT RERUN)
 	ctest_update (SOURCE "${CTEST_SOURCE_DIRECTORY}")
 	ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
@@ -143,7 +144,7 @@ if(NOT RERUN)
   endif(WIN32)
 
   ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
-  
+
   if(WIN32)
     # Reset project
     set(CTEST_PROJECT_NAME "OpenMS")

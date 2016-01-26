@@ -30,9 +30,6 @@ include( "${SCRIPT_PATH}/compilers.cmake" )
 # description of this system (e.g. OS version: Win8, Ubuntu15.10)
 set (SYSTEM_IDENTIFIER @system_identifier@ )
 
-# contrib folder definition
-set (CONTRIB @contrib_dir@ )
-
 # usually the branch or other description about the state of the sources e.g. release2.0.0, develop
 set (OPENMS_BUILDNAME_PREFIX @buildname_prefix@ )
 
@@ -98,9 +95,11 @@ set (RERUN Off)
 if(UNIX)
 	select_compiler(@compiler_id@ )
 	set (GENERATOR "Unix Makefiles" )
+	# contrib folder definition
+	set (CONTRIB @contrib_dir@ )
 	set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
 
-	############# If not using the selector you have to set the following: #############
+	############# If not using the selector you may also set the following: #############
 	# Path to compilers
 	#set (C_COMPILER @c_compiler@ )
 	#set (CXX_COMPILER @cxx_compiler@ )
@@ -116,6 +115,7 @@ else() #WIN32
 	# Searchengines have to be in path.
 	#set (QT @qmake@ )
 	#set (GENERATOR @generator@ )
+	#set (CONTRIB @contrib_dir@ )
 	######################################################################################
 	# setup the environment variables for windows
 	set ( CTEST_ENVIRONMENT
