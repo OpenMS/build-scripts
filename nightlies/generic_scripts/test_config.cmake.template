@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(SCRIPT_PATH @script_path@)
 
 # For starting up and keeping track of Xservers for TOPPView tests on Unix
@@ -92,7 +93,8 @@ set (RERUN Off)
 # Together with compilers and paths to already compiled contribs/thirdparty binaries set in "compilers.cmake"
 
 if(UNIX)
-	select_compiler(@compiler_id@ )
+	select_compiler(@compiler_id@)
+	## TODO make generic: might be Xcode for Darwin
 	set (GENERATOR "Unix Makefiles" )
 	# contrib folder definition
 	set (CONTRIB @contrib_dir@ )
@@ -103,8 +105,7 @@ if(UNIX)
 	#set (C_COMPILER @c_compiler@ )
 	#set (CXX_COMPILER @cxx_compiler@ )
 	######################################################################################
-
-else(UNIX) #WIN32
+elseif(WIN32)
 	## The compiler is defined by the command line environment you are using to call
 	## this script e.g. "C:\Program Files (x86)\Microsoft Visual Studio %vs_version%.0\VC\vcvarsall.bat"
 
@@ -117,20 +118,14 @@ else(UNIX) #WIN32
 	#set (CONTRIB @contrib_dir@ )
 	######################################################################################
 
-	set (QT_QMAKE_BIN_PATH "${QT}/bin\" )
-	
+	set (QT_QMAKE_BIN_PATH "${QT}\bin\" )
 	# setup the environment variables for windows
 	set ( CTEST_ENVIRONMENT
-		"PATH=${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}"
-		"Path=${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
-
-	set (ENV{PATH} "${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
-
-	set (ENV{Path} "${QT_QMAKE_BIN_PATH};${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
-
+		"PATH=${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}"
+		"Path=${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
+	set (ENV{PATH} "${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
+	set (ENV{Path} "${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
 endif(UNIX)
-
-
 
 # define generator (e.g., Unix Makefiles, Visual Studio 10 Win64)
 #set (GENERATOR @generator@ )
