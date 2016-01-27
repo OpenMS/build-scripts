@@ -101,6 +101,7 @@ if(UNIX)
 	set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
 	############# If not using the selector you may also set the following: #############
 	# Path to compilers
+	set (COMPILER_IDENTIFIER @compiler_id@ )
 	set (C_COMPILER @c_compiler@ )
 	set (CXX_COMPILER @cxx_compiler@ )
 	######################################################################################

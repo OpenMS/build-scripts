@@ -21,7 +21,8 @@ PIDFILE="/tmp/.X${DISPLAY_NUMBER}-lock"
 case "$1" in
   start)
     #echo -n "Starting Xvnc .. "
-    $XVNC $XVFBARGS &
+    #x11vnc requires the display option
+    $XVNC $XVFBARGS & || $XVNC -display $XVFBARGS &
     #echo "done"
     ;;
   stop)

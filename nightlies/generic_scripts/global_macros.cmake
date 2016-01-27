@@ -64,7 +64,7 @@ endif(WIN32)
 macro(prepare_notes)
   list(APPEND CTEST_NOTES_FILES
     "${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}"
-    "${SCRIPT_PATH}/test_macros.cmake"
+    "${SCRIPT_PATH}/global_macros.cmake"
   )
 endmacro(prepare_notes)
 
