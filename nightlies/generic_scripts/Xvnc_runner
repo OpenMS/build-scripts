@@ -22,7 +22,7 @@ case "$1" in
   start)
     #echo -n "Starting Xvnc .. "
     #x11vnc requires the create and display option
-    $XVNC $XVFBARGS & || $XVNC -create -display $XVFBARGS &
+    $XVNC $XVFBARGS || $XVNC -create -display $XVFBARGS &
     #echo "done"
     ;;
   stop)
