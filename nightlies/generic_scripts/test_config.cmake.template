@@ -114,12 +114,11 @@ elseif(WIN32)
 	# set (GENERATOR @generator@ )
 	# set (CONTRIB @contrib_dir@ )
 	######################################################################################
-	set(QT foo)
-	set (QT_QMAKE_BIN_PATH "${QT}\bin\" )
+	set (QT_QMAKE_BIN_PATH "${QT}/bin/" )
 	# setup the environment variables for windows
-	#set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
-	#set (ENV{PATH} "${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
-	#set (ENV{Path} "${QT_QMAKE_BIN_PATH};${CONTRIB}\lib\;${CTEST_BINARY_DIRECTORY}\bin\${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
+	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
+	set (ENV{PATH} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
+	set (ENV{Path} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
 endif()
 
 # define generator (e.g., Unix Makefiles, Visual Studio 10 Win64)
