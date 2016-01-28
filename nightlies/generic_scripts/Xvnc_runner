@@ -23,8 +23,8 @@ case "$1" in
     #echo -n "Starting Xvnc .. "
     #x11vnc requires the create and display option
     #$XVNC -xvnc || echo "Does not support -create. Hope that a server is running."
-    $XVNC -listdpy || echo "No listing possible"
-    $XVNC $XVFBARGS || $XVNC -passwd "OpenMS" -xvnc $XVFBARGS &
+    #$XVNC -listdpy || echo "No listing possible"
+    ($XVNC $XVFBARGS || $XVNC -passwd "OpenMS" -xvnc -display $XVFBARGS) &
     #echo "done"
     ;;
   stop)
