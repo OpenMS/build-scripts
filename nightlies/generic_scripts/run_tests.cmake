@@ -61,6 +61,10 @@ if(WIN32)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
 ENABLE_UNITYBUILD=On
   " )
+else(WIN32)
+  SET(INITIAL_CACHE "${INITIAL_CACHE}
+BOOST_USE_STATIC=OFF
+  " )
 endif(WIN32)
 
 if(DEFINED ${C_COMPILER})
@@ -135,7 +139,7 @@ ctest_start  (Nightly)
 # TODO Do we need update if Jenkins does the pulling for us beforehand?
 # We can even get rid of the git command specification then
 if(NOT RERUN)
-	ctest_update (SOURCE "${CTEST_SOURCE_DIRECTORY}")
+	#ctest_update (SOURCE "${CTEST_SOURCE_DIRECTORY}")
 	ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
 
   if(WIN32)
