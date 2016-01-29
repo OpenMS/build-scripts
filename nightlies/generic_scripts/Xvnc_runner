@@ -25,7 +25,7 @@ case "$1" in
     #$XVNC -xvnc || echo "Does not support -create. Hope that a server is running."
     #$XVNC -listdpy || echo "No listing possible"
     ($XVNC $XVFBARGS || $XVNC -passwd "OpenMS" -xvnc -display $XVFBARGS) &
-    #echo "done"
+    echo "done"
     ;;
   stop)
     #echo -n "Killing Xvnc .. " 
