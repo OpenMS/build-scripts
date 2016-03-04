@@ -25,8 +25,11 @@ set (MAKE_COMMAND @make_path@ )
 set (CTEST_GIT_COMMAND   @git_command@ )
 set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
 
-# compiler versions (TODO might be able to remove)
-include( "${SCRIPT_PATH}/compilers.cmake" )
+# If you want to use a CMake file listing
+# all the supported compiler versions on your machine
+if(DEFINED COMPILER_CMAKE)
+	include( "${SCRIPT_PATH}/compilers.cmake" )
+endif()
 
 # description of this system (e.g. OS version: Win8, Ubuntu15.10)
 set (SYSTEM_IDENTIFIER @system_identifier@ )
@@ -93,37 +96,42 @@ set (RERUN Off)
 # Together with compilers and paths to already compiled contribs/thirdparty binaries set in "compilers.cmake"
 
 if(UNIX)
-	#select_compiler(@compiler_id@)
+	if(DEFINED COMPILER_CMAKE)
+		select_compiler(@compiler_id@)
+	else()
+		set (COMPILER_IDENTIFIER @compiler_id@ )
+		set (C_COMPILER @c_compiler@ )
+		set (CXX_COMPILER @cxx_compiler@ )
+	endif()
+	
 	## TODO make generic: might be Xcode for Darwin
 	set (GENERATOR "Unix Makefiles" )
+	
 	# contrib folder definition
 	set (CONTRIB @contrib_dir@ )
 	set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
-	############# If not using the selector you may also set the following: #############
-	# Path to compilers
-	set (COMPILER_IDENTIFIER @compiler_id@ )
-	set (C_COMPILER @c_compiler@ )
-	set (CXX_COMPILER @cxx_compiler@ )
-	######################################################################################
+	
 elseif(WIN32)
 	## The compiler is defined by the command line environment you are using to call
 	## this script e.g. C:\Program Files\Microsoft Visual Studio vs_version.0\VC\vcvarsall.bat
-	#select_vs_version(@vs@ @arch@)
-	############# If not using the selectors you have to set the following: #############
-	## Searchengines have to be in path.
-	# set (QT @qmake@ )
-	# set (GENERATOR @generator@ )
-	# set (CONTRIB @contrib_dir@ )
-	######################################################################################
+	if(DEFINED COMPILER_CMAKE)
+		select_vs_version(@vs@ @arch@)
+	else()
+		## TODO Searchengines built for the right Arch
+		## have to be in path for this, too! Done in select_vs_version.
+		set (QT @qmake@ )
+		# define generator (e.g., Visual Studio 10 Win64)
+		set (GENERATOR @generator@ )
+		set (CONTRIB @contrib_dir@ )
+	endif()
+	
 	set (QT_QMAKE_BIN_PATH "${QT}/bin/" )
-	# setup the environment variables for windows
+	
+	# Setup additional environment variables for windows
 	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
 	set (ENV{PATH} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
 	set (ENV{Path} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
 endif()
-
-# define generator (e.g., Unix Makefiles, Visual Studio 10 Win64)
-#set (GENERATOR @generator@ )
 
 # Next steps, found in test_macros.cmake
 prepare_notes()
