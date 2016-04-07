@@ -109,11 +109,11 @@ set (CTEST_CUSTOM_WARNING_EXCEPTION
     ".include/boost.*:.*"
     ".*boost_static_assert_typedef_575.*"
     ".*boost_static_assert_typedef_628.*"
-    "*BOOST_STATIC_ASSERT*"
+    ".*BOOST_STATIC_ASSERT.*"
     # Suppress warnings imported from seqan
     ".include/seqan.*:.*"
     ".*seqan.*[-Wunused-local-typedefs]"
-		".*qsharedpointer_impl.h:595:43.*"
+    ".*qsharedpointer_impl.h:595:43.*"
     )
 
 
