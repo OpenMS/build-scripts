@@ -3,15 +3,24 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(SCRIPT_PATH @script_path@)
 
+if(NOT DEFINED TEST_MACROS_INCLUDED)
+  include( "${SCRIPT_PATH}/global_macros.cmake" )
+endif()
+
 # For starting up and keeping track of Xservers for TOPPView tests on Unix
 if(UNIX)
 	include ( "${SCRIPT_PATH}/VirtualXServer.cmake" )
 endif(UNIX)
 
-if(NOT DEFINED TEST_MACROS_INCLUDED)
-  include( "${SCRIPT_PATH}/global_macros.cmake" )
-endif()
+## Set if you have a compiler config cmake (old style)
+set(COMPILER_CMAKE @compiler_cmake@)
 
+include("${COMPILER_CMAKE}" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
+
+## If the script path was not given or wrong, look in the script dir again
+if (NOT COMPILER_CMAKE_INCLUDED)
+  include("${SCRIPT_PATH}\compiler.cmake" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
+endif()
 
 # source and build_dir
 set (CTEST_SOURCE_DIRECTORY @source_dir@ )
@@ -24,12 +33,6 @@ set (CTEST_CTEST_COMMAND "${CMAKE_BIN_PATH}ctest" )
 set (MAKE_COMMAND @make_path@ )
 set (CTEST_GIT_COMMAND   @git_command@ )
 set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
-
-# If you want to use a CMake file listing
-# all the supported compiler versions on your machine
-if(DEFINED COMPILER_CMAKE)
-	include( "${SCRIPT_PATH}/compilers.cmake" )
-endif()
 
 # description of this system (e.g. OS version: Win8, Ubuntu15.10)
 set (SYSTEM_IDENTIFIER @system_identifier@ )
@@ -83,7 +86,7 @@ if(PACKAGE_TEST)
 	SET (TARGET_NAME @package_target_name@ )
 endif(PACKAGE_TEST)
 	
-
+# TODO categorize: does it run on win?
 set (EXTERNAL_CODE_TESTS @external_code_test@ )
 
 # to automatically rerun a test when failed
@@ -96,7 +99,7 @@ set (RERUN Off)
 # Together with compilers and paths to already compiled contribs/thirdparty binaries set in "compilers.cmake"
 
 if(UNIX)
-	if(DEFINED COMPILER_CMAKE)
+	if(COMPILER_CMAKE_INCLUDED)
 		select_compiler(@compiler_id@)
 	else()
 		set (COMPILER_IDENTIFIER @compiler_id@ )
@@ -111,14 +114,14 @@ if(UNIX)
 	set (CONTRIB @contrib_dir@ )
 	set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
 	
+	## TODO maybe also let the THIRDPARTY dirs be added to the PATH here.
+	
 elseif(WIN32)
 	## The compiler is defined by the command line environment you are using to call
 	## this script e.g. C:\Program Files\Microsoft Visual Studio vs_version.0\VC\vcvarsall.bat
-	if(DEFINED COMPILER_CMAKE)
+	if(COMPILER_CMAKE_INCLUDED)
 		select_vs_version(@vs@ @arch@)
 	else()
-		## TODO Searchengines built for the right Arch
-		## have to be in path for this, too! Done in select_vs_version.
 		set (QT @qmake@ )
 		# define generator (e.g., Visual Studio 10 Win64)
 		set (GENERATOR @generator@ )
@@ -128,9 +131,19 @@ elseif(WIN32)
 	set (QT_QMAKE_BIN_PATH "${QT}/bin/" )
 	
 	# Setup additional environment variables for windows
-	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
-	set (ENV{PATH} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{PATH}")
-	set (ENV{Path} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;${MYRIMATCH_PATH}\;${OMSSA_PATH}\;${XTANDEM_PATH}\;${FIDO_PATH}\;$ENV{Path}")
+	## Add Search Engine test binaries to PATH
+	set(THIRDPARTY_DIR "@thirdparty_root@\@arch@\")
+	SUBDIRLIST(SUBDIRS ${THIRDPARTY_DIR})
+	FOREACH(subdir ${SUBDIRS})
+    		set ( CTEST_ENVIRONMENT "PATH=${THIRDPARTY_DIR}${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_DIR}${subdir}\;$ENV{Path}")
+    		set (ENV{PATH} "${THIRDPARTY_DIR}${subdir}\;$ENV{PATH}")
+    		set (ENV{Path} "${THIRDPARTY_DIR}${subdir}\;$ENV{Path}")
+	ENDFOREACH()
+	
+	## Add rest (e.g. QT, CONTRIB, binDir)
+	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
+	set (ENV{PATH} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}")
+	set (ENV{Path} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
 endif()
 
 # Next steps, found in test_macros.cmake
