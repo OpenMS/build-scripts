@@ -19,7 +19,7 @@ include("${COMPILER_CMAKE}" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
 
 ## If the script path was not given or wrong, look in the script dir again
 if (NOT COMPILER_CMAKE_INCLUDED)
-  include("${SCRIPT_PATH}\compiler.cmake" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
+  include("${SCRIPT_PATH}/compiler.cmake" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
 endif()
 
 # source and build_dir
@@ -41,8 +41,9 @@ set (SYSTEM_IDENTIFIER @system_identifier@ )
 set (OPENMS_BUILDNAME_PREFIX @buildname_prefix@ )
 
 # proxy settings
-set( $ENV{http_proxy}    "http://http-proxy.fu-berlin.de/" )
-set( $ENV{HTTP_PROXY}    "http://http-proxy.fu-berlin.de/" )
+set(MY_HTTP_PROXY "http://http-proxy.fu-berlin.de/")
+set( $ENV{http_proxy}   "${MY_HTTP_PROXY}" )
+set( $ENV{HTTP_PROXY}   "${MY_HTTP_PROXY}" )
 
 # FTP server for storing binaries, docu, checker results:
 set ( FTP_LOCATION "jpfeuffer@ftp.imp.fu-berlin.de/pub/OpenMS/" )
@@ -114,7 +115,8 @@ if(UNIX)
 	set (CONTRIB @contrib_dir@ )
 	set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
 	
-	## TODO maybe also let the THIRDPARTY dirs be added to the PATH here.
+	## TODO maybe also let the THIRDPARTY dirs be added to the PATH here, instead of outside
+	## of the script.
 	
 elseif(WIN32)
 	## The compiler is defined by the command line environment you are using to call
@@ -132,7 +134,7 @@ elseif(WIN32)
 	
 	# Setup additional environment variables for windows
 	## Add Search Engine test binaries to PATH
-	set(THIRDPARTY_DIR "@thirdparty_root@\@arch@\")
+	set(THIRDPARTY_DIR "@thirdparty_root@/@arch@/")
 	SUBDIRLIST(SUBDIRS ${THIRDPARTY_DIR})
 	FOREACH(subdir ${SUBDIRS})
     		set ( CTEST_ENVIRONMENT "PATH=${THIRDPARTY_DIR}${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_DIR}${subdir}\;$ENV{Path}")
