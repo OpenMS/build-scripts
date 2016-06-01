@@ -122,7 +122,7 @@ elseif(WIN32)
 	## The compiler is defined by the command line environment you are using to call
 	## this script e.g. C:\Program Files\Microsoft Visual Studio vs_version.0\VC\vcvarsall.bat
 	if(COMPILER_CMAKE_INCLUDED)
-		select_vs_version(@vs@ @arch@)
+		select_vs_version("@vs@" "@arch@")
 	else()
 		set (QT @qmake@ )
 		# define generator (e.g., Visual Studio 10 Win64)
@@ -134,7 +134,7 @@ elseif(WIN32)
 	
 	# Setup additional environment variables for windows
 	## Add Search Engine test binaries to PATH
-	set(THIRDPARTY_DIR "@thirdparty_root@/@arch@/")
+	set (THIRDPARTY_DIR @thirdparty_root@/@arch@/)
 	SUBDIRLIST(SUBDIRS ${THIRDPARTY_DIR})
 	FOREACH(subdir ${SUBDIRS})
     		set ( CTEST_ENVIRONMENT "PATH=${THIRDPARTY_DIR}${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_DIR}${subdir}\;$ENV{Path}")
