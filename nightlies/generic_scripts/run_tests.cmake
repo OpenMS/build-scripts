@@ -48,6 +48,13 @@ endif(NOT RERUN)
 set (CTEST_CMAKE_GENERATOR "${GENERATOR}" )
 set (CTEST_BUILD_CONFIGURATION ${BUILD_TYPE})
 
+# Add binary dir to Windows path for the tests
+if(WIN32)
+	set ( CTEST_ENVIRONMENT "PATH=${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}" "Path=${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
+	set (ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}")
+	set (ENV{Path} "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
+endif()
+
 # ensure the config is known to ctest
 set(CTEST_COMMAND "${CTEST_COMMAND} -D Nightly -C ${BUILD_TYPE} ")
 
