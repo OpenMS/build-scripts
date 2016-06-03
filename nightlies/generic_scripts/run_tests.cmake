@@ -29,21 +29,11 @@ elseif(TEST_STYLE)
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Style")
 endif()
 
-# set variables describing the build environments
-SET (CTEST_BINARY_DIRECTORY "${BUILD_DIRECTORY}/${CTEST_BUILD_NAME}")
-
-if(RERUN)
-  ## Distinguish multiple builds in CDash
-  string(RANDOM RANDOM_BUILD_SUFFIX)
-  SET(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-${RANDOM_BUILD_SUFFIX}")
-endif(RERUN)
+# set variables describing the build environments (with Jenkins I assume we do not need to mark the dir with the name)
+#SET (CTEST_BINARY_DIRECTORY "${BUILD_DIRECTORY}/${CTEST_BUILD_NAME}")
+SET (CTEST_BINARY_DIRECTORY "${BUILD_DIRECTORY}")
 
 SET (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
-
-if(NOT RERUN)
-  # clear the binary directory to avoid problems
-  CTEST_EMPTY_BINARY_DIRECTORY (${CTEST_BINARY_DIRECTORY})
-endif(NOT RERUN)
 
 set (CTEST_CMAKE_GENERATOR "${GENERATOR}" )
 set (CTEST_BUILD_CONFIGURATION ${BUILD_TYPE})
@@ -53,6 +43,9 @@ if(WIN32)
 	set ( CTEST_ENVIRONMENT "PATH=${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}" "Path=${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
 	set (ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}")
 	set (ENV{Path} "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
+else(WIN32)
+	# customizing PATH so ExecutePipeline_test finds its executables
+	set(ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}")
 endif()
 
 # ensure the config is known to ctest
@@ -157,16 +150,9 @@ set (CTEST_CUSTOM_WARNING_EXCEPTION
  # customize errors TODO put them all in this external script!!
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
-
-if(NOT RERUN)
-  # this is the initial cache to use for the binary tree, be careful to escape
-  # any quotes inside of this string if you use it
-  FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
-endif(NOT RERUN)
-
-# customizing PATH so ExecutePipeline_test finds its executables
-set(ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}")
-
+# this is the initial cache to use for the binary tree, be careful to escape
+# any quotes inside of this string if you use it
+FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
 if(UNIX)
   # start virtual xserver (Xvnc) to test TOPPView
@@ -190,24 +176,22 @@ endif()
 # do the dashboard/testings steps
 ctest_start  (Nightly)
 
-if(NOT RERUN)
-  ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
+ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
 
-  if(WIN32)
-    # So that windows uses the correct sln file
-    set(CTEST_PROJECT_NAME "OpenMS_host")
-  endif(WIN32)
+if(WIN32)
+# So that windows uses the correct sln file
+set(CTEST_PROJECT_NAME "OpenMS_host")
+endif(WIN32)
 
-  ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
+ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
 
-  if(WIN32)
-    # Reset project
-    set(CTEST_PROJECT_NAME "OpenMS")
-  endif(WIN32)
-endif(NOT RERUN)
+if(WIN32)
+# Reset project
+set(CTEST_PROJECT_NAME "OpenMS")
+endif(WIN32)
 
 if(NOT TEST_STYLE)
-	ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 3)
+	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 3)
 	if(BUILD_PYOPENMS)
 		ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
 	endif()
