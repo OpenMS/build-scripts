@@ -29,6 +29,8 @@ elseif(TEST_STYLE)
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Style")
 endif()
 
+
+
 # set variables describing the build environments (with Jenkins I assume we do not need to mark the dir with the name)
 #SET (CTEST_BINARY_DIRECTORY "${BUILD_DIRECTORY}/${CTEST_BUILD_NAME}")
 SET (CTEST_BINARY_DIRECTORY "${BUILD_DIRECTORY}")
@@ -106,6 +108,9 @@ CMAKE_SHARED_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage
 " )
 endif(TEST_COVERAGE)
 
+if(TEST_STYLE)
+	set(INITIAL_CACHE "${INITIAL_CACHE} ENABLE_STYLE_TESTING:BOOL=On")
+endif()
 
 if(APPLE)
 ## if you want to use another SDK add the following also to the cache (usually not necessary)
