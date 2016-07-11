@@ -15,10 +15,10 @@ endif(UNIX)
 ## Set if you have a compiler config cmake (old style)
 set(COMPILER_CMAKE @compiler_cmake@)
 
-include("${COMPILER_CMAKE}" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
-
-## If the script path was not given or wrong, look in the script dir again
-if (NOT COMPILER_CMAKE_INCLUDED)
+if (EXISTS "${COMPILER_CMAKE}")
+  include("${COMPILER_CMAKE}" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
+elseif (EXISTS "${SCRIPT_PATH}/compiler.cmake")
+  ## If the script path was not given or wrong, look in a standard script dir again
   include("${SCRIPT_PATH}/compiler.cmake" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
 endif()
 
