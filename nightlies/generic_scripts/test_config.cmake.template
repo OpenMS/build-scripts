@@ -58,6 +58,8 @@ set (CTEST_CHECK_HTTP_ERROR ON )
 set (BUILD_TYPE @build_type@ )
 # site description of this machine e.g. scratchy.imp.fu-berlin.de
 set (CTEST_SITE @ctest_site@ )
+# if you want to submit to CDash at all. Might be helpful if you want to show results in other test dashboard
+set (CDASH_SUBMIT @cdash_submit@)
 
 # packaging tests only allowed for UNIX (lnx,osx), otherwise we use NSIS Installer scripts for Win
 # checker and coverage tests are also only allowed for UNIX

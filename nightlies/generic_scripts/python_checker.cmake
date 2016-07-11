@@ -42,6 +42,10 @@ set(required_variables
 	"CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUILD_NAME")
 backup_and_check_variables(required_variables)
 
+if(NOT DEFINED CDASH_SUBMIT)
+    set(CDASH_SUBMIT Off)
+endif()
+
 set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_PythonChecker")
 
 # now we hack our own checker into cdash
@@ -72,6 +76,8 @@ ctest_start(Nightly)
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "doc_xml")
 ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}")
 ctest_checker()
-ctest_submit(PARTS Configure Build Test)
+if(CDASH_SUBMIT)
+  ctest_submit(PARTS Configure Build Test)
+endif()
 
 restore_variables(required_variables)

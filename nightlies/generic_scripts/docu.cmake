@@ -40,13 +40,19 @@ set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUIL
 
 backup_and_check_variables(required_variables)
 
+if(NOT DEFINED CDASH_SUBMIT)
+    set(CDASH_SUBMIT Off)
+endif()
+
 ## (re)define build name and test directories
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Documentation")
 
 CTEST_START (Nightly)
 CTEST_BUILD (BUILD TARGET doc APPEND)
 CTEST_BUILD (BUILD TARGET doc_tutorials APPEND)
-CTEST_SUBMIT (PARTS Build) # lets see if this works
+if(CDASH_SUBMIT)
+  CTEST_SUBMIT (PARTS Build) # lets see if this works
+endif()
 
 # and now the hard work
 if(EXISTS "${CTEST_BINARY_DIRECTORY}/doc/index.html")

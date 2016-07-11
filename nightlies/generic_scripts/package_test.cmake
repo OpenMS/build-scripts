@@ -5,6 +5,10 @@ set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;INITIAL_CA
 
 backup_and_check_variables(required_variables)
 
+if(NOT DEFINED CDASH_SUBMIT)
+    set(CDASH_SUBMIT Off)
+endif()
+
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Package")
 
 # update the source tree
@@ -44,15 +48,17 @@ CTEST_START   (Nightly)
 CTEST_BUILD   (TARGET doc)
 CTEST_BUILD   (TARGET doc_tutorials APPEND)
 CTEST_BUILD   (TARGET package APPEND)
-CTEST_SUBMIT  (PARTS Build)
+if(CDASH_SUBMIT)
+  CTEST_SUBMIT  (PARTS Build)
+endif()
 
 
 ### TODO use RSYNC for putting on FTP
 # copy package to destination
-file(RENAME ${CTEST_BINARY_DIRECTORY}/${BUNDLE_NAME} ${CTEST_BINARY_DIRECTORY}/${TARGET_NAME})
-file(
-		COPY ${CTEST_BINARY_DIRECTORY}/${TARGET_NAME}
-		DESTINATION ${PACKAGE_TARGET_PATH}
-)
+#file(RENAME ${CTEST_BINARY_DIRECTORY}/${BUNDLE_NAME} ${CTEST_BINARY_DIRECTORY}/${TARGET_NAME})
+#file(
+#		COPY ${CTEST_BINARY_DIRECTORY}/${TARGET_NAME}
+#		DESTINATION ${PACKAGE_TARGET_PATH}
+#)
 
 restore_variables(required_variables)

@@ -9,6 +9,10 @@
 set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUILD_NAME")
 backup_and_check_variables(required_variables)
 
+if(NOT DEFINED CDASH_SUBMIT)
+    set(CDASH_SUBMIT Off)
+endif()
+
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Checker")
 
 # now we hack our own checker into cdash
@@ -30,6 +34,8 @@ ENDMACRO(CTEST_CHECKER)
 CTEST_START     (Nightly)
 CTEST_TEST      (BUILD "${CTEST_BINARY_DIRECTORY}")
 CTEST_CHECKER   ()
-CTEST_SUBMIT    (PARTS Configure Build Test)
+if(CDASH_SUBMIT)
+  CTEST_SUBMIT    (PARTS Configure Build Test)
+endif()
 
 restore_variables(required_variables)
