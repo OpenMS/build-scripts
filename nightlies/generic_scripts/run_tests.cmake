@@ -205,13 +205,15 @@ if(NOT TEST_STYLE)
 endif()
 
 # E.g. for use with Jenkins or other Dashboards
-if (CTEST_SUBMIT)
+if (CDASH_SUBMIT)
   ctest_submit() #(RETRY_COUNT 3)
 endif()
 
 if(TEST_COVERAGE)
   ctest_coverage(BUILD "${CTEST_BINARY_DIRECTORY}")
-	ctest_submit(PARTS Coverage)
+  	if(CDASH_SUBMIT)
+	  ctest_submit(PARTS Coverage)
+	endif()
 endif()
 
 if(RUN_CHECKER)
