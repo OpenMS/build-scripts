@@ -63,7 +63,7 @@ macro(CTEST_CHECKER)
 		--output
 		xml
 		OUTPUT_FILE
-		${CTEST_BINARY_DIRECTORY}/checker.log
+		${CTEST_BINARY_DIRECTORY}/pychecker.log
 		WORKING_DIRECTORY
 		${CTEST_SOURCE_DIRECTORY})
 
