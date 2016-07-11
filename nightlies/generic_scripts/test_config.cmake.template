@@ -65,11 +65,13 @@ if(UNIX)
 # Use the chosen settings
 	set (PACKAGE_TEST @package_test@ )
 	set (RUN_CHECKER @run_checker@ )
+	set (RUN_PYTHON_CHECKER @run_pychecker@ )
 	set (TEST_COVERAGE @coverage_test@ )
 else(UNIX) 
 # On windows default to Off
 	set (PACKAGE_TEST Off )
 	set (RUN_CHECKER Off )
+	set (RUN_PYTHON_CHECKER Off )
 	set (TEST_COVERAGE Off )
 endif(UNIX)
 

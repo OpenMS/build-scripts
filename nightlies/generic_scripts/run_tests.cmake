@@ -152,7 +152,8 @@ set (CTEST_CUSTOM_WARNING_EXCEPTION
     ".*qsharedpointer_impl.h:595:43.*"
     )
   
- # customize errors TODO put them all in this external script!!
+# customize errors
+# TODO put them all in this external script!!
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
 # this is the initial cache to use for the binary tree, be careful to escape
