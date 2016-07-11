@@ -1,5 +1,12 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
 
+## See https://itk.org/Bug/bug_relationship_graph.php?bug_id=9599&graph=dependency (to get rid of CMake warnings)
+if(COMMAND CMAKE_POLICY) # CMake 2.4 does not have this command
+  if(POLICY CMP0011)
+    cmake_policy(SET CMP0011 NEW)
+  endif(POLICY CMP0011)
+endif(COMMAND CMAKE_POLICY)
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(SCRIPT_PATH @script_path@)
 
