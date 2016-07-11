@@ -204,7 +204,10 @@ if(NOT TEST_STYLE)
 	# adapt project name to allow xcode to find the test project
 endif()
 
-ctest_submit() #(RETRY_COUNT 3)
+# E.g. for use with Jenkins or other Dashboards
+if (CTEST_SUBMIT)
+  ctest_submit() #(RETRY_COUNT 3)
+endif()
 
 if(TEST_COVERAGE)
   ctest_coverage(BUILD "${CTEST_BINARY_DIRECTORY}")
