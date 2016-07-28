@@ -70,12 +70,23 @@ macro(CTEST_CHECKER)
 	safe_message("Finished checker with log in ${CHECKER_LOG}")
 endmacro()
 
-# test again and execute checker
-ctest_start(Nightly)
-# ensure that we have the doxygen xml files
+# test again and execute checker, use Track to specify Track (Dart2) / Build group (Dart1)
+# in CDash
+ctest_start(Nightly TRACK PyOpenMS)
+
+# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
+# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash
+# Otherwise skip update completely
+if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
+ ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" CTEST_UPDATE_VERSION_ONLY)
+endif()
+
+# ensure that we have the doxygen xml files. WHY??
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "doc_xml")
 ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}")
+# uses the macro in the beginning of the file.
 ctest_checker()
+
 if(CDASH_SUBMIT)
   ctest_submit(PARTS Configure Build Test)
 endif()

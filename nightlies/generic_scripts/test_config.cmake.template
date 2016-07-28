@@ -8,16 +8,14 @@ if(COMMAND CMAKE_POLICY) # CMake 2.4 does not have this command
 endif(COMMAND CMAKE_POLICY)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
+
+# Path to look for additional scripts with macros.
 set(SCRIPT_PATH @script_path@)
 
+# Defines general macros.
 if(NOT DEFINED TEST_MACROS_INCLUDED)
   include( "${SCRIPT_PATH}/global_macros.cmake" )
 endif()
-
-# For starting up and keeping track of Xservers for TOPPView tests on Unix
-if(UNIX)
-	include ( "${SCRIPT_PATH}/VirtualXServer.cmake" )
-endif(UNIX)
 
 ## Set if you have a compiler config cmake (old style)
 set(COMPILER_CMAKE @compiler_cmake@)
@@ -47,12 +45,12 @@ set (SYSTEM_IDENTIFIER @system_identifier@ )
 # usually the branch or other description about the state of the sources e.g. release2.0.0, develop
 set (OPENMS_BUILDNAME_PREFIX @buildname_prefix@ )
 
-# proxy settings
+# proxy settings (TODO not sure if this is needed)
 set(MY_HTTP_PROXY "http://http-proxy.fu-berlin.de/")
 set( $ENV{http_proxy}   "${MY_HTTP_PROXY}" )
 set( $ENV{HTTP_PROXY}   "${MY_HTTP_PROXY}" )
 
-# FTP server for storing binaries, docu, checker results:
+# FTP server for storing binaries, docu, checker results publicly:
 set ( FTP_LOCATION "jpfeuffer@ftp.imp.fu-berlin.de/pub/OpenMS/" )
 set ( CHECKER_TARGET_PATH "${FTP_LOCATION}" )
 set ( PACKAGE_TARGET_PATH "${FTP_LOCATION}nightly_binaries/" )
@@ -68,20 +66,25 @@ set (CTEST_SITE @ctest_site@ )
 # if you want to submit to CDash at all. Might be helpful if you want to show results in other test dashboard
 set (CDASH_SUBMIT @cdash_submit@)
 
-# packaging tests only allowed for UNIX (lnx,osx), otherwise we use NSIS Installer scripts for Win
-# checker and coverage tests are also only allowed for UNIX
+
 if(UNIX) 
 # Use the chosen settings
 	set (PACKAGE_TEST @package_test@ )
+	set (BUILD_DOCU @build_docu@ )
 	set (RUN_CHECKER @run_checker@ )
 	set (RUN_PYTHON_CHECKER @run_pychecker@ )
 	set (TEST_COVERAGE @coverage_test@ )
-else(UNIX) 
-# On windows default to Off
+	set (EXTERNAL_CODE_TESTS @external_code_test@ )
+else(UNIX)
+	# packaging tests only allowed for UNIX (lnx,osx), otherwise we use NSIS Installer scripts for Win
 	set (PACKAGE_TEST Off )
+	# Standard uses gcov. Difficult on windows.
+	set (TEST_COVERAGE Off )
+	# On windows default to Off, needs to be tested, please use Unix for now
 	set (RUN_CHECKER Off )
 	set (RUN_PYTHON_CHECKER Off )
-	set (TEST_COVERAGE Off )
+	set (BUILD_DOCU Off )
+	set (EXTERNAL_CODE_TESTS Off )
 endif(UNIX)
 
 # Set coverage test specific binaries/includes
@@ -97,19 +100,13 @@ if(PACKAGE_TEST)
 	# e.g. "OpenMS-1.10.0-debian_squeeze-x86_64.deb"
 	SET (TARGET_NAME @package_target_name@ )
 endif(PACKAGE_TEST)
-	
-# TODO categorize: does it run on win?
-set (EXTERNAL_CODE_TESTS @external_code_test@ )
 
-# to automatically rerun a test when failed
-set (RERUN Off)
+if(RUN_PYTHON_CHECKER)
+	# if you want to check python, it needs to be built
+	SET (BUILD_PYOPENMS On)
+endif(RUN_PYTHON_CHECKER)
 
-# the actual test procedure
-# next line not needed, when fixed compiler paths are given to the template
-# For Unix we used "test_macros.cmake -> select_compiler"
-# For Win we used "selector.cmake -> select_vs_version"
-# Together with compilers and paths to already compiled contribs/thirdparty binaries set in "compilers.cmake"
-
+# Setup compilers and build environment
 if(UNIX)
 	if(COMPILER_CMAKE_INCLUDED)
 		select_compiler(@compiler_id@)
@@ -127,11 +124,12 @@ if(UNIX)
 	set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
 	
 	## TODO maybe also let the THIRDPARTY dirs be added to the PATH here, instead of outside
-	## of the script.
+	## of the script. For consistency.
 	
 elseif(WIN32)
-	## The compiler is defined by the command line environment you are using to call
+	## The compiler is defined by the generator and the command line environment you are using to call
 	## this script e.g. C:\Program Files\Microsoft Visual Studio vs_version.0\VC\vcvarsall.bat
+	## They should of course match.
 	if(COMPILER_CMAKE_INCLUDED)
 		select_vs_version(@vs@ @arch@)
 	else()
@@ -153,8 +151,8 @@ elseif(WIN32)
     		set (ENV{Path} "${THIRDPARTY_DIR}${subdir}\;$ENV{Path}")
 	ENDFOREACH()
 	
-	## Add rest (e.g. QT, CONTRIB, binDir)
-	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
+	## Add rest (e.g. QT, CONTRIB)
+	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
 	set (ENV{PATH} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}")
 	set (ENV{Path} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
 endif()

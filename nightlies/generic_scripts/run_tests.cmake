@@ -24,6 +24,9 @@ if(TEST_COVERAGE)
   if(NOT DEFINED CTEST_COVERAGE_COMMAND)
     safe_message(FATAL_ERROR "CTEST_COVERAGE_COMMAND needs to be set for coverage builds")
   endif()
+  if(NOT BUILD_TYPE Debug)
+    safe_message(FATAL_ERROR "For coverage check, the library should be built in Debug mode with Debug symbols.")
+  endif()
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Coverage")
 elseif(TEST_STYLE)
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Style")
@@ -120,40 +123,8 @@ if(APPLE)
     CMAKE_OSX_DEPLOYMENT_TARGET=10.6
   ")
 endif()
-
-# ------------------------------------------------------------
-# Increase number of reported errors/warnings.
-# ------------------------------------------------------------
-
-## customize reporting of errors in CDash
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 10000)
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 10000)
-
-# ------------------------------------------------------------
-# Suppress certain warnings.
-# ------------------------------------------------------------
-
-# Of course, the following list should be kept as short as possible and should
-# be limited to very small lists of system/compiler pairs.  However, some
-# warnings cannot be suppressed from the source.  Also, the warnings
-# suppressed here should be specific to certain system/compiler versions.
-#
-# If you add anything then document what it does.
-
-set (CTEST_CUSTOM_WARNING_EXCEPTION
-    # Suppress warnings imported from boost
-    ".include/boost.*:.*"
-    ".*boost_static_assert_typedef_575.*"
-    ".*boost_static_assert_typedef_628.*"
-    ".*BOOST_STATIC_ASSERT.*"
-    # Suppress warnings imported from seqan
-    ".include/seqan.*:.*"
-    ".*seqan.*[-Wunused-local-typedefs]"
-    ".*qsharedpointer_impl.h:595:43.*"
-    )
   
 # customize errors
-# TODO put them all in this external script!!
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
 # this is the initial cache to use for the binary tree, be careful to escape
@@ -180,22 +151,27 @@ if(BUILD_PYOPENMS)
 endif()
 
 # do the dashboard/testings steps
+# TODO make a variable out of it? E.g. MODEL
 ctest_start  (Nightly)
 
 ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
 
+# Reads the previously copied CTestCustom.cmake (which e.g. contains excluded warnings)
+ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
+
 if(WIN32)
-# So that windows uses the correct sln file
-set(CTEST_PROJECT_NAME "OpenMS_host")
+  # So that windows uses the correct sln file
+  set(CTEST_PROJECT_NAME "OpenMS_host")
 endif(WIN32)
 
 ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
 
 if(WIN32)
-# Reset project
-set(CTEST_PROJECT_NAME "OpenMS")
+  # Reset project
+  set(CTEST_PROJECT_NAME "OpenMS")
 endif(WIN32)
 
+# If we only tested style, the binaries were not built -> no testing
 if(NOT TEST_STYLE)
 	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 3)
 	if(BUILD_PYOPENMS)

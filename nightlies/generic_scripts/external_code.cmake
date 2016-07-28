@@ -20,7 +20,7 @@ SET (CTEST_BINARY_TESTEXTERNAL_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/
 SET (CTEST_ENVIRONMENT "OPENMS_BUILD_TREE=${CTEST_BINARY_DIRECTORY}")
 
 ## extend initial cache with references to
-## the OpenMS directory
+## the OpenMS directory (TODO does this change anything?)
 SET(INITIAL_CACHE "${INITIAL_CACHE}
 ")
 
@@ -35,7 +35,14 @@ CTEST_EMPTY_BINARY_DIRECTORY (${CTEST_BINARY_DIRECTORY})
 
 FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
-CTEST_START (Nightly)
+CTEST_START (Nightly TRACK ExternalCode)
+
+# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
+# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash 
+# Otherwise skip update completely
+if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
+ CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}" CTEST_UPDATE_VERSION_ONLY)
+endif()
 CTEST_CONFIGURE (BUILD "${CTEST_BINARY_TESTEXTERNAL_DIRECTORY}")
 CTEST_BUILD     (BUILD "${CTEST_BINARY_TESTEXTERNAL_DIRECTORY}")
 CTEST_TEST      (BUILD "${CTEST_BINARY_TESTEXTERNAL_DIRECTORY}")

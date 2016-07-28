@@ -30,8 +30,14 @@ MACRO (CTEST_CHECKER)
   safe_message("Finished checker with log in ${CHECKER_LOG}")
 ENDMACRO(CTEST_CHECKER)
 
-# test again and execute checker
-CTEST_START     (Nightly)
+# test again and execute checker on track/group Checker
+CTEST_START     (Nightly TRACK Checker)
+# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
+# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash 
+# Otherwise skip update completely
+if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
+ CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}" CTEST_UPDATE_VERSION_ONLY)
+endif()
 CTEST_TEST      (BUILD "${CTEST_BINARY_DIRECTORY}")
 CTEST_CHECKER   ()
 if(CDASH_SUBMIT)

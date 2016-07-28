@@ -25,6 +25,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	ERROR_VARIABLE RECONFIGURE_FOR_PACKAGE_BUILD_OUT  
 	)
 else()
+	## TODO If at all, then this only works for creating Debian packages. Needs testing.
 	execute_process(
 		COMMAND ${CMAKE_COMMAND} -D PACKAGE_TYPE=deb -D LATEX_COMPILER:FILEPATH=/usr/bin/latex -D PDFLATEX_COMPILER:FILEPATH=/usr/bin/pdflatex ${CTEST_SOURCE_DIRECTORY}
 		WORKING_DIRECTORY "${CTEST_BINARY_DIRECTORY}/"
@@ -33,7 +34,6 @@ else()
 		ERROR_VARIABLE RECONFIGURE_FOR_PACKAGE_BUILD_OUT  
 	)
 endif()
-
 
   
 if( NOT RECONFIGURE_FOR_PACKAGE_BUILD EQUAL 0)
@@ -44,7 +44,13 @@ endif()
 SET( $ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}" )
 
 # build the package and submit the results to cdash  
-CTEST_START   (Nightly)
+CTEST_START   (Nightly TRACK Package)
+# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
+# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash 
+# Otherwise skip update completely
+if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
+ CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}" CTEST_UPDATE_VERSION_ONLY)
+endif()
 CTEST_BUILD   (TARGET doc)
 CTEST_BUILD   (TARGET doc_tutorials APPEND)
 CTEST_BUILD   (TARGET package APPEND)
@@ -53,7 +59,7 @@ if(CDASH_SUBMIT)
 endif()
 
 
-### TODO use RSYNC for putting on FTP
+### TODO use RSYNC for putting on FTP or do it completely outside of CMake.
 # copy package to destination
 #file(RENAME ${CTEST_BINARY_DIRECTORY}/${BUNDLE_NAME} ${CTEST_BINARY_DIRECTORY}/${TARGET_NAME})
 #file(

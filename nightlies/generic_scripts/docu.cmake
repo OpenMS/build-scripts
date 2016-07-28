@@ -47,26 +47,27 @@ endif()
 ## (re)define build name and test directories
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Documentation")
 
-CTEST_START (Nightly)
+CTEST_START (Nightly TRACK Documentation)
 CTEST_BUILD (BUILD TARGET doc APPEND)
 CTEST_BUILD (BUILD TARGET doc_tutorials APPEND)
 if(CDASH_SUBMIT)
   CTEST_SUBMIT (PARTS Build) # lets see if this works
 endif()
 
-# and now the hard work
-if(EXISTS "${CTEST_BINARY_DIRECTORY}/doc/index.html")
-  message(STATUS "cmake -E remove_directory ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/")
-  execute_process(
-    COMMAND cmake -E remove_directory ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/
-    WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
-  )
+# Copy the full docu to target destination
+# Commented for now. we will try to do this in the scripts. Might need ssh and so on.
+# if(EXISTS "${CTEST_BINARY_DIRECTORY}/doc/index.html")
+#   message(STATUS "cmake -E remove_directory ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/")
+#   execute_process(
+#     COMMAND cmake -E remove_directory ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/
+#     WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
+#   )
 
-  message(STATUS "cmake -E copy_directory ${CTEST_BINARY_DIRECTORY}/doc/ ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/")
-  execute_process(
-    COMMAND cmake -E copy_directory ${CTEST_BINARY_DIRECTORY}/doc/ ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/
-    WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
-  )
-endif()
+#   message(STATUS "cmake -E copy_directory ${CTEST_BINARY_DIRECTORY}/doc/ ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/")
+#   execute_process(
+#     COMMAND cmake -E copy_directory ${CTEST_BINARY_DIRECTORY}/doc/ ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/
+#     WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
+#   )
+# endif()
 
 restore_variables(required_variables)
