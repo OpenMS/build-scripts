@@ -20,11 +20,12 @@ endforeach()
 SET (CTEST_BUILD_NAME "${OPENMS_BUILDNAME_PREFIX}-${SYSTEM_IDENTIFIER}-${COMPILER_IDENTIFIER}-${BUILD_TYPE}")
 
 ## check requirements for special CTest features (style/coverage) and append additional information to the build name
+## TODO Does it require GCC as compiler? If so, test here.
 if(TEST_COVERAGE)
   if(NOT DEFINED CTEST_COVERAGE_COMMAND)
     safe_message(FATAL_ERROR "CTEST_COVERAGE_COMMAND needs to be set for coverage builds")
   endif()
-  if(NOT BUILD_TYPE Debug)
+  if(NOT BUILD_TYPE STREQUAL Debug)
     safe_message(FATAL_ERROR "For coverage check, the library should be built in Debug mode with Debug symbols.")
   endif()
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Coverage")
@@ -76,21 +77,21 @@ else(WIN32)
   " )
 endif(WIN32)
 
-## Docu needs latex
-if(BUILD_DOCU)
-  if(NOT DEFINED ${LATEX})
-    safe_message(FATAL_ERROR "Variable <${LATEX_COMPILER}> needs to be set to run this script")
-  endif()
-  if(NOT DEFINED ${PDFLATEX})
-    safe_message(FATAL_ERROR "Variable <${PDFLATEX_COMPILER}> needs to be set to run this script")
-  endif()
+## Docu needs latex (TODO But this should be automatically found????)
+# if(BUILD_DOCU)
+#   if(NOT DEFINED ${LATEX})
+#     safe_message(FATAL_ERROR "Variable <LATEX_COMPILER> needs to be set to run this script")
+#   endif()
+#   if(NOT DEFINED ${PDFLATEX})
+#     safe_message(FATAL_ERROR "Variable <PDFLATEX_COMPILER> needs to be set to run this script")
+#   endif()
   
-  SET(INITIAL_CACHE "${INITIAL_CACHE}
-    ## standard /usr/texbin/pdflatex
-    LATEX_COMPILER:FILEPATH=${LATEX}
-    PDFLATEX_COMPILER:FILEPATH=${PDFLATEX}
-  " )
-endif()
+#   SET(INITIAL_CACHE "${INITIAL_CACHE}
+#     ## standard /usr/texbin/pdflatex
+#     LATEX_COMPILER:FILEPATH=${LATEX}
+#     PDFLATEX_COMPILER:FILEPATH=${PDFLATEX}
+#   " )
+# endif()
 
 ## If you set a custom compiler, pass it to the CMake calls
 if(DEFINED ${C_COMPILER})
@@ -101,6 +102,7 @@ CMAKE_CXX_COMPILER:FILEPATH=${CXX_COMPILER}
 endif(DEFINED ${C_COMPILER})
 
 
+## TODO does this add these flag or replace all flags?
 if(TEST_COVERAGE)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
 CMAKE_C_FLAGS:STRING=-fprofile-arcs -ftest-coverage
@@ -127,16 +129,11 @@ endif()
 # customize errors
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
-# this is the initial cache to use for the binary tree, be careful to escape
-# any quotes inside of this string if you use it
-FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
-
-if(UNIX)
-  # start virtual xserver (Xvnc) to test TOPPView
-  START_XSERVER(DISPLAY)
-  message(STATUS "Started X-Server on ${DISPLAY}")
-  
-endif(UNIX)
+# if(UNIX)
+#   # start virtual xserver (Xvnc) to test TOPPView
+#   START_XSERVER(DISPLAY)
+#   message(STATUS "Started X-Server on ${DISPLAY}")
+# endif(UNIX)
 
 if(BUILD_PYOPENMS)
 	set(INITIAL_CACHE "${INITIAL_CACHE}
@@ -149,6 +146,10 @@ if(BUILD_PYOPENMS)
 	set(ENV{CFLAGS} "-Qunused-arguments")
 	set(ENV{CPPFLAGS} "-Qunused-arguments")
 endif()
+
+# this is the initial cache to use for the binary tree, be careful to escape
+# any quotes inside of this string if you use it
+FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
 # do the dashboard/testings steps
 # TODO make a variable out of it? E.g. MODEL
@@ -173,7 +174,7 @@ endif(WIN32)
 
 # If we only tested style, the binaries were not built -> no testing
 if(NOT TEST_STYLE)
-	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 3)
+	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 2)
 	if(BUILD_PYOPENMS)
 		ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
 	endif()
