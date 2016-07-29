@@ -103,6 +103,10 @@ endif(DEFINED ${C_COMPILER})
 
 
 ## TODO does this add these flag or replace all flags?
+
+##Error(s) while accumulating results:
+##  Problem reading source file: /home/jenkins/workspace/openms_linux/025a6a2d/source/src/openms/include/OpenMS/DATASTRUCTURES/Map.h line:166  out total: 191
+## Fixed in 2.8.7
 if(TEST_COVERAGE)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
 CMAKE_C_FLAGS:STRING=-fprofile-arcs -ftest-coverage
