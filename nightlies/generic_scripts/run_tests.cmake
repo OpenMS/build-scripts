@@ -121,18 +121,20 @@ if(TEST_STYLE)
 	set(INITIAL_CACHE "${INITIAL_CACHE} ENABLE_STYLE_TESTING:BOOL=On")
 endif()
 
-if(APPLE)
+## Please specify the deployment target yourself, if you want to build OpenMS backwards compatible.
+#if(APPLE)
 ## if you want to use another SDK add the following also to the cache (usually not necessary)
 ## CMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/
 ## Anyway, we try to build relatively backwards compatible (10.6)
-  SET(INITIAL_CACHE "${INITIAL_CACHE}
-    CMAKE_OSX_DEPLOYMENT_TARGET=10.6
-  ")
-endif()
+#  SET(INITIAL_CACHE "${INITIAL_CACHE}
+#    CMAKE_OSX_DEPLOYMENT_TARGET=10.6
+#  ")
+#endif()
   
 # customize errors
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
+## Please start an XServer yourself, if you wan to test TOPPView.
 # if(UNIX)
 #   # start virtual xserver (Xvnc) to test TOPPView
 #   START_XSERVER(DISPLAY)
