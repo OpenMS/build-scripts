@@ -35,7 +35,7 @@ set (BUILD_DIRECTORY        @build_dir@ )
 set (CMAKE_BIN_PATH @cmake_bin_path@ )
 
 set (OPENMS_INSTALL_DIR @install_dir@)
-if(NOT OPENMS_INSTALL_DIR MATCHES "\@install_dir\@"
+if(NOT OPENMS_INSTALL_DIR MATCHES "\@install_dir\@")
   set (CMAKE_INSTALL_PREFIX ${OPENMS_INSTALL_DIR})
   message(CMAKE_INSTALL_PREFIX was overwritten)
 endif()
