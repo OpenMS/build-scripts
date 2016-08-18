@@ -137,6 +137,7 @@ elseif(WIN32)
 		# define generator (e.g., Visual Studio 10 Win64)
 		set (GENERATOR @generator@ )
 		set (CONTRIB @contrib_dir@ )
+                set (COMPILER_IDENTIFIER @compiler@)
 	endif()
 	
 	set (QT_QMAKE_BIN_PATH "${QT}/bin/" )
