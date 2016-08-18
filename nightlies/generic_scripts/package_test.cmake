@@ -50,7 +50,8 @@ CTEST_START   (Nightly TRACK Package)
 # With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash 
 # Otherwise skip update completely
 if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
- CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}" CTEST_UPDATE_VERSION_ONLY)
+ SET(CTEST_UPDATE_VERSION_ONLY On)
+ CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
 CTEST_BUILD   (TARGET doc)

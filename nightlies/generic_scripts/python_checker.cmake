@@ -78,7 +78,8 @@ ctest_start(Nightly TRACK PyOpenMS)
 # With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash
 # Otherwise skip update completely
 if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
- ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" CTEST_UPDATE_VERSION_ONLY)
+ SET(CTEST_UPDATE_VERSION_ONLY On)
+ CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
 # ensure that we have the doxygen xml files. WHY??
