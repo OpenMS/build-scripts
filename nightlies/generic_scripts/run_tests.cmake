@@ -60,6 +60,7 @@ set(CTEST_COMMAND "${CTEST_COMMAND} -D Nightly -C ${BUILD_TYPE} ")
 if(NOT OPENMS_INSTALL_DIR MATCHES "\@install_dir\@")
   SET(INITIAL_CACHE "
     CMAKE_INSTALL_PREFIX:PATH=${OPENMS_INSTALL_DIR}
+    "
   )
   message("CMAKE_INSTALL_PREFIX cache variable for following CMAKE calls is overwritten/set to ${OPENMS_INSTALL_DIR}.")
 endif()
