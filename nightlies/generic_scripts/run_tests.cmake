@@ -86,7 +86,7 @@ else(WIN32)
 endif(WIN32)
 
 ## Docu needs latex
-if(BUILD_DOCU)
+if(BUILD_DOCU OR PACKAGE_TEST)
   find_package(LATEX)
   find_package(DOXYGEN)
   
