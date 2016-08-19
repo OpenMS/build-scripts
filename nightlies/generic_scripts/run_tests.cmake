@@ -85,21 +85,18 @@ else(WIN32)
   " )
 endif(WIN32)
 
-## Docu needs latex (TODO But this should be automatically found????)
-# if(BUILD_DOCU)
-#   if(NOT DEFINED ${LATEX})
-#     safe_message(FATAL_ERROR "Variable <LATEX_COMPILER> needs to be set to run this script")
-#   endif()
-#   if(NOT DEFINED ${PDFLATEX})
-#     safe_message(FATAL_ERROR "Variable <PDFLATEX_COMPILER> needs to be set to run this script")
-#   endif()
+## Docu needs latex
+if(BUILD_DOCU)
+  find_package(LATEX)
+  find_package(DOXYGEN)
   
-#   SET(INITIAL_CACHE "${INITIAL_CACHE}
-#     ## standard /usr/texbin/pdflatex
-#     LATEX_COMPILER:FILEPATH=${LATEX}
-#     PDFLATEX_COMPILER:FILEPATH=${PDFLATEX}
-#   " )
-# endif()
+  SET(INITIAL_CACHE "${INITIAL_CACHE}
+    ## standard /usr/texbin/pdflatex
+    LATEX_COMPILER:FILEPATH=${LATEX_COMPILER}
+    PDFLATEX_COMPILER:FILEPATH=${PDFLATEX_COMPILER}
+    DVIPS_CONVERTER:FILEPATH=${DVIPS_CONVERTER}
+  " )
+endif()
 
 ## If you set a custom compiler, pass it to the CMake calls
 if(DEFINED ${C_COMPILER})
