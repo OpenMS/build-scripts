@@ -87,6 +87,7 @@ endif(WIN32)
 
 ## Docu needs latex
 if(BUILD_DOCU OR PACKAGE_TEST)
+  message("You seem to need to build the documentation. Searching for LaTeX and Doxygen...")
   find_package(LATEX)
   find_package(DOXYGEN)
   
