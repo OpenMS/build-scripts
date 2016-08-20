@@ -88,9 +88,11 @@ endif(WIN32)
 ## Docu needs latex
 if(BUILD_DOCU OR PACKAGE_TEST)
   message("You seem to need to build the documentation. Searching for LaTeX and Doxygen...")
-  find_package(LATEX HINTS "/usr/texbin")
+  find_package(LATEX HINTS "/usr/texbin/")
+  find_package(LATEX)
   find_package(DOXYGEN)
   message("Latex? ${LATEX_FOUND}")
+  message({LATEX_COMPILER})
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     ## standard /usr/texbin/pdflatex
     LATEX_COMPILER:FILEPATH=${LATEX_COMPILER}
