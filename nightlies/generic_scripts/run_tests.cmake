@@ -44,13 +44,12 @@ SET (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 set (CTEST_CMAKE_GENERATOR "${GENERATOR}" )
 set (CTEST_BUILD_CONFIGURATION ${BUILD_TYPE})
 
-# Add binary dir to Windows path for the tests
+# Add binary dir to Paths for for the tests (e.g. ExecutePipeline)
 if(WIN32)
-	set ( CTEST_ENVIRONMENT "PATH=${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}" "Path=${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
+	set (CTEST_ENVIRONMENT "PATH=${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}" "Path=${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
 	set (ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{PATH}")
 	set (ENV{Path} "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}\;$ENV{Path}")
 else(WIN32)
-	# customizing PATH so ExecutePipeline_test finds its executables
 	set(ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}")
 endif()
 
@@ -60,8 +59,7 @@ set(CTEST_COMMAND "${CTEST_COMMAND} -D Nightly -C ${BUILD_TYPE} ")
 if(NOT OPENMS_INSTALL_DIR MATCHES "\@install_dir\@")
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     CMAKE_INSTALL_PREFIX:PATH=${OPENMS_INSTALL_DIR}
-    "
-  )
+    ")
   message("CMAKE_INSTALL_PREFIX cache variable for following CMAKE calls is overwritten/set to ${OPENMS_INSTALL_DIR}.")
 endif()
 
@@ -88,11 +86,9 @@ endif(WIN32)
 ## Docu needs latex
 if(BUILD_DOCU OR PACKAGE_TEST)
   message("You seem to need to build the documentation. Searching for LaTeX and Doxygen...")
-  find_package(LATEX HINTS "/usr/texbin/")
   find_package(LATEX)
   find_package(DOXYGEN)
-  message("Latex? ${LATEX_FOUND}")
-  message(${LATEX_COMPILER})
+  message("Latex found? ${LATEX_FOUND} at ${LATEX_COMPILER}")
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     ## standard /usr/texbin/pdflatex
     LATEX_COMPILER:FILEPATH=/usr/texbin/latex
@@ -110,8 +106,8 @@ CMAKE_CXX_COMPILER:FILEPATH=${CXX_COMPILER}
 endif(DEFINED ${C_COMPILER})
 
 
-## TODO does this add these flag or replace all flags?
-
+## TODO Does the following add these flag or replace all flags? I assume the initial cache would be empty and
+## therefore it basically adds the flags.
 ##Error(s) while accumulating results:
 ##  Problem reading source file: /home/jenkins/workspace/openms_linux/025a6a2d/source/src/openms/include/OpenMS/DATASTRUCTURES/Map.h line:166  out total: 191
 ## Fixed in 2.8.7
@@ -130,6 +126,7 @@ if(TEST_STYLE)
 endif()
 
 ## Please specify the deployment target yourself, if you want to build OpenMS backwards compatible.
+## TODO needs more testing if this works reliably.
 #if(APPLE)
 ## if you want to use another SDK add the following also to the cache (usually not necessary)
 ## CMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/
@@ -139,10 +136,11 @@ endif()
 #  ")
 #endif()
   
-# customize errors
+# Copy config file to customize errors (will be loaded later)
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
-## Please start an XServer yourself, if you wan to test TOPPView.
+## For now: Please start an XServer yourself, if you want to test TOPPView.
+## TODO find a clean integration to CMake.
 # if(UNIX)
 #   # start virtual xserver (Xvnc) to test TOPPView
 #   START_XSERVER(DISPLAY)
@@ -150,12 +148,13 @@ file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTOR
 # endif(UNIX)
 
 if(BUILD_PYOPENMS)
-	set(INITIAL_CACHE "${INITIAL_CACHE}
-          PYOPENMS=ON")
-
+	set(INITIAL_CACHE "${INITIAL_CACHE} PYOPENMS=ON")
+          
 	# http://stackoverflow.com/questions/22313407/clang-error-unknown-argument-mno-fused-madd-python-package-installation-fa
-	#export CFLAGS=-Qunused-arguments
-	#export CPPFLAGS=-Qunused-arguments
+	# UPDATE [2014-05-16]: Apple has fixed this problem with updated system Pythons (2.7, 2.6, and 2.5) in OS X 10.9.3
+	# so the workaround is no longer necessary when using the latest Mavericks and Xcode 5.1+.
+	# However, as of now, the workaround is still required for OS X 10.8.x (Mountain Lion, currently 10.8.5)
+	# if you are using Xcode 5.1+ there.
 
 	set(ENV{CFLAGS} "-Qunused-arguments")
 	set(ENV{CPPFLAGS} "-Qunused-arguments")
@@ -197,37 +196,32 @@ endif()
 
 # E.g. for use with Jenkins or other Dashboards
 if (CDASH_SUBMIT)
-  ctest_submit() #(RETRY_COUNT 3)
+  ctest_submit()
 endif()
 
 if(TEST_COVERAGE)
   ctest_coverage(BUILD "${CTEST_BINARY_DIRECTORY}")
-  	if(CDASH_SUBMIT)
-	  ctest_submit(PARTS Coverage)
-	endif()
+  if(CDASH_SUBMIT)
+    ctest_submit(PARTS Coverage)
+  endif()
 endif()
 
 if(RUN_CHECKER)
   include ( "${SCRIPT_PATH}/checker.cmake" )
-endif(RUN_CHECKER)
+endif()
 
 if(RUN_PYTHON_CHECKER)
-	include("${SCRIPT_PATH}/python_checker.cmake")
+  include ( "${SCRIPT_PATH}/python_checker.cmake" )
 endif()
 
 if(BUILD_DOCU)
-  safe_message(STATUS "Enter build docu")
   include ( "${SCRIPT_PATH}/docu.cmake" )
-endif(BUILD_DOCU)
+endif()
 
 if(EXTERNAL_CODE_TESTS)
   include ( "${SCRIPT_PATH}/external_code.cmake" )
-endif(EXTERNAL_CODE_TESTS)
+endif()
 
 if(PACKAGE_TEST)
   include ( "${SCRIPT_PATH}/package_test.cmake" )
-endif(PACKAGE_TEST)
-
-#if(NOT KEEP_BUILD AND NOT RERUN)
-#  ctest_empty_binary_directory (${CTEST_BINARY_DIRECTORY})
-#endif(NOT KEEP_BUILD AND NOT RERUN)
+endif()
