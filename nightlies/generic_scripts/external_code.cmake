@@ -20,7 +20,8 @@ SET (CTEST_BINARY_TESTEXTERNAL_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/
 SET (CTEST_ENVIRONMENT "OPENMS_BUILD_TREE=${CTEST_BINARY_DIRECTORY}")
 
 ## extend initial cache with references to
-## the OpenMS directory (TODO does this change anything?)
+## the OpenMS directory
+## TODO Figure out, why only on Mac, OpenMS_DIR:PATH=${CTEST_BINARY_DIRECTORY}/cmake is added.
 SET(INITIAL_CACHE "${INITIAL_CACHE}
 ")
 
