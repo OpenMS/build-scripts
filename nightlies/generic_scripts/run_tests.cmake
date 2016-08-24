@@ -175,6 +175,10 @@ ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
 # Reads the previously copied CTestCustom.cmake (which e.g. contains excluded warnings)
 ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
 
+
+## The following might also be needed for XCode (e.g. all generators that build Projects)
+## On our Mac machines this does not seem to affect the Makefile-based generators,
+## so maybe we can always set it to OpenMS_host
 if(WIN32)
   # So that windows uses the correct sln file
   set(CTEST_PROJECT_NAME "OpenMS_host")
