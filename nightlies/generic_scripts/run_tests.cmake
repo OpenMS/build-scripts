@@ -58,6 +58,8 @@ endif()
 # ensure the config is known to ctest
 set(CTEST_COMMAND "${CTEST_COMMAND} -D Nightly -C ${BUILD_TYPE} ")
 
+## TODO check if this works when not setting the install dir manually and using the templateconfig script.
+## Be safe and add check for empty and/or undefined.
 if(NOT OPENMS_INSTALL_DIR MATCHES "\@install_dir\@")
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     CMAKE_INSTALL_PREFIX:PATH=${OPENMS_INSTALL_DIR}
@@ -91,6 +93,8 @@ if(BUILD_DOCU OR PACKAGE_TEST)
   find_package(LATEX)
   find_package(DOXYGEN)
   message("Latex found? ${LATEX_FOUND} at ${LATEX_COMPILER}")
+  ## TODO figure out how Latex will automatically be found.
+  ## This was included before I found errors on the machines.
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     ## standard /usr/texbin/pdflatex
     LATEX_COMPILER:FILEPATH=/usr/texbin/latex
@@ -137,6 +141,10 @@ endif()
 #    CMAKE_OSX_DEPLOYMENT_TARGET=10.6
 #  ")
 #endif()
+
+if(KNIME_TEST)
+	set(INITIAL_CACHE "${INITIAL_CACHE} ENABLE_PREPARE_KNIME_PACKAGE:BOOL=On")
+endif()
   
 # Copy config file to customize errors (will be loaded later)
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
@@ -162,7 +170,9 @@ if(BUILD_PYOPENMS)
 	set(ENV{CPPFLAGS} "-Qunused-arguments")
 endif()
 
-# this is the initial cache to use for the binary tree, be careful to escape
+
+## Configuration finished!
+# This is the initial cache to use for the binary tree, be careful to escape
 # any quotes inside of this string if you use it
 FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
