@@ -71,7 +71,8 @@ set (BUILD_TYPE @build_type@ )
 set (CTEST_SITE @ctest_site@ )
 # if you want to submit to CDash at all. Might be helpful if you want to show results in other test dashboard
 set (CDASH_SUBMIT @cdash_submit@)
-
+# if generation of CTDs and therefore of the KNIME package sources should be enabled
+set (KNIME_TEST @knime_test@ )
 
 if(UNIX) 
 # Use the chosen settings
