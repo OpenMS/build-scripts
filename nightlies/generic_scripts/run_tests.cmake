@@ -87,6 +87,7 @@ else()
           set (CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
           set (ENV{PATH} "${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
     ENDFOREACH()
+  endif()
 endif()
 
 # set variables describing the build environments (with Jenkins I assume we do not need to mark the dir with the name)
