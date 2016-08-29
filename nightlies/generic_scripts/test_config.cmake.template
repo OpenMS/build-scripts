@@ -92,20 +92,6 @@ set (CHECKER_TARGET_PATH "${FTP_LOCATION}" )
 set (PACKAGE_TARGET_PATH "${FTP_LOCATION}nightly_binaries/" )
 set (DOCU_TARGET_PATH    "${FTP_LOCATION}" )
 
-# Set coverage test specific binaries/includes
-if(TEST_COVERAGE) #Currently Unix-only
-    ## TODO Add as user variable and check its value here. Override if empty.
-	set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov -p")
-	# Holds additional excluding tests for coverage
-	include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
-endif(TEST_COVERAGE)
-
-if(PACKAGE_TEST)
-	# e.g. "OpenMS-1.10.0-Linux.deb"
-	SET (BUNDLE_NAME @bundle_name@ )
-	# e.g. "OpenMS-1.10.0-debian_squeeze-x86_64.deb"
-	SET (TARGET_NAME @package_target_name@ )
-endif(PACKAGE_TEST)
 
 if(RUN_PYTHON_CHECKER)
 	# if you want to check python, it needs to be built
@@ -114,6 +100,15 @@ endif(RUN_PYTHON_CHECKER)
 
 # Platform specific setup:
 if(UNIX)
+	# Set coverage test specific binaries/includes
+	if(TEST_COVERAGE) #Currently Unix-only
+	    ## TODO Add as user variable and check its value here. Override if empty.
+		set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov -p")
+		# Holds additional excluding tests for coverage
+		include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
+	endif(TEST_COVERAGE)
+
+
 	if(COMPILER_CMAKE_INCLUDED)
 		select_compiler(@compiler_id@)
 	endif()
@@ -158,6 +153,13 @@ elseif(WIN32)
 	set (ENV{PATH} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}")
 	set (ENV{Path} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
 endif()
+
+if(PACKAGE_TEST)
+	# e.g. "OpenMS-1.10.0-Linux.deb"
+	SET (BUNDLE_NAME @bundle_name@ )
+	# e.g. "OpenMS-1.10.0-debian_squeeze-x86_64.deb"
+	SET (TARGET_NAME @package_target_name@ )
+endif(PACKAGE_TEST)
 
 # Next steps, found in test_macros.cmake
 prepare_notes()
