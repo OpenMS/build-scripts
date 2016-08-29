@@ -100,12 +100,6 @@ set (CHECKER_TARGET_PATH "${FTP_LOCATION}" )
 set (PACKAGE_TARGET_PATH "${FTP_LOCATION}nightly_binaries/" )
 set (DOCU_TARGET_PATH    "${FTP_LOCATION}" )
 
-
-if(RUN_PYTHON_CHECKER)
-	# if you want to check python, it needs to be built
-	SET (BUILD_PYOPENMS On)
-endif(RUN_PYTHON_CHECKER)
-
 # Platform specific setup:
 if(UNIX)
 	if(COMPILER_CMAKE_INCLUDED)

@@ -47,8 +47,16 @@ endif()
 ## Compiler identifier is e.g. MSVC10x64 or gcc4.9 or clang3.3
 SET (CTEST_BUILD_NAME "${OPENMS_BUILDNAME_PREFIX}-${SYSTEM_IDENTIFIER}-${COMPILER_IDENTIFIER}-${BUILD_TYPE}")
 
+## Make sure pyOpenMS is build when you want to check it.
+if(RUN_PYTHON_CHECKER)
+  # if you want to check python, it needs to be built
+  SET (BUILD_PYOPENMS On)
+endif(RUN_PYTHON_CHECKER)
+
 ## check requirements for special CTest features (style/coverage) and append additional information to the build name
-## TODO Does it require GCC as compiler? If so, maybe test here.
+## TODO Requires GCC or newer Clang as compiler, maybe test here.
+## TODO Think about putting these settings into own CMakes like the other options. Think about renaming to WithCoverage an StyleOnly
+## To show additional/exclusive nature.
 if(TEST_COVERAGE)
   if (NOT CTEST_COVERAGE_COMMAND)
       safe_message("Warning: Coverage tests enabled but no coverage command given: Defaulting to /usr/bin/gcov")
@@ -61,7 +69,7 @@ if(TEST_COVERAGE)
   endif()
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Coverage")
 elseif(TEST_STYLE)
-  ## TODO requires Python exxecutable?
+  ## TODO requires Python executable?
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Style")
 endif()
 
@@ -150,7 +158,7 @@ if(WIN32)
   " )
 else(WIN32)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
-    BOOST_USE_STATIC=OFF
+    BOOST_USE_STATIC=Off
   " )
 endif(WIN32)
 
@@ -267,6 +275,7 @@ endif(WIN32)
 # If we only tested style, all testing targets are deactivated (no topp, no class_tests, no pipeline)
 if(NOT TEST_STYLE)
 	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${NUMBER_THREADS})
+  ## TODO better put in the python_checker.cmake?
 	if(BUILD_PYOPENMS)
 		ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
 	endif()
