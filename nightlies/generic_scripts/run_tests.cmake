@@ -87,13 +87,15 @@ else()
           set ( CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_ROOT}${subdir}\;$ENV{Path}")
           set (ENV{PATH} "${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
           set (ENV{Path} "${THIRDPARTY_ROOT}${subdir}\;$ENV{Path}")
+          safe_message("Added ${THIRDPARTY_ROOT}${subdir} to the PATH enviroment used by CMake and CTest."
     ENDFOREACH()
   else()
     # Add Search Engine test binaries to PATH, such that tests are automatically enabled.
     SUBDIRLIST(SUBDIRS ${THIRDPARTY_ROOT})
     FOREACH(subdir ${SUBDIRS})
-          set (CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
-          set (ENV{PATH} "${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
+          set (CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}${subdir}:$ENV{PATH}")
+          set (ENV{PATH} "${THIRDPARTY_ROOT}${subdir}:$ENV{PATH}")
+          safe_message("Added ${THIRDPARTY_ROOT}${subdir} to the PATH enviroment used by CMake and CTest."
     ENDFOREACH()
   endif()
 endif()
@@ -171,10 +173,9 @@ if(BUILD_DOCU OR PACKAGE_TEST)
   ## TODO figure out how Latex will automatically be found.
   ## This was included before I found errors on the machines.
   SET(INITIAL_CACHE "${INITIAL_CACHE}
-    ## standard /usr/texbin/pdflatex
-    LATEX_COMPILER:FILEPATH=/usr/texbin/latex
-    PDFLATEX_COMPILER:FILEPATH=/usr/texbin/pdflatex
-    DVIPS_CONVERTER:FILEPATH=/usr/texbin/dvips
+    LATEX_COMPILER:FILEPATH=${LATEX_COMPILER}
+    PDFLATEX_COMPILER:FILEPATH=${PDFLATEX_COMPILER}
+    DVIPS_CONVERTER:FILEPATH=${DVIPS_CONVERTER}
   " )
 endif()
 
