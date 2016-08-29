@@ -31,6 +31,7 @@ endif()
 ## TODO not sure if needed
 SET( $ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}" )
 
+
 # build the package and submit the results to cdash  
 CTEST_START   (Nightly TRACK KNIME)
 # In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
@@ -38,13 +39,13 @@ CTEST_START   (Nightly TRACK KNIME)
 # Otherwise skip update completely
 if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
  SET(CTEST_UPDATE_VERSION_ONLY On)
- CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
+ CTEST_UPDATE (SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
 CTEST_BUILD   (TARGET prepare_knime_package)
 
 if(CDASH_SUBMIT)
-  CTEST_SUBMIT  (PARTS Build)
+  CTEST_SUBMIT(PARTS Build)
 endif()
 
 

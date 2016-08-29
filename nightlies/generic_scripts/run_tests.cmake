@@ -37,6 +37,7 @@ if(NUMBER_THREADS)
     set(CTEST_BUILD_FLAGS "-jobs" "${NUMBER_THREADS}")
   else() ## Unix and Makefiles
     set(CTEST_BUILD_FLAGS "-j${NUMBER_THREADS}")
+  endif()
 else()
   # not defined. Set to serial for further usage.
   # TODO we could infer max number of processors
