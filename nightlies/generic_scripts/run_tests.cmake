@@ -87,7 +87,7 @@ else()
           set ( CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_ROOT}${subdir}\;$ENV{Path}")
           set (ENV{PATH} "${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
           set (ENV{Path} "${THIRDPARTY_ROOT}${subdir}\;$ENV{Path}")
-          safe_message("Added ${THIRDPARTY_ROOT}${subdir} to the PATH enviroment used by CMake and CTest."
+          safe_message("Added ${THIRDPARTY_ROOT}${subdir} to the PATH enviroment used by CMake and CTest.")
     ENDFOREACH()
   else()
     # Add Search Engine test binaries to PATH, such that tests are automatically enabled.
@@ -95,7 +95,7 @@ else()
     FOREACH(subdir ${SUBDIRS})
           set (CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}${subdir}:$ENV{PATH}")
           set (ENV{PATH} "${THIRDPARTY_ROOT}${subdir}:$ENV{PATH}")
-          safe_message("Added ${THIRDPARTY_ROOT}${subdir} to the PATH enviroment used by CMake and CTest."
+          safe_message("Added ${THIRDPARTY_ROOT}${subdir} to the PATH enviroment used by CMake and CTest.")
     ENDFOREACH()
   endif()
 endif()
