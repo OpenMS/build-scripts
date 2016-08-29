@@ -156,10 +156,6 @@ endif()
 #    CMAKE_OSX_DEPLOYMENT_TARGET=10.6
 #  ")
 #endif()
-
-if(KNIME_TEST)
-	set(INITIAL_CACHE "${INITIAL_CACHE} ENABLE_PREPARE_KNIME_PACKAGE:BOOL=On")
-endif()
   
 # Copy config file to customize errors (will be loaded later)
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
