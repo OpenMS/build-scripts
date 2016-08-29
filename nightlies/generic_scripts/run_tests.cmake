@@ -1,13 +1,3 @@
-## Check for all required variables that have to be set in the main script and raise errors
-set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_IDENTIFIER;COMPILER_IDENTIFIER;SCRIPT_PATH;CTEST_SOURCE_DIRECTORY;CTEST_GIT_COMMAND;MAKE_COMMAND;CONTRIB;BUILD_TYPE;QT_QMAKE_BIN_PATH;GENERATOR")
-
-
-foreach(var IN LISTS required_variables)
-  if(NOT DEFINED ${var})
-    safe_message(FATAL_ERROR "Variable <${var}> needs to be set to run this script")
-  endif()
-endforeach()
-
 ## Set non-required boolean variables to "Off" if not present
 set (not_required_bool "KNIME_TEST;PACKAGE_TEST;EXTERNAL_CODE_TESTS;TEST_COVERAGE;TEST_STYLE;BUILD_PYOPENMS;RUN_CHECKER;RUN_PYTHON_CHECKER;BUILD_DOCU;RERUN")
 
@@ -18,8 +8,20 @@ foreach(var IN LISTS not_required_bool)
   endif()
 endforeach()
 
+## Check for all required variables that have to be set in the main script and raise errors
+set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_IDENTIFIER;COMPILER_IDENTIFIER;SCRIPT_PATH;CTEST_SOURCE_DIRECTORY;CTEST_GIT_COMMAND;MAKE_COMMAND;CONTRIB;BUILD_TYPE;QT_QMAKE_BIN_PATH;GENERATOR")
+if(PACKAGE_TEST)
+  set(required_variables ${required_variables} "PACKAGE_NAME" "TARGET_NAME")
+endif()
+
+foreach(var IN LISTS required_variables)
+  if(NOT DEFINED ${var})
+    safe_message(FATAL_ERROR "Variable <${var}> needs to be set to run this script")
+  endif()
+endforeach()
+
 ## Unset non-required string variables if not present
-set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS")
+set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_COVERAGE_COMMAND")
 
 foreach(var IN LISTS not_required_str)
   if(NOT DEFINED ${var} OR ${var} MATCHES "\@*\@")
@@ -41,22 +43,49 @@ else()
   set(NUMBER_THREADS "1")
 endif()
 
-## Compiler identifier is e.g. VS10_x64 or gcc4.9 or clang3.3
+## Compiler identifier is e.g. MSVC10x64 or gcc4.9 or clang3.3
 SET (CTEST_BUILD_NAME "${OPENMS_BUILDNAME_PREFIX}-${SYSTEM_IDENTIFIER}-${COMPILER_IDENTIFIER}-${BUILD_TYPE}")
 
 ## check requirements for special CTest features (style/coverage) and append additional information to the build name
 ## TODO Does it require GCC as compiler? If so, maybe test here.
 if(TEST_COVERAGE)
-  if(NOT DEFINED CTEST_COVERAGE_COMMAND)
-    safe_message(FATAL_ERROR "CTEST_COVERAGE_COMMAND needs to be set for coverage builds")
+  if (NOT CTEST_COVERAGE_COMMAND)
+      safe_message("Warning: Coverage tests enabled but no coverage command given: Defaulting to /usr/bin/gcov")
+      set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov -p")
   endif()
+  # Holds additional excluding tests for coverage
+  include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
   if(NOT BUILD_TYPE STREQUAL Debug)
     safe_message(FATAL_ERROR "For coverage check, the library should be built in Debug mode with Debug symbols.")
   endif()
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Coverage")
 elseif(TEST_STYLE)
-  ## TODO requires Python?
+  ## TODO requires Python exxecutable?
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Style")
+endif()
+
+## Package dependent requirements
+if(NOT THIRDPARTY_ROOT)
+  if(KNIME_TEST OR PACKAGE_TEST)
+    safe_message(FATAL_ERROR "Trying to build a package or KNIME plugin without setting the path to the Thirdparty binaries (THIRDPARTY_ROOT)")
+  else()
+    safe_message("Warning: Trying to test OpenMS without setting the path to the Thirdparty binaries (THIRDPARTY_ROOT). This will disable their tests.")
+  endif()
+else()
+  if(WIN32)
+    SUBDIRLIST(SUBDIRS ${THIRDPARTY_ROOT})
+    FOREACH(subdir ${SUBDIRS})
+          set ( CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_ROOT}${subdir}\;$ENV{Path}")
+          set (ENV{PATH} "${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
+          set (ENV{Path} "${THIRDPARTY_ROOT}${subdir}\;$ENV{Path}")
+    ENDFOREACH()
+  else()
+    # Add Search Engine test binaries to PATH, such that tests are automatically enabled.
+    SUBDIRLIST(SUBDIRS ${THIRDPARTY_ROOT})
+    FOREACH(subdir ${SUBDIRS})
+          set (CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
+          set (ENV{PATH} "${THIRDPARTY_ROOT}${subdir}\;$ENV{PATH}")
+    ENDFOREACH()
 endif()
 
 # set variables describing the build environments (with Jenkins I assume we do not need to mark the dir with the name)
@@ -68,13 +97,20 @@ SET (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 set (CTEST_CMAKE_GENERATOR "${GENERATOR}" )
 set (CTEST_BUILD_CONFIGURATION ${BUILD_TYPE})
 
-# Add binary dir to Paths for the tests (e.g. ExecutePipeline)
+# Setup Paths for the tests (e.g. ExecutePipeline)
 if(WIN32)
   ## VS is always multiconf
   set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}")
   set (CTEST_ENVIRONMENT "PATH=${BINARY_DIR}\;$ENV{PATH}" "Path=${BINARY_DIR}\;$ENV{Path}")
   set (ENV{PATH} "${BINARY_DIR}\;$ENV{PATH}")
   set (ENV{Path} "${BINARY_DIR}\;$ENV{Path}")
+
+  # Setup additional environment variables for windows
+  ## TODO Why is the following only needed on Windows?
+  ## Add rest (e.g. QT, CONTRIB)
+  set (CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
+  set (ENV{PATH} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}")
+  set (ENV{Path} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
 else(WIN32)
   ## Multi config like Xcode?
   if(CMAKE_CONFIGURATION_TYPES)
