@@ -1,6 +1,7 @@
 ## Check for all required variables that have to be set in the main script and raise errors
 set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_IDENTIFIER;COMPILER_IDENTIFIER;SCRIPT_PATH;CTEST_SOURCE_DIRECTORY;CTEST_GIT_COMMAND;MAKE_COMMAND;CONTRIB;BUILD_TYPE;QT_QMAKE_BIN_PATH;GENERATOR")
 
+
 foreach(var IN LISTS required_variables)
   if(NOT DEFINED ${var})
     safe_message(FATAL_ERROR "Variable <${var}> needs to be set to run this script")
@@ -8,11 +9,21 @@ foreach(var IN LISTS required_variables)
 endforeach()
 
 ## Set non-required boolean variables to "Off" if not present
-set (not_required "PACKAGE_TEST;EXTERNAL_CODE_TESTS;TEST_COVERAGE;TEST_STYLE;BUILD_PYOPENMS;RUN_CHECKER;RUN_PYTHON_CHECKER;BUILD_DOCU;RERUN")
+set (not_required_bool "KNIME_TEST;PACKAGE_TEST;EXTERNAL_CODE_TESTS;TEST_COVERAGE;TEST_STYLE;BUILD_PYOPENMS;RUN_CHECKER;RUN_PYTHON_CHECKER;BUILD_DOCU;RERUN")
 
-foreach(var IN LISTS not_required)
-  if(NOT DEFINED ${var})
+foreach(var IN LISTS not_required_bool)
+  ## if undefined or not configured:
+  if(NOT DEFINED ${var} OR ${var} MATCHES "\@*\@")
     set(${var} Off)
+  endif()
+endforeach()
+
+## Unset non-required string variables if not present
+set (not_required_str "OPENMS_INSTALL_DIR")
+
+foreach(var IN LISTS not_required_str)
+  if(NOT DEFINED ${var} OR ${var} MATCHES "\@*\@")
+    unset(${var})
   endif()
 endforeach()
 
@@ -20,7 +31,7 @@ endforeach()
 SET (CTEST_BUILD_NAME "${OPENMS_BUILDNAME_PREFIX}-${SYSTEM_IDENTIFIER}-${COMPILER_IDENTIFIER}-${BUILD_TYPE}")
 
 ## check requirements for special CTest features (style/coverage) and append additional information to the build name
-## TODO Does it require GCC as compiler? If so, test here.
+## TODO Does it require GCC as compiler? If so, maybe test here.
 if(TEST_COVERAGE)
   if(NOT DEFINED CTEST_COVERAGE_COMMAND)
     safe_message(FATAL_ERROR "CTEST_COVERAGE_COMMAND needs to be set for coverage builds")
@@ -30,10 +41,9 @@ if(TEST_COVERAGE)
   endif()
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Coverage")
 elseif(TEST_STYLE)
+  ## TODO requires Python?
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Style")
 endif()
-
-
 
 # set variables describing the build environments (with Jenkins I assume we do not need to mark the dir with the name)
 #SET (CTEST_BINARY_DIRECTORY "${BUILD_DIRECTORY}/${CTEST_BUILD_NAME}")
@@ -44,34 +54,39 @@ SET (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 set (CTEST_CMAKE_GENERATOR "${GENERATOR}" )
 set (CTEST_BUILD_CONFIGURATION ${BUILD_TYPE})
 
-# Add binary dir to Paths for for the tests (e.g. ExecutePipeline)
+# Add binary dir to Paths for the tests (e.g. ExecutePipeline)
 if(WIN32)
+  ## VS is always multiconf
   set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}")
   set (CTEST_ENVIRONMENT "PATH=${BINARY_DIR}\;$ENV{PATH}" "Path=${BINARY_DIR}\;$ENV{Path}")
   set (ENV{PATH} "${BINARY_DIR}\;$ENV{PATH}")
   set (ENV{Path} "${BINARY_DIR}\;$ENV{Path}")
 else(WIN32)
-  set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin")
+  ## Multi config like Xcode?
+  if(CMAKE_CONFIGURATION_TYPES)
+    set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}")
+  else()
+    set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/")
+  endif()
   set (ENV{PATH} "${BINARY_DIR}:$ENV{PATH}")
 endif()
 
 # ensure the config is known to ctest
 set(CTEST_COMMAND "${CTEST_COMMAND} -D Nightly -C ${BUILD_TYPE} ")
 
-## TODO check if this works when not setting the install dir manually and using the templateconfig script.
-## Be safe and add check for empty and/or undefined.
-if(NOT OPENMS_INSTALL_DIR MATCHES "\@install_dir\@")
+# If it was set, use custom install dir
+if(OPENMS_INSTALL_DIR)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     CMAKE_INSTALL_PREFIX:PATH=${OPENMS_INSTALL_DIR}
     ")
-  message("CMAKE_INSTALL_PREFIX cache variable for following CMAKE calls is overwritten/set to ${OPENMS_INSTALL_DIR}.")
+  message("Warning: CMAKE_INSTALL_PREFIX cache variable for following CMake calls is overwritten/set to ${OPENMS_INSTALL_DIR}.")
 endif()
 
 SET(INITIAL_CACHE "${INITIAL_CACHE}
 CMAKE_PREFIX_PATH:PATH=${CONTRIB}
 CMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
 CMAKE_GENERATOR:INTERNAL=${GENERATOR}
-QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_BIN_PATH}qmake
+QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_BIN_PATH}/qmake
 MAKECOMMAND:STRING=${MAKE_COMMAND} -i -j4
 ")
 
@@ -190,18 +205,18 @@ ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
 ## On our Mac machines this does not seem to affect the Makefile-based generators,
 ## so maybe we can always set it to OpenMS_host
 if(WIN32)
-  # So that windows uses the correct sln file
+  # So that windows uses the correct sln file (see https://gitlab.kitware.com/cmake/cmake/issues/12623)
   set(CTEST_PROJECT_NAME "OpenMS_host")
 endif(WIN32)
 
 ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
 
 if(WIN32)
-  # Reset project
+  # Reset project name
   set(CTEST_PROJECT_NAME "OpenMS")
 endif(WIN32)
 
-# If we only tested style, the binaries were not built -> no testing
+# If we only tested style, all testing targets are deactivated (no topp, no class_tests, no pipeline)
 if(NOT TEST_STYLE)
 	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 2)
 	if(BUILD_PYOPENMS)
@@ -211,7 +226,7 @@ if(NOT TEST_STYLE)
 endif()
 
 # E.g. for use with Jenkins or other Dashboards
-if (CDASH_SUBMIT)
+if(CDASH_SUBMIT)
   ctest_submit()
 endif()
 
@@ -240,4 +255,8 @@ endif()
 
 if(PACKAGE_TEST)
   include ( "${SCRIPT_PATH}/package_test.cmake" )
+endif()
+
+if(KNIME_TEST)
+  include ( "${SCRIPT_PATH}/knime_test.cmake" )
 endif()

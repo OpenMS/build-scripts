@@ -7,95 +7,93 @@ if(COMMAND CMAKE_POLICY) # CMake 2.4 does not have this command
   endif(POLICY CMP0011)
 endif(COMMAND CMAKE_POLICY)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+# Verbosity
+set (CMAKE_VERBOSE_MAKEFILE ON)
 
+# Additional scripts:
 # Path to look for additional scripts with macros.
-set(SCRIPT_PATH @script_path@)
-
-# Defines general macros.
+# Defaults to directory of this script.
+set (SCRIPT_PATH @script_path@)
+if (NOT EXISTS ${SCRIPT_PATH})
+	set (SCRIPT_PATH ${CMAKE_CURRENT_LIST_DIR})
+endif()
+# Loads general macros from the script dir.
 if(NOT DEFINED TEST_MACROS_INCLUDED)
   include( "${SCRIPT_PATH}/global_macros.cmake" )
 endif()
 
-## Set if you have a compiler config cmake (old style)
-set(COMPILER_CMAKE @compiler_cmake@)
 
+# Set if you have an optional compiler config cmake (old style)
+set (COMPILER_CMAKE @compiler_cmake@)
+# Looks for optional compiler definitions that hard code compiler setups. (Old style)
 if (EXISTS "${COMPILER_CMAKE}")
   include("${COMPILER_CMAKE}" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
 elseif (EXISTS "${SCRIPT_PATH}/compiler.cmake")
-  ## If the script path was not given or wrong, look in a standard script dir again
+  ## If the script path was not given or wrong, look in the standard script dir again
   include("${SCRIPT_PATH}/compiler.cmake" RESULT_VARIABLE COMPILER_CMAKE_INCLUDED)
 endif()
 
+# User variables, to be configured/replaced
 # source and build_dir
 set (CTEST_SOURCE_DIRECTORY @source_dir@ )
 set (BUILD_DIRECTORY        @build_dir@ )
-
 # general ctest/cmake/other programs
 set (CMAKE_BIN_PATH @cmake_bin_path@ )
-
 set (OPENMS_INSTALL_DIR @install_dir@)
-#if(NOT OPENMS_INSTALL_DIR MATCHES "\@install_dir\@")
-#  set (CMAKE_INSTALL_PREFIX ${OPENMS_INSTALL_DIR} CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-#  message("CMAKE_INSTALL_PREFIX cache variable was overwritten/set.")
-#endif()
-set (CTEST_CMAKE_COMMAND   "${CMAKE_BIN_PATH}cmake" )
-set (CTEST_CTEST_COMMAND "${CMAKE_BIN_PATH}ctest" )
 set (MAKE_COMMAND @make_path@ )
 set (CTEST_GIT_COMMAND   @git_command@ )
-set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
-
+# compiler/generator settings (ID is just for display)
+set (GENERATOR @generator@ )
+set (CONTRIB @contrib_dir@ )
+set (COMPILER_IDENTIFIER @compiler_id@ )
+# on unix you can specify the path to the compiler you want to use
+# on windows, this will be determined from the Visual Studio command line
+# environment that you used to call that script and the generator.
+if(UNIX)
+	set (C_COMPILER @c_compiler@ )
+	set (CXX_COMPILER @cxx_compiler@ )
+endif()
+# contrib and thirdparty locations matching your compiler (check yourself)
+set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
 # description of this system (e.g. OS version: Win8, Ubuntu15.10)
 set (SYSTEM_IDENTIFIER @system_identifier@ )
-
 # usually the branch or other description about the state of the sources e.g. release2.0.0, develop
 set (OPENMS_BUILDNAME_PREFIX @buildname_prefix@ )
-
-# proxy settings (TODO not sure if this is needed)
-set(MY_HTTP_PROXY "http://http-proxy.fu-berlin.de/")
-set( $ENV{http_proxy}   "${MY_HTTP_PROXY}" )
-set( $ENV{HTTP_PROXY}   "${MY_HTTP_PROXY}" )
-
+## TODO Remove this? Better outside of CMake?
 # FTP server for storing binaries, docu, checker results publicly:
-set ( FTP_LOCATION "jpfeuffer@ftp.imp.fu-berlin.de/pub/OpenMS/" )
-set ( CHECKER_TARGET_PATH "${FTP_LOCATION}" )
-set ( PACKAGE_TARGET_PATH "${FTP_LOCATION}nightly_binaries/" )
-set ( DOCU_TARGET_PATH    "${FTP_LOCATION}" )
-
-set (CTEST_CHECK_HTTP_ERROR ON )
-
-# Describe type of build/tests
-# e.g. Default, Release
+set (FTP_LOCATION "jpfeuffer@ftp.imp.fu-berlin.de/pub/OpenMS/" )
+# Describe type of build/tests e.g. Default, Release
 set (BUILD_TYPE @build_type@ )
 # site description of this machine e.g. scratchy.imp.fu-berlin.de
 set (CTEST_SITE @ctest_site@ )
 # if you want to submit to CDash at all. Might be helpful if you want to show results in other test dashboard
 set (CDASH_SUBMIT @cdash_submit@)
+# Path to a folder with all Thirdparty binaries in direct subfolders (for testing and packaging them)
+set (THIRDPARTY_DIR @thirdparty_root@)
 # if generation of CTDs and therefore of the KNIME package sources should be enabled
 set (KNIME_TEST @knime_test@ )
+# More settings:
+set (PACKAGE_TEST @package_test@ )
+set (BUILD_DOCU @build_docu@ )
+set (BUILD_PYOPENMS @build_pyopenms@)
+set (RUN_CHECKER @run_checker@ )
+set (RUN_PYTHON_CHECKER @run_pychecker@ )
+set (TEST_COVERAGE @coverage_test@ )
+set (EXTERNAL_CODE_TESTS @external_code_test@ )
 
-if(UNIX) 
-# Use the chosen settings
-	set (PACKAGE_TEST @package_test@ )
-	set (BUILD_DOCU @build_docu@ )
-	set (RUN_CHECKER @run_checker@ )
-	set (RUN_PYTHON_CHECKER @run_pychecker@ )
-	set (TEST_COVERAGE @coverage_test@ )
-	set (EXTERNAL_CODE_TESTS @external_code_test@ )
-else(UNIX)
-	# packaging tests only allowed for UNIX (lnx,osx), otherwise we use NSIS Installer scripts for Win
-	set (PACKAGE_TEST Off )
-	# Standard uses gcov. Difficult on windows.
-	set (TEST_COVERAGE Off )
-	# On windows default to Off, needs to be tested, please use Unix for now
-	set (RUN_CHECKER Off )
-	set (RUN_PYTHON_CHECKER Off )
-	set (BUILD_DOCU Off )
-	set (EXTERNAL_CODE_TESTS Off )
-endif(UNIX)
+
+# Setup important non-user variables (dependent on user vars)
+set (CTEST_CMAKE_COMMAND   "${CMAKE_BIN_PATH}cmake" )
+set (CTEST_CTEST_COMMAND "${CMAKE_BIN_PATH}ctest" )
+set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
+set (CTEST_CHECK_HTTP_ERROR ON )
+set (CHECKER_TARGET_PATH "${FTP_LOCATION}" )
+set (PACKAGE_TARGET_PATH "${FTP_LOCATION}nightly_binaries/" )
+set (DOCU_TARGET_PATH    "${FTP_LOCATION}" )
 
 # Set coverage test specific binaries/includes
 if(TEST_COVERAGE) #Currently Unix-only
+    ## TODO Add as user variable and check its value here. Override if empty.
 	set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov -p")
 	# Holds additional excluding tests for coverage
 	include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
@@ -113,45 +111,39 @@ if(RUN_PYTHON_CHECKER)
 	SET (BUILD_PYOPENMS On)
 endif(RUN_PYTHON_CHECKER)
 
-# Setup compilers and build environment
+# Platform specific setup:
 if(UNIX)
 	if(COMPILER_CMAKE_INCLUDED)
 		select_compiler(@compiler_id@)
-	else()
-		set (COMPILER_IDENTIFIER @compiler_id@ )
-		set (C_COMPILER @c_compiler@ )
-		set (CXX_COMPILER @cxx_compiler@ )
 	endif()
 	
-	## TODO make generic: might be Xcode for Darwin
+	# Warn if it is not Makefiles or XCode
 	set (GENERATOR "Unix Makefiles" )
 	
-	# contrib folder definition
-	set (CONTRIB @contrib_dir@ )
-	set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
-	
-	## TODO maybe also let the THIRDPARTY dirs be added to the PATH here, instead of outside
-	## of the script. For consistency.
+	# Add Search Engine test binaries to PATH, such that tests are automatically enabled.
+	SUBDIRLIST(SUBDIRS ${THIRDPARTY_DIR})
+	FOREACH(subdir ${SUBDIRS})
+    		set (CTEST_ENVIRONMENT "PATH=${THIRDPARTY_DIR}${subdir}\;$ENV{PATH}")
+    		set (ENV{PATH} "${THIRDPARTY_DIR}${subdir}\;$ENV{PATH}")
+	ENDFOREACH()
 	
 elseif(WIN32)
-	## The compiler is defined by the generator and the command line environment you are using to call
-	## this script e.g. C:\Program Files\Microsoft Visual Studio vs_version.0\VC\vcvarsall.bat
-	## They should of course match.
+	# Disable certain tests if falsely enabled. TODO Raise warning?
+	# packaging tests only allowed for UNIX (lnx,osx), otherwise we use NSIS Installer scripts for Win
+	set (PACKAGE_TEST Off )
+	# Standard uses gcov. Difficult on windows.
+	set (TEST_COVERAGE Off )
+
+	# Overrides or initially defines compiler settings
 	if(COMPILER_CMAKE_INCLUDED)
 		select_vs_version(@vs@ @arch@)
-	else()
-		set (QT @qmake@ )
-		# define generator (e.g., Visual Studio 10 Win64)
-		set (GENERATOR @generator@ )
-		set (CONTRIB @contrib_dir@ )
-        set (COMPILER_IDENTIFIER @compiler@)
+	#else()
+		# check if generator is VS (e.g., Visual Studio 10 Win64)
 	endif()
 	
-	set (QT_QMAKE_BIN_PATH "${QT}/bin/" )
-	
 	# Setup additional environment variables for windows
-	## Add Search Engine test binaries to PATH
-	set (THIRDPARTY_DIR @thirdparty_root@)
+	# Add Search Engine test binaries to PATH
+
 	SUBDIRLIST(SUBDIRS ${THIRDPARTY_DIR})
 	FOREACH(subdir ${SUBDIRS})
     		set ( CTEST_ENVIRONMENT "PATH=${THIRDPARTY_DIR}${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_DIR}${subdir}\;$ENV{Path}")
@@ -159,8 +151,9 @@ elseif(WIN32)
     		set (ENV{Path} "${THIRDPARTY_DIR}${subdir}\;$ENV{Path}")
 	ENDFOREACH()
 	
+	## TODO WHy is the following only needed on Windows?
 	## Add rest (e.g. QT, CONTRIB)
-	set ( CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
+	set (CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
 	set (ENV{PATH} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}")
 	set (ENV{Path} "${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
 endif()

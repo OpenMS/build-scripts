@@ -82,14 +82,20 @@ if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
  CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
-# ensure that we have the doxygen xml files. WHY??
+# ensure that we have the doxygen xml files. Why actually??
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "doc_xml")
-ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}")
-# uses the macro in the beginning of the file.
+
+# why do we need to execute test again? For the additional doc_xml target?
+# To create the actual Testing/TAG folder structure and so on?
+#ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}")
+
+# uses the macro in the beginning of the file to write a Test.xml to $CTEST_BIN/Testing/$NIGHTLYDATE
 ctest_checker()
 
 if(CDASH_SUBMIT)
-  ctest_submit(PARTS Configure Build Test)
+  ## Do we really need the Configure results here? Do they exist? We did not call configure since the last ctest_start.
+  #ctest_submit(PARTS Configure Build Test)
+  ctest_submit(PARTS Build Test)
 endif()
 
 restore_variables(required_variables)
