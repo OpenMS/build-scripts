@@ -19,13 +19,27 @@ foreach(var IN LISTS not_required_bool)
 endforeach()
 
 ## Unset non-required string variables if not present
-set (not_required_str "OPENMS_INSTALL_DIR")
+set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS")
 
 foreach(var IN LISTS not_required_str)
   if(NOT DEFINED ${var} OR ${var} MATCHES "\@*\@")
     unset(${var})
   endif()
 endforeach()
+
+## For parallel building
+if(NUMBER_THREADS)
+  if(WIN32) ## and MSVC Generator
+    set(CTEST_BUILD_FLAGS "/maxcpucount:${NUMBER_THREADS}")
+  elseif(${GENERATOR} MATCHES "XCode") ## and Darwin
+    set(CTEST_BUILD_FLAGS "-jobs" "${NUMBER_THREADS}")
+  else() ## Unix and Makefiles
+    set(CTEST_BUILD_FLAGS "-j${NUMBER_THREADS}")
+else()
+  # not defined. Set to serial for further usage.
+  # TODO we could infer max number of processors
+  set(NUMBER_THREADS "1")
+endif()
 
 ## Compiler identifier is e.g. VS10_x64 or gcc4.9 or clang3.3
 SET (CTEST_BUILD_NAME "${OPENMS_BUILDNAME_PREFIX}-${SYSTEM_IDENTIFIER}-${COMPILER_IDENTIFIER}-${BUILD_TYPE}")
@@ -87,7 +101,7 @@ CMAKE_PREFIX_PATH:PATH=${CONTRIB}
 CMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
 CMAKE_GENERATOR:INTERNAL=${GENERATOR}
 QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_BIN_PATH}/qmake
-MAKECOMMAND:STRING=${MAKE_COMMAND} -i -j4
+MAKECOMMAND:STRING=${MAKE_COMMAND} -i -j${NUMBER_THREADS}
 ")
 
 ## On win, we use unity builds
@@ -214,7 +228,7 @@ endif(WIN32)
 
 # If we only tested style, all testing targets are deactivated (no topp, no class_tests, no pipeline)
 if(NOT TEST_STYLE)
-	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 2)
+	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${NUMBER_THREADS})
 	if(BUILD_PYOPENMS)
 		ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
 	endif()

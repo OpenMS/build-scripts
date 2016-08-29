@@ -80,6 +80,7 @@ set (RUN_CHECKER @run_checker@ )
 set (RUN_PYTHON_CHECKER @run_pychecker@ )
 set (TEST_COVERAGE @coverage_test@ )
 set (EXTERNAL_CODE_TESTS @external_code_test@ )
+set (NUMBER_THREADS @number_threads@)
 
 
 # Setup important non-user variables (dependent on user vars)
