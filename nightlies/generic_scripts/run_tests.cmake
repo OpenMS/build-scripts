@@ -21,13 +21,16 @@ foreach(var IN LISTS required_variables)
 endforeach()
 
 ## Unset non-required string variables if not present
-set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_COVERAGE_COMMAND")
+set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_COVERAGE_COMMAND;MY_JAVA_PATH;MY_LATEX_PATH;MY_DOXYGEN_PATH")
 
 foreach(var IN LISTS not_required_str)
   if(NOT DEFINED ${var} OR ${var} MATCHES "\@*\@")
     unset(${var})
   endif()
 endforeach()
+
+## Add user paths to CMAKE_PREFIX_PATH to help in the search of libraries and programs
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CONTRIB} ${MY_JAVA_PATH} ${MY_LATEX_PATH} ${MY_DOXYGEN_PATH})
 
 ## For parallel building
 if(NUMBER_THREADS)
@@ -81,14 +84,23 @@ if(NOT THIRDPARTY_ROOT)
     safe_message("Warning: Trying to test OpenMS without setting the path to the Thirdparty binaries (THIRDPARTY_ROOT). This will disable their tests.")
   endif()
 else()
+  find_package(Java COMPONENTS Runtime)
+  if(NOT JAVA_FOUND)
+    safe_message("Warning: Trying to test Thirdparty tools without Java. Some of them require a JRE. Please add it to the path environment variable or the CMAKE_PREFIX_PATH")
+  endif()
+  get_filename_component(JAVA_BIN_DIR ${Java_JAVA_EXECUTABLE} DIRECTORY)
+  safe_message("Adding ${JAVA_BIN_DIR} to path for Thirdparty tests."
   if(WIN32)
     SUBDIRLIST(SUBDIRS ${THIRDPARTY_ROOT})
     FOREACH(subdir ${SUBDIRS})
-          set ( CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}/${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_ROOT}/${subdir}\;$ENV{Path}")
+          set (CTEST_ENVIRONMENT "PATH=${THIRDPARTY_ROOT}/${subdir}\;$ENV{PATH}" "Path=${THIRDPARTY_ROOT}/${subdir}\;$ENV{Path}")
           set (ENV{PATH} "${THIRDPARTY_ROOT}/${subdir}\;$ENV{PATH}")
           set (ENV{Path} "${THIRDPARTY_ROOT}/${subdir}\;$ENV{Path}")
           safe_message("Added ${THIRDPARTY_ROOT}/${subdir} to the PATH enviroment used by CMake and CTest.")
     ENDFOREACH()
+    set (CTEST_ENVIRONMENT "PATH=${JAVA_BIN_DIR}\;$ENV{PATH}" "Path=${JAVA_BIN_DIR}\;$ENV{Path}")
+    set (ENV{PATH} "${JAVA_BIN_DIR}\;$ENV{PATH}")
+    set (ENV{Path} "${JAVA_BIN_DIR}\;$ENV{Path}")
   else()
     # Add Search Engine test binaries to PATH, such that tests are automatically enabled.
     SUBDIRLIST(SUBDIRS ${THIRDPARTY_ROOT})
@@ -97,6 +109,8 @@ else()
           set (ENV{PATH} "${THIRDPARTY_ROOT}/${subdir}:$ENV{PATH}")
           safe_message("Added ${THIRDPARTY_ROOT}/${subdir} to the PATH enviroment used by CMake and CTest.")
     ENDFOREACH()
+    set (CTEST_ENVIRONMENT "PATH=${JAVA_BIN_DIR}:$ENV{PATH}")
+    set (ENV{PATH} "${JAVA_BIN_DIR}:$ENV{PATH}")
   endif()
 endif()
 
@@ -145,7 +159,7 @@ if(OPENMS_INSTALL_DIR)
 endif()
 
 SET(INITIAL_CACHE "${INITIAL_CACHE}
-CMAKE_PREFIX_PATH:PATH=${CONTRIB}
+CMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
 CMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
 CMAKE_GENERATOR:INTERNAL=${GENERATOR}
 QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_BIN_PATH}/qmake
@@ -164,19 +178,23 @@ else(WIN32)
   " )
 endif(WIN32)
 
-## Docu needs latex
+## Docu needs latex, packaging should require docu (although it might be copied.)
+## This is a precheck before you build everything. During build it will be tested again.
 if(BUILD_DOCU OR PACKAGE_TEST)
   message("You seem to need to build the documentation. Searching for LaTeX and Doxygen...")
   find_package(LATEX)
-  find_package(DOXYGEN)
-  message("Latex found? ${LATEX_FOUND} at ${LATEX_COMPILER}")
-  ## TODO figure out how Latex will automatically be found.
-  ## This was included before I found errors on the machines.
-  SET(INITIAL_CACHE "${INITIAL_CACHE}
-    LATEX_COMPILER:FILEPATH=${LATEX_COMPILER}
-    PDFLATEX_COMPILER:FILEPATH=${PDFLATEX_COMPILER}
-    DVIPS_CONVERTER:FILEPATH=${DVIPS_CONVERTER}
-  " )
+  if (NOT LATEX_FOUND)
+    safe_message("Latex not found. You will need it to build the documentation with formulas.")
+  else()
+    safe_message("Latex found at ${LATEX_COMPILER}")
+  endif()
+
+  find_package(Doxygen)
+  if(NOT DOXYGEN_FOUND)
+    safe_message("Doxygen not found. You will need it to build any part of the documentation.")
+  else()
+    safe_message("Doxygen found at ${LATEX_COMPILER}")
+  endif()
 endif()
 
 ## If you set a custom compiler, pass it to the CMake calls
