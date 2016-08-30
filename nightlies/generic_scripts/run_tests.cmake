@@ -11,7 +11,7 @@ endforeach()
 ## Check for all required variables that have to be set in the main script and raise errors
 set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_IDENTIFIER;COMPILER_IDENTIFIER;SCRIPT_PATH;CTEST_SOURCE_DIRECTORY;CTEST_GIT_COMMAND;MAKE_COMMAND;CONTRIB;BUILD_TYPE;QT_QMAKE_BIN_PATH;GENERATOR")
 if(PACKAGE_TEST)
-  set(required_variables ${required_variables} "PACKAGE_NAME" "TARGET_NAME")
+  set(required_variables ${required_variables} "BUNDLE_NAME" "TARGET_NAME")
 endif()
 
 foreach(var IN LISTS required_variables)
