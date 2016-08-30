@@ -89,7 +89,7 @@ else()
     safe_message("Warning: Trying to test Thirdparty tools without Java. Some of them require a JRE. Please add it to the path environment variable or the CMAKE_PREFIX_PATH")
   endif()
   get_filename_component(JAVA_BIN_DIR ${Java_JAVA_EXECUTABLE} DIRECTORY)
-  safe_message("Adding ${JAVA_BIN_DIR} to path for Thirdparty tests."
+  safe_message("Adding ${JAVA_BIN_DIR} to path for Thirdparty tests.")
   if(WIN32)
     SUBDIRLIST(SUBDIRS ${THIRDPARTY_ROOT})
     FOREACH(subdir ${SUBDIRS})
