@@ -63,7 +63,7 @@ endif(RUN_PYTHON_CHECKER)
 if(TEST_COVERAGE)
   if (NOT CTEST_COVERAGE_COMMAND)
       safe_message("Warning: Coverage tests enabled but no coverage command given: Defaulting to /usr/bin/gcov")
-      set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov -p")
+      set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov")
   endif()
   # Holds additional excluding tests for coverage
   include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
