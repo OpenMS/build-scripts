@@ -61,7 +61,7 @@ endif(RUN_PYTHON_CHECKER)
 ## TODO Think about putting these settings into own CMakes like the other options. Think about renaming to WithCoverage an StyleOnly
 ## To show additional/exclusive nature.
 if(TEST_COVERAGE)
-  ## https://cmake.org/gitweb?p=cmake.git;a=commitdiff;h=2f309cba455d0a946e935f66a53561ba64717faf
+
   set (COVERAGE_EXTRA_FLAGS "${COVERAGE_EXTRA_FLAGS} -p")
   if (NOT CTEST_COVERAGE_COMMAND)
       safe_message("Warning: Coverage tests enabled but no coverage command given: Defaulting to /usr/bin/gcov")
