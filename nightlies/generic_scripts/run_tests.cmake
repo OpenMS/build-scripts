@@ -210,7 +210,8 @@ endif(DEFINED ${C_COMPILER})
 ## therefore it basically adds the flags.
 ##Error(s) while accumulating results:
 ##  Problem reading source file: /home/jenkins/workspace/openms_linux/025a6a2d/source/src/openms/include/OpenMS/DATASTRUCTURES/Map.h line:166  out total: 191
-## Fixed in 2.8.7
+## Fixed in 2.8.7, but reverted in favor of CTEST_COVERAGE_EXTRA_FLAGS variable. However, until CMake 3.1 this variable is not respected
+## in Ctest scripts but only from the CLI of ctest
 if(TEST_COVERAGE)
   set(CTEST_COVERAGE_EXTRA_FLAGS "${CTEST_COVERAGE_EXTRA_FLAGS} -p -r")
   SET(INITIAL_CACHE "${INITIAL_CACHE}
