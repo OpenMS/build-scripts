@@ -61,10 +61,6 @@ endif(RUN_PYTHON_CHECKER)
 ## TODO Think about putting these settings into own CMakes like the other options. Think about renaming to WithCoverage an StyleOnly
 ## To show additional/exclusive nature.
 if(TEST_COVERAGE)
-  ##set(INITIAL_CACHE "${INITIAL_CACHE}
-  ##  COVERAGE_EXTRA_FLAGS=-l -p
-  ##")
-  set(CTEST_COVERAGE_EXTRA_FLAGS "${CTEST_COVERAGE_EXTRA_FLAGS} -p")
   if (NOT CTEST_COVERAGE_COMMAND)
       safe_message("Warning: Coverage tests enabled but no coverage command given: Defaulting to /usr/bin/gcov")
       set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov")
@@ -216,12 +212,17 @@ endif(DEFINED ${C_COMPILER})
 ##  Problem reading source file: /home/jenkins/workspace/openms_linux/025a6a2d/source/src/openms/include/OpenMS/DATASTRUCTURES/Map.h line:166  out total: 191
 ## Fixed in 2.8.7
 if(TEST_COVERAGE)
+  set(CTEST_COVERAGE_EXTRA_FLAGS "${CTEST_COVERAGE_EXTRA_FLAGS} -p -r")
   SET(INITIAL_CACHE "${INITIAL_CACHE}
 CMAKE_C_FLAGS:STRING=-fprofile-arcs -ftest-coverage
 CMAKE_CXX_FLAGS:STRING=-fprofile-arcs -ftest-coverage
 CMAKE_EXE_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage
 CMAKE_MODULE_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage
 CMAKE_SHARED_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage
+COVERAGE_EXTRA_FLAGS:STRING=-l -r -p
+CTEST_COVERAGE_EXTRA_FLAGS:STRING=-l -r -p
+COVERAGE_COMMAND:STRING=${CTEST_COVERAGE_COMMAND}
+CTEST_COVERAGE_COMMAND:STRING=${CTEST_COVERAGE_COMMAND}
 " )
 endif(TEST_COVERAGE)
 
