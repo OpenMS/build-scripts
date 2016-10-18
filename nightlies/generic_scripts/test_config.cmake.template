@@ -57,7 +57,7 @@ endif()
 set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
 # Optional paths that will be added to the CMakePrefixPath
 # Should be path to the base folder without /bin attached
-# Optional Latex path to help find the Latex compilers for the Documentation
+# Optional Latex path to help find the pdflatex compiler for the Documentation
 set (MY_LATEX_PATH @latex_path@)
 # Optional Doxygen path to help find doxygen for Documentation
 set (MY_DOXYGEN_PATH @doxygen_path@)
