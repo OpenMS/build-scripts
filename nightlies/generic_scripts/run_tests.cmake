@@ -197,9 +197,9 @@ if(BUILD_DOCU OR PACKAGE_TEST)
 	  DOC "Ghostscript: PostScript and PDF language interpreter and previewer."
 	)
   if (NOT LATEX_COMPILER OR NOT DVIPS_CONVERTER OR NOT GHOSTSCRIPT_EXECUTABLE)
-    safe_message("Latex not found. You will need it to build the standard html documentation with formulas. ")
+    safe_message("Latex, dvips or ghostscript not found. You will need them to build the standard html documentation with formulas. ")
   else()
-    safe_message("Latex found at ${LATEX_COMPILER}")
+    safe_message("Latex found at ${LATEX_COMPILER}, dvips found at ${DVIPS_CONVERTER}, ghostscript found at ${GHOSTSCRIPT_EXECUTABLE}")
   endif()
   
   if (NOT PDFLATEX_COMPILER OR NOT MAKEINDEX_COMPILER)
