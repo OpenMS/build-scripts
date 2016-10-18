@@ -147,8 +147,14 @@ else(WIN32)
   set (ENV{PATH} "${BINARY_DIR}:$ENV{PATH}")
 endif()
 
+# Decide on CDash Track to use
+if (${OPENMS_BUILDNAME_PREFIX} MATCHES "pr-.*")
+  set(DASHBOARD_MODEL Continuous)
+else()
+  set(DASHBOARD_MODEL Nightly)
+endif()
 # ensure the config is known to ctest
-set(CTEST_COMMAND "${CTEST_COMMAND} -D Nightly -C ${BUILD_TYPE} ")
+set(CTEST_COMMAND "${CTEST_COMMAND} -D ${DASHBOARD_MODEL} -C ${BUILD_TYPE} ")
 
 # If it was set, use custom install dir
 if(OPENMS_INSTALL_DIR)
@@ -272,11 +278,6 @@ endif()
 FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
 # do the dashboard/testings steps
-if (${OPENMS_BUILDNAME_PREFIX} MATCHES "pr-.*")
-  set(DASHBOARD_MODEL Continuous)
-else()
-  set(DASHBOARD_MODEL Nightly)
-endif()
 ctest_start  (${DASHBOARD_MODEL})
 
 ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
