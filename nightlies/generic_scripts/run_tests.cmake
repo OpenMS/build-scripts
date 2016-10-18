@@ -188,6 +188,7 @@ endif(WIN32)
 ## This is a precheck before you build everything. During build it will be tested again.
 if(BUILD_DOCU OR PACKAGE_TEST)
   message("You seem to need to build the documentation. Searching for (PDF)LaTeX and Doxygen...")
+  find_package(Doxygen)
   find_package(LATEX)
   ## Copied from lemon build system. Added newer versions. Actually there are more...
   FIND_PROGRAM(GHOSTSCRIPT_EXECUTABLE
@@ -208,7 +209,6 @@ if(BUILD_DOCU OR PACKAGE_TEST)
     safe_message("PDFLatex found at ${PDFLATEX_COMPILER}")
   endif()
 
-  find_package(Doxygen)
   if(NOT DOXYGEN_FOUND)
     safe_message("Doxygen not found. You will need it to build any part of the documentation.")
   else()
