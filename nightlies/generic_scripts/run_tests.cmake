@@ -148,7 +148,7 @@ else(WIN32)
 endif()
 
 # Decide on CDash Track to use
-if (${OPENMS_BUILDNAME_PREFIX} MATCHES "pr-.*")
+if (OPENMS_BUILDNAME_PREFIX MATCHES "pr-.*")
   set(DASHBOARD_MODEL Continuous)
 else()
   set(DASHBOARD_MODEL Nightly)
@@ -189,8 +189,15 @@ endif(WIN32)
 if(BUILD_DOCU OR PACKAGE_TEST)
   message("You seem to need to build the documentation. Searching for (PDF)LaTeX and Doxygen...")
   find_package(LATEX)
-  if (NOT LATEX_COMPILER)
-    safe_message("Latex not found. You will need it to build the and documentation with formulas. ")
+  ## Copied from lemon build system. Added newer versions. Actually there are more...
+  FIND_PROGRAM(GHOSTSCRIPT_EXECUTABLE
+	  NAMES gs gswin32c
+	  PATHS "$ENV{ProgramFiles}/gs"
+	  PATH_SUFFIXES gs8.61/bin gs8.62/bin gs8.63/bin gs8.64/bin gs8.65/bin gs8.70/bin gs8.71/bin gs9.05/bin gs9.10/bin gs9.18/bin
+	  DOC "Ghostscript: PostScript and PDF language interpreter and previewer."
+	)
+  if (NOT LATEX_COMPILER OR NOT DVIPS_CONVERTER OR NOT GHOSTSCRIPT_EXECUTABLE)
+    safe_message("Latex not found. You will need it to build the standard html documentation with formulas. ")
   else()
     safe_message("Latex found at ${LATEX_COMPILER}")
   endif()
