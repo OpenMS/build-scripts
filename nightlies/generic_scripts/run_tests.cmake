@@ -272,8 +272,12 @@ endif()
 FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
 # do the dashboard/testings steps
-# TODO make a variable out of it? E.g. MODEL
-ctest_start  (Nightly)
+if (${OPENMS_BUILDNAME_PREFIX} MATCHES "pr-\\.*")
+  set(DASHBOARD_MODEL Continuous)
+else()
+  set(DASHBOARD_MODEL Nightly)
+endif()
+ctest_start  (${DASHBOARD_MODEL})
 
 ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
 
