@@ -193,7 +193,7 @@ if(BUILD_DOCU OR PACKAGE_TEST)
   if(NOT DOXYGEN_FOUND)
     safe_message("Doxygen not found. You will need it to build any part of the documentation.")
   else()
-    safe_message("Doxygen found at ${LATEX_COMPILER}")
+    safe_message("Doxygen found at ${DOXYGEN_EXECUTABLE}")
   endif()
 endif()
 
