@@ -271,6 +271,7 @@ file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTOR
 #   message(STATUS "Started X-Server on ${DISPLAY}")
 # endif(UNIX)
 
+##TODO check which OSX version
 if(BUILD_PYOPENMS)
 	set(INITIAL_CACHE "${INITIAL_CACHE} PYOPENMS=ON")
           
@@ -292,62 +293,83 @@ FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
 # do the dashboard/testings steps
 ctest_start  (${DASHBOARD_MODEL})
-
 ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}")
 
 # Reads the previously copied CTestCustom.cmake (which e.g. contains excluded warnings)
 ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
 
-
-## The following might also be needed for XCode (e.g. all generators that build Projects)
-## On our Mac machines this does not seem to affect the Makefile-based generators,
-## so maybe we can always set it to OpenMS_host
-if(WIN32)
-  # So that windows uses the correct sln file (see https://gitlab.kitware.com/cmake/cmake/issues/12623)
-  set(CTEST_PROJECT_NAME "OpenMS_host")
-endif(WIN32)
-
-ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
-
-if(WIN32)
-  # Reset project name
-  set(CTEST_PROJECT_NAME "OpenMS")
-endif(WIN32)
-
-# If we only tested style, all testing targets are deactivated (no topp, no class_tests, no pipeline)
+# If we are testing style, the usual test targets are replaced (it instead
+# runs cppcheck/lint on every file and parses the output with a regex)
 if(NOT TEST_STYLE)
-	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${NUMBER_THREADS})
-  ## TODO better put in the python_checker.cmake?
-	if(BUILD_PYOPENMS)
-		ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
-	endif()
-	# adapt project name to allow xcode to find the test project
+    ## The following might also be needed for XCode (e.g. all generators that build Projects)
+    ## On our Mac machines this does not seem to affect the Makefile-based generators,
+    ## so maybe we can always set it to OpenMS_host
+    if(WIN32)
+        # So that windows uses the correct sln file (see https://gitlab.kitware.com/cmake/cmake/issues/12623)
+        set(CTEST_PROJECT_NAME "OpenMS_host")
+    endif(WIN32)
+
+    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
+
+    if(WIN32)
+        # Reset project name
+        set(CTEST_PROJECT_NAME "OpenMS")
+    endif(WIN32)
+    
+    ## Test the normal testing suite
+    ## TODO make this a global param so that one can disable the usual test suite
+    set (SKIP_TESTS Off)
+    if(NOT SKIP_TESTS)
+        ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${NUMBER_THREADS})
+
+        # Coverage only makes sense with normal testing suite. (no style)
+        # TODO Test it more thoroughly and/or switch to the new method for generating a coverage report.
+        # Because I think Coverage report are a bit hidden in CDash
+        if(TEST_COVERAGE)
+            ctest_coverage(BUILD "${CTEST_BINARY_DIRECTORY}")
+        endif()
+        # E.g. for use with Jenkins or other Dashboards you can disable submission
+        if(CDASH_SUBMIT)
+            # Submit all
+            ctest_submit()
+        endif()
+        # Checker needs tests to be executed. Overwrites tests
+        if(RUN_CHECKER)
+            # TODO Clean up checker script. Add dependency on doc_xml and doc_internal.
+            include ( "${SCRIPT_PATH}/checker.cmake" )
+        endif()
+    endif()
+else()
+    ## Only test the style tests
+    ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${NUMBER_THREADS})
+    # E.g. for use with Jenkins or other Dashboards you can disable submission
+    if(CDASH_SUBMIT)
+        # Submit all
+        ctest_submit()
+    endif()
 endif()
 
-# E.g. for use with Jenkins or other Dashboards
-if(CDASH_SUBMIT)
-  ctest_submit()
-endif()
+## The python-checker tool only needs the class documentation in xml (target: doc_xml)
+## Otherwise it can be executed independently from building pyOpenMS
+## Nonetheless group the outputs into a single CDash submission entry when both are executed.
+if(BUILD_PYOPENMS OR RUN_PYTHON_CHECKER)
+    ctest_start(TRACK pyOpenMS)
+    if(BUILD_PYOPENMS)
+        ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
+    endif()
+    if(RUN_PYTHON_CHECKER)
+        ##TODO cleanup the include script. Remove ctest_start, ctest_submit, change of buildname
+        include ( "${SCRIPT_PATH}/python_checker.cmake" )
+    endif()
+    ctest_submit()
+else()
 
-if(TEST_COVERAGE)
-  ctest_coverage(BUILD "${CTEST_BINARY_DIRECTORY}")
-  if(CDASH_SUBMIT)
-    ctest_submit(PARTS Coverage)
-  endif()
-endif()
-
-if(RUN_CHECKER)
-  include ( "${SCRIPT_PATH}/checker.cmake" )
-endif()
-
-if(RUN_PYTHON_CHECKER)
-  include ( "${SCRIPT_PATH}/python_checker.cmake" )
-endif()
-
+## To build full html documentation with Tutorials.
 if(BUILD_DOCU)
   include ( "${SCRIPT_PATH}/docu.cmake" )
 endif()
 
+## Needs targets OpenMS OpenSWATH
 if(EXTERNAL_CODE_TESTS)
   include ( "${SCRIPT_PATH}/external_code.cmake" )
 endif()
