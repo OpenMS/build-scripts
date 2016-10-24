@@ -78,6 +78,11 @@ macro(prepare_notes)
   )
 endmacro(prepare_notes)
 
+macro(backup_test_results backupdir_prefix)
+  safe_message("Backing up test results. Adding prefix ${backupdir_prefix}.")
+  file(COPY ${CTEST_BINARY_DIRECTORY}\Testing DESTINATION ${CTEST_BINARY_DIRECTORY}\${backupdir_prefix}_Testing)
+endmacro(backup_test_results)
+
 macro(run_tests)
 	safe_message("Starting tests!!")
   include ( ${SCRIPT_PATH}/run_tests.cmake)
