@@ -13,47 +13,23 @@ endif()
 
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Package")
 
-# update the source tree
-
-## TODO not sure why the LATEX options are needed. Should be found automatically.
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
-	safe_message("Executing ${CMAKE_COMMAND} -DPACKAGE_TYPE=dmg -DSEARCH_ENGINES_DIRECTORY=${THIRDPARTY_ROOT} ${CTEST_SOURCE_DIRECTORY}")
-	safe_message("Working directory is ${CTEST_BINARY_DIRECTORY}")
-
-	execute_process(
-	COMMAND ${CMAKE_COMMAND} -DPACKAGE_TYPE=dmg -DSEARCH_ENGINES_DIRECTORY=${THIRDPARTY_ROOT} ${CTEST_SOURCE_DIRECTORY}
-	WORKING_DIRECTORY "${CTEST_BINARY_DIRECTORY}/"
-	RESULT_VARIABLE RECONFIGURE_FOR_PACKAGE_BUILD
-	OUTPUT_VARIABLE RECONFIGURE_FOR_PACKAGE_BUILD_OUT
-	ERROR_VARIABLE RECONFIGURE_FOR_PACKAGE_BUILD_OUT  
-	)
+if(WIN32)
+    safe_message(FATAL_ERROR "Please use NSIS Installer scripts under github.com/OpenMS/windows-installer instead of CPack on Windows.")
+elseif(APPLE)
+    set ( MY_PACK_TYPE "deb")
+elseif(UNIX)
+    if(EXISTS "/etc/debian_version")
+        set ( MY_PACK_TYPE "deb")
+    elseif(EXISTS "/etc/redhat-release")
+        set ( MY_PACK_TYPE "rpm")
+    else()
+        safe_message(FATAL_ERROR "Could not determine Linux distribution to determine package type. No /etc/debian_version or redhat-release.")
+    endif()
 else()
-	if(EXISTS "/etc/debian_version")
-	   set ( MY_PACK_TYPE "deb")
-	endif(EXISTS "/etc/debian_version")
-
-	if(EXISTS "/etc/redhat-release")
-	   set ( MY_PACK_TYPE "rpm")
-	endif(EXISTS "/etc/redhat-release")
-	
-	safe_message("Executing ${CMAKE_COMMAND} -DPACKAGE_TYPE=${MY_PACK_TYPE} -DSEARCH_ENGINES_DIRECTORY=${THIRDPARTY_ROOT} ${CTEST_SOURCE_DIRECTORY}")
-	safe_message("Working directory is ${CTEST_BINARY_DIRECTORY}")
-	## TODO If at all, then this only works for creating Debian packages. Needs testing.
-	execute_process(
-		COMMAND ${CMAKE_COMMAND} -DPACKAGE_TYPE=${MY_PACK_TYPE} -DSEARCH_ENGINES_DIRECTORY=${THIRDPARTY_ROOT} ${CTEST_SOURCE_DIRECTORY}
-		WORKING_DIRECTORY "${CTEST_BINARY_DIRECTORY}/"
-		RESULT_VARIABLE RECONFIGURE_FOR_PACKAGE_BUILD
-		OUTPUT_VARIABLE RECONFIGURE_FOR_PACKAGE_BUILD_OUT
-		ERROR_VARIABLE RECONFIGURE_FOR_PACKAGE_BUILD_OUT  
-	)
+    safe_message(FATAL_ERROR "Unknown platform. None of the CMAKE variables WIN32, APPLE, UNIX set.")
 endif()
 
-  
-if( NOT RECONFIGURE_FOR_PACKAGE_BUILD EQUAL 0)
-	message("Could not reconfigure ${CTEST_BINARY_DIRECTORY} for package build")
-	message(FATAL_ERROR "reconfigure resulted in: ${RECONFIGURE_FOR_PACKAGE_BUILD}")
-endif()
-
+# Not sure why this was needed. Evaluate removal.
 SET( $ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}" )
 
 # build the package and submit the results to cdash  
@@ -62,25 +38,19 @@ CTEST_START   (Nightly TRACK Package)
 # With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash 
 # Otherwise skip update completely
 if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
- SET(CTEST_UPDATE_VERSION_ONLY On)
- CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
+   SET(CTEST_UPDATE_VERSION_ONLY On)
+   CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
-CTEST_BUILD   (TARGET doc)
-CTEST_BUILD   (TARGET doc_tutorials APPEND)
-CTEST_BUILD   (TARGET package APPEND)
+CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTORY=${THIRDPARTY_ROOT}")
+
+## TODO Think about how to backup the results of intermediate build steps. (*.xmls in the Testing Dir)
+CTEST_BUILD    (TARGET doc)
+CTEST_BUILD    (TARGET doc_tutorials APPEND)
+CTEST_BUILD    (TARGET package APPEND)
 
 if(CDASH_SUBMIT)
-  CTEST_SUBMIT  (PARTS Build)
+    CTEST_SUBMIT  (PARTS Build)
 endif()
-
-
-### TODO use RSYNC for putting on FTP or do it completely outside of CMake.
-# copy package to destination
-#file(RENAME ${CTEST_BINARY_DIRECTORY}/${BUNDLE_NAME} ${CTEST_BINARY_DIRECTORY}/${TARGET_NAME})
-#file(
-#		COPY ${CTEST_BINARY_DIRECTORY}/${TARGET_NAME}
-#		DESTINATION ${PACKAGE_TARGET_PATH}
-#)
 
 restore_variables(required_variables)
