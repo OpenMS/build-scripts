@@ -84,6 +84,6 @@ macro(backup_test_results backupdir_prefix)
 endmacro(backup_test_results)
 
 macro(run_tests)
-	safe_message("Starting tests!!")
+  safe_message("Starting tests!!")
   include ( ${SCRIPT_PATH}/run_tests.cmake)
 endmacro()
