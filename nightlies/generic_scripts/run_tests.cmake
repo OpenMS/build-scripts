@@ -147,11 +147,15 @@ else(WIN32)
   set (ENV{PATH} "${BINARY_DIR}:$ENV{PATH}")
 endif()
 
-# Decide on CDash Track to use
+# Decide on CDash Dashboard model to use
+# Mainly cosmetic reasons since we do not use ctest_update
+# Might change how the Testing folders are generated.
 if (OPENMS_BUILDNAME_PREFIX MATCHES "pr-.*")
   set(DASHBOARD_MODEL Continuous)
-else()
+elseif(OPENMS_BUILDNAME_PREFIX STREQUAL "develop" OR OPENMS_BUILDNAME_PREFIX STREQUAL "master")
   set(DASHBOARD_MODEL Nightly)
+else()
+  set(DASHBOARD_MODEL Experimental)
 endif()
 # ensure the config is known to ctest
 set(CTEST_COMMAND "${CTEST_COMMAND} -D ${DASHBOARD_MODEL} -C ${BUILD_TYPE} ")
@@ -351,7 +355,7 @@ endif()
 ## Otherwise it can be executed independently from building pyOpenMS
 ## Nonetheless group the outputs into a single CDash submission entry when both are executed.
 if(BUILD_PYOPENMS OR RUN_PYTHON_CHECKER)
-    ctest_start(TRACK pyOpenMS)
+    ctest_start(${DASHBOARD_MODEL} TRACK pyOpenMS)
     if(BUILD_PYOPENMS)
         ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
     endif()
