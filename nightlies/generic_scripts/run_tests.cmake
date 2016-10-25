@@ -77,6 +77,7 @@ elseif(TEST_STYLE)
 endif()
 
 ## Package dependent requirements
+## TODO Actually KNIME_TEST needs full Java SDK because of jar.exe.
 if(NOT THIRDPARTY_ROOT)
   if(KNIME_TEST OR PACKAGE_TEST)
     safe_message(FATAL_ERROR "Trying to build a package or KNIME plugin without setting the path to the Thirdparty binaries (THIRDPARTY_ROOT)")
