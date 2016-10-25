@@ -185,14 +185,9 @@ else(WIN32)
 endif(WIN32)
 
 
-## Docu needs latex, packaging should require docu (although it might be copied.)
+## Docu needs latex, packaging requires full docu (although it might be copied from somewhere with a custom script).
 ## This is a precheck before you build everything. During build it will be tested again.
-
-## TODO Should we automatically set BUILD_DOCU to true then?
-if(PACKAGE_TEST AND NOT BUILD_DOCU)
-  message("Warning: Packaging the build without building the full documentation.")
-endif()
-if(BUILD_DOCU)
+if(BUILD_DOCU OR PACKAGE_TEST)
   message("You seem to want to build the full documentation. Searching for (PDF)LaTeX and Doxygen...")
   find_package(Doxygen)
   find_package(LATEX)
@@ -377,12 +372,13 @@ if(EXTERNAL_CODE_TESTS)
   include ( "${SCRIPT_PATH}/external_code.cmake" )
 endif()
 
-## Usually built with documentation
+## Additionally buils full documentation.
+## TODO check if it actually is not executed twice. It probably is -.-
 if(PACKAGE_TEST)
   include ( "${SCRIPT_PATH}/package_test.cmake" )
 endif()
 
-## Relatively independent from the rest. Needs THIRDPARTY binaries.
+## Relatively independent from the rest. Needs THIRDPARTY binaries and TOPP, UTILS.
 if(KNIME_TEST)
   include ( "${SCRIPT_PATH}/knime_test.cmake" )
 endif()
