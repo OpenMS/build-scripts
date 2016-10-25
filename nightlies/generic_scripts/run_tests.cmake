@@ -184,10 +184,16 @@ else(WIN32)
   " )
 endif(WIN32)
 
+
 ## Docu needs latex, packaging should require docu (although it might be copied.)
 ## This is a precheck before you build everything. During build it will be tested again.
-if(BUILD_DOCU OR PACKAGE_TEST)
-  message("You seem to need to build the documentation. Searching for (PDF)LaTeX and Doxygen...")
+
+## TODO Should we automatically set BUILD_DOCU to true then?
+if(PACKAGE_TEST AND NOT BUILD_DOCU)
+  message("Warning: Packaging the build without building the full documentation.")
+endif()
+if(BUILD_DOCU)
+  message("You seem to want to build the full documentation. Searching for (PDF)LaTeX and Doxygen...")
   find_package(Doxygen)
   find_package(LATEX)
   ## Copied from lemon build system. Added newer versions. Actually there are more...
@@ -224,9 +230,6 @@ CMAKE_CXX_COMPILER:FILEPATH=${CXX_COMPILER}
   " )
 endif(DEFINED ${C_COMPILER})
 
-
-## TODO Does the following add these flag or replace all flags? I assume the initial cache would be empty and
-## therefore it basically adds the flags.
 ##Error(s) while accumulating results:
 ##  Problem reading source file: /home/jenkins/workspace/openms_linux/025a6a2d/source/src/openms/include/OpenMS/DATASTRUCTURES/Map.h line:166  out total: 191
 ## Fixed in 2.8.7, but soon reverted in favor of CTEST_COVERAGE_EXTRA_FLAGS variable. However, until CMake 3.1 this variable is not respected
@@ -362,22 +365,24 @@ if(BUILD_PYOPENMS OR RUN_PYTHON_CHECKER)
         include ( "${SCRIPT_PATH}/python_checker.cmake" )
     endif()
     ctest_submit()
-else()
+endif()
 
 ## To build full html documentation with Tutorials.
 if(BUILD_DOCU)
   include ( "${SCRIPT_PATH}/docu.cmake" )
 endif()
 
-## Needs targets OpenMS OpenSWATH
+## Needs only our libraries
 if(EXTERNAL_CODE_TESTS)
   include ( "${SCRIPT_PATH}/external_code.cmake" )
 endif()
 
+## Usually built with documentation
 if(PACKAGE_TEST)
   include ( "${SCRIPT_PATH}/package_test.cmake" )
 endif()
 
+## Relatively independent from the rest. Needs THIRDPARTY binaries.
 if(KNIME_TEST)
   include ( "${SCRIPT_PATH}/knime_test.cmake" )
 endif()
