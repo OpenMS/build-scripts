@@ -33,7 +33,7 @@ endif()
 SET( $ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}" )
 
 # build the package and submit the results to cdash  
-CTEST_START   (Nightly TRACK Package)
+CTEST_START   (${DASHBOARD_MODEL} TRACK Package)
 # In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
 # With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash 
 # Otherwise skip update completely
@@ -45,8 +45,10 @@ endif()
 CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTORY=${THIRDPARTY_ROOT}")
 
 ## TODO Think about how to backup the results of intermediate build steps. (*.xmls in the Testing Dir)
-CTEST_BUILD    (TARGET doc)
-CTEST_BUILD    (TARGET doc_tutorials APPEND)
+# The preinstall target that is called by "make package" will build the ALL target which includes
+# doc and doc_tutorial (if enabled)
+#CTEST_BUILD    (TARGET doc)
+#CTEST_BUILD    (TARGET doc_tutorials APPEND)
 CTEST_BUILD    (TARGET package APPEND)
 
 if(CDASH_SUBMIT)
