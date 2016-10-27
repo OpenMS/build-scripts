@@ -36,18 +36,24 @@
 #         specified destination.
 
 # Check for required variables.
-set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUILD_NAME;DOCU_TARGET_PATH")
+set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUILD_NAME")
 
 backup_and_check_variables(required_variables)
 
 if(NOT DEFINED CDASH_SUBMIT)
     set(CDASH_SUBMIT Off)
 endif()
+if(NOT DEFINED DASHBOARD_MODEL)
+    set(DASHBOARD_MODEL Experimental)
+endif()
 
 ## (re)define build name and test directories
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Documentation")
 
-CTEST_START (Nightly TRACK Documentation)
+## If BUILD_DOCU is called with other parameters that lead to a build of the docu before,
+## this will generate the docu multiple times and waste resources.
+## TODO prevent in parent script.
+CTEST_START (${DASHBOARD_MODEL} TRACK Documentation)
 CTEST_BUILD (BUILD TARGET doc APPEND)
 CTEST_BUILD (BUILD TARGET doc_tutorials APPEND)
 if(CDASH_SUBMIT)
