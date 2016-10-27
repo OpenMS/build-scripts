@@ -7,8 +7,8 @@ if(COMMAND CMAKE_POLICY) # CMake 2.4 does not have this command
   endif(POLICY CMP0011)
 endif(COMMAND CMAKE_POLICY)
 
-# Verbosity
-set (CMAKE_VERBOSE_MAKEFILE ON)
+# Verbosity (off for now)
+set (CMAKE_VERBOSE_MAKEFILE OFF)
 
 # Additional scripts:
 # Path to look for additional scripts with macros.
@@ -38,10 +38,7 @@ endif()
 set (CTEST_SOURCE_DIRECTORY @source_dir@ )
 set (BUILD_DIRECTORY        @build_dir@ )
 # general ctest/cmake/other programs
-set (CMAKE_BIN_PATH @cmake_bin_path@ )
 set (OPENMS_INSTALL_DIR @install_dir@)
-set (MAKE_COMMAND @make_path@ )
-set (CTEST_GIT_COMMAND   @git_command@ )
 # compiler/generator settings (ID is just for display)
 set (GENERATOR @generator@ )
 set (CONTRIB @contrib_dir@ )
@@ -55,21 +52,10 @@ if(UNIX)
 endif()
 # contrib and thirdparty locations matching your compiler (check yourself)
 set (QT_QMAKE_BIN_PATH @qmake_bin_path@ )
-# Optional paths that will be added to the CMakePrefixPath
-# Should be path to the base folder without /bin attached
-# Optional Latex path to help find the pdflatex compiler for the Documentation
-set (MY_LATEX_PATH @latex_path@)
-# Optional Doxygen path to help find doxygen for Documentation
-set (MY_DOXYGEN_PATH @doxygen_path@)
-# Optional Java path to help find Java for some TOPP Tests
-set (MY_JAVA_PATH @java_path@)
 # description of this system (e.g. OS version: Win8, Ubuntu15.10)
 set (SYSTEM_IDENTIFIER @system_identifier@ )
 # usually the branch or other description about the state of the sources e.g. release2.0.0, develop
 set (OPENMS_BUILDNAME_PREFIX @buildname_prefix@ )
-## TODO Remove this? Better outside of CMake?
-# FTP server for storing binaries, docu, checker results publicly:
-set (FTP_LOCATION "jpfeuffer@ftp.imp.fu-berlin.de/pub/OpenMS/" )
 # Describe type of build/tests e.g. Default, Release
 set (BUILD_TYPE @build_type@ )
 # site description of this machine e.g. scratchy.imp.fu-berlin.de
@@ -82,6 +68,7 @@ set (THIRDPARTY_ROOT @thirdparty_root@)
 set (KNIME_TEST @knime_test@ )
 # More settings:
 if (WIN32)
+	# packaging on win is handled outside of cmake with standalone NSIS scripts
 	set (PACKAGE_TEST Off )
 else()
 	set (PACKAGE_TEST @package_test@ )
@@ -99,25 +86,31 @@ set (EXTERNAL_CODE_TESTS @external_code_test@ )
 set (NUMBER_THREADS @number_threads@)
 
 
-# Setup important non-user variables (dependent on user vars)
-set (CTEST_CMAKE_COMMAND   "${CMAKE_BIN_PATH}cmake" )
-set (CTEST_CTEST_COMMAND "${CMAKE_BIN_PATH}ctest" )
+# Git is actually not needed if you do not use ctest_update() but it should be present anyway
+find_package(Git)
+set (CTEST_GIT_COMMAND    "${GIT_EXECUTABLE}" )
+# Setup important CTest variables (dependent on the ctest/cmake binary used to call this script)
+set (CTEST_CMAKE_COMMAND  "${CMAKE_COMMAND}" )
+set (CTEST_CTEST_COMMAND  "${CMAKE_CTEST_COMMAND}" )
 set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
 set (CTEST_CHECK_HTTP_ERROR ON )
-set (CHECKER_TARGET_PATH "${FTP_LOCATION}" )
-set (PACKAGE_TARGET_PATH "${FTP_LOCATION}nightly_binaries/" )
-set (DOCU_TARGET_PATH    "${FTP_LOCATION}" )
+
 
 # Platform specific setup:
 if(UNIX)
 	if(COMPILER_CMAKE_INCLUDED)
 		select_compiler(@compiler_id@)
 	endif()
-	
-	# TODO make user var
 	# Warn if it is not Makefiles or XCode
-	set (GENERATOR "Unix Makefiles" )
-	
+	if (NOT GENERATOR MATCHES "Unix Makefiles")
+	    if (APPLE)
+	        if (NOT GENERATOR MATCHES "XCode")
+		    message(FATAL_ERROR "Only XCode or Unix Makefiles supported on Mac")
+		endif()
+            else()
+	        message(FATAL_ERROR "Only Unix Makefiles supported on Linux")
+	    endif()
+	endif()
 elseif(WIN32)
 	# Disable certain tests if falsely enabled. TODO Raise warning?
 	# packaging tests only allowed for UNIX (lnx,osx), otherwise we use NSIS Installer scripts for Win
@@ -128,18 +121,13 @@ elseif(WIN32)
 	# Overrides or initially defines compiler settings
 	if(COMPILER_CMAKE_INCLUDED)
 		select_vs_version(@vs@ @arch@)
-	#else()
+	else()
 		# check if generator is VS (e.g., Visual Studio 10 Win64)
+		if (NOT GENERATOR MATCHES "Visual Studio*")
+		    message(FATAL_ERROR "Only Visual Studio supported on Windows")
+		endif()
 	endif()
 endif()
-
-## TODO infer from other variables?
-if(PACKAGE_TEST)
-	# e.g. "OpenMS-1.10.0-Linux.deb"
-	SET (BUNDLE_NAME @bundle_name@ )
-	# e.g. "OpenMS-1.10.0-debian_squeeze-x86_64.deb"
-	SET (TARGET_NAME @package_target_name@ )
-endif(PACKAGE_TEST)
 
 # Next steps, found in test_macros.cmake
 prepare_notes()
