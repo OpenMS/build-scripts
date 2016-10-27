@@ -11,6 +11,9 @@ backup_and_check_variables(required_variables)
 if(NOT DEFINED CDASH_SUBMIT)
     set(CDASH_SUBMIT Off)
 endif()
+if(NOT DEFINED DASHBOARD_MODEL)
+    set(DASHBOARD_MODEL Experimental)
+endif()
 
 
 ## external project:
@@ -36,7 +39,7 @@ CTEST_EMPTY_BINARY_DIRECTORY (${CTEST_BINARY_DIRECTORY})
 
 FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
-CTEST_START (Nightly TRACK ExternalCode)
+CTEST_START (${DASHBOARD_MODEL} TRACK ExternalCode)
 
 # In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
 # With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash 
