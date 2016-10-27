@@ -1,6 +1,3 @@
-### TODO rework to make it more generic (e.g. on bundle name etc.)
-
-##TODO Check for not Windows.
 # Check for required variables.
 ## TODO THIRDPARTY_ROOT could theoretically be made optional. Ships without thirdparty then.
 set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;INITIAL_CACHE;CTEST_BUILD_NAME;THIRDPARTY_ROOT")
