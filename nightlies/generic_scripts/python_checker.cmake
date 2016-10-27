@@ -39,14 +39,20 @@
 
 # Check for required variables.
 set(required_variables
-	"CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUILD_NAME;DASHBOARD_MODEL")
+	"CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUILD_NAME")
 backup_and_check_variables(required_variables)
 
 if(NOT DEFINED CDASH_SUBMIT)
     set(CDASH_SUBMIT Off)
 endif()
+if(NOT DEFINED DASHBOARD_MODEL)
+    set(DASHBOARD_MODEL Experimental)
+endif()
 
-set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_PythonChecker")
+if(NOT PYOPENMS_BUILT)
+  set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_PythonChecker")
+endif()
+## else keep the build name 
 
 # now we hack our own checker into cdash
 # we assume here that all tests have been build/run already
@@ -72,28 +78,29 @@ endmacro()
 
 # test again and execute checker, use Track to specify Track (Dart2) / Build group (Dart1)
 # in CDash
-ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
-
-# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
-# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash
-# Otherwise skip update completely
-if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
- SET(CTEST_UPDATE_VERSION_ONLY On)
- CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
+if(NOT PYOPENMS_BUILT)
+  ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
+	# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
+	# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash
+	# Otherwise skip update completely
+  if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
+    SET(CTEST_UPDATE_VERSION_ONLY On)
+    CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
+  endif()
 endif()
 
 # ensure that we have the doxygen xml files. To check if everything is wrapped or so..
-ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "doc_xml")
+ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "doc_xml" APPEND)
 
 # why do we need to execute test again? For the additional doc_xml target?
 # To create the actual Testing/TAG folder structure and so on?
 #ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}")
 
-# uses the macro in the beginning of the file to write a Test.xml to $CTEST_BIN/Testing/$NIGHTLYDATE
+# uses the macro in the beginning of the file to write a Test.xml to $CTEST_BIN/Testing/$LASTTAGDATE
 ctest_checker()
 
 if(CDASH_SUBMIT)
-  ctest_submit(PARTS Build Test)
+    ctest_submit(PARTS Build Test)
 endif()
 
 restore_variables(required_variables)
