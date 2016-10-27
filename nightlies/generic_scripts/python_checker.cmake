@@ -39,7 +39,7 @@
 
 # Check for required variables.
 set(required_variables
-	"CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUILD_NAME")
+	"CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUILD_NAME;DASHBOARD_MODEL")
 backup_and_check_variables(required_variables)
 
 if(NOT DEFINED CDASH_SUBMIT)
@@ -72,7 +72,7 @@ endmacro()
 
 # test again and execute checker, use Track to specify Track (Dart2) / Build group (Dart1)
 # in CDash
-ctest_start(Nightly TRACK PyOpenMS)
+ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
 
 # In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
 # With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash
@@ -82,7 +82,7 @@ if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
  CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
-# ensure that we have the doxygen xml files. Why actually??
+# ensure that we have the doxygen xml files. To check if everything is wrapped or so..
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "doc_xml")
 
 # why do we need to execute test again? For the additional doc_xml target?
@@ -93,8 +93,6 @@ ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "doc_xml")
 ctest_checker()
 
 if(CDASH_SUBMIT)
-  ## Do we really need the Configure results here? Do they exist? We did not call configure since the last ctest_start.
-  #ctest_submit(PARTS Configure Build Test)
   ctest_submit(PARTS Build Test)
 endif()
 
