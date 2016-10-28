@@ -274,7 +274,7 @@ endif(WIN32)
 ## This is a precheck before you build everything. During build it will be tested again.
 find_package(Doxygen)
 find_package(LATEX)
-if($ENV{BUILD_FULL_DOC} OR $ENV{PACKAGE_TEST})
+if($ENV{BUILD_DOCU} OR $ENV{PACKAGE_TEST})
   message("You seem to want to build the full documentation. Searching for (PDF)LaTeX and Doxygen before building...")
   ## Copied from lemon build system. Added newer versions. Actually there are more...
   FIND_PROGRAM(GHOSTSCRIPT_EXECUTABLE
