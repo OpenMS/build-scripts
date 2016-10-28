@@ -1,11 +1,15 @@
 # Check for required variables.
 ## TODO THIRDPARTY_ROOT could theoretically be made optional. Ships without thirdparty then.
-set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;INITIAL_CACHE;CTEST_BUILD_NAME;THIRDPARTY_ROOT")
+set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;INITIAL_CACHE;CTEST_BUILD_NAME")
 
 backup_and_check_variables(required_variables)
 
 if(NOT DEFINED CDASH_SUBMIT)
     set(CDASH_SUBMIT Off)
+endif()
+
+if(NOT DEFINED DASHBOARD_MODEL)
+    set(DASHBOARD_MODEL Experimental)
 endif()
 
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Package")
@@ -39,7 +43,7 @@ if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
    CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
-CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTORY=${THIRDPARTY_ROOT}")
+CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTORY=$ENV{SEARCH_ENGINES_DIRECTORY}")
 
 ## TODO Think about how to backup the results of intermediate build steps. (*.xmls in the Testing Dir)
 # The preinstall target that is called by "make package" will build the ALL target which includes
