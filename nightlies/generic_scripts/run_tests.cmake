@@ -22,13 +22,24 @@ if(NOT DEFINED TEST_MACROS_INCLUDED)
   include( "${SCRIPT_PATH}/global_macros.cmake" )
 endif()
 
+set (DEBUG ON)
+macro (debug_message mymessage)
+  if(DEBUG)
+   safe_message(mymessage)
+  endif()
+endmacro(debug_message)
+
+
 ## Set non-required boolean variables to "Off" if not present
 set (not_required_bool "ENABLE_PREPARE_KNIME_PACKAGE;PACKAGE_TEST;EXTERNAL_CODE_TESTS;TEST_COVERAGE;ENABLE_STYLE_TESTING;PYOPENMS;RUN_CHECKER;RUN_PYTHON_CHECKER;BUILD_DOCU")
 
 foreach(var IN LISTS not_required_bool)
   ## if undefined or not configured:
-  if(NOT DEFINED ENV{${var}} OR ENV{${var}} MATCHES "\@*\@")
+  if(NOT DEFINED ENV{${var}})
     set(ENV{${var}} Off)
+    debug_message("${var} is undefined. Defaulting to OFF.")
+  else()
+    debug_message("${var} is defined as $ENV{${var}}")
   endif()
 endforeach()
 
@@ -42,6 +53,8 @@ endif()
 foreach(var IN LISTS required_variables)
   if(NOT DEFINED ENV{${var}})
     safe_message(FATAL_ERROR "Environment variable <${var}> needs to be set to run this script")
+  else()
+    debug_message("${var} is defined as $ENV{${var}}")
   endif()
 endforeach()
 
@@ -52,6 +65,8 @@ set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_SITE;CTEST_COVERA
 foreach(var IN LISTS not_required_str)
   if(NOT DEFINED ENV{${var}})
     safe_message("Environment variable <${var}> not defined. Using default.")
+  else()
+    debug_message("${var} is defined as $ENV{${var}}")
   endif()
 endforeach()
 
