@@ -47,7 +47,7 @@ endforeach()
 
 ## Unset non-required string variables if not present
 ## TODO remove. We can check for undefined.
-set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_COVERAGE_COMMAND;BUILD_TYPE;QT_QMAKE_BIN_PATH")
+set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_SITE;CTEST_COVERAGE_COMMAND;BUILD_TYPE;QT_QMAKE_BIN_PATH")
 
 foreach(var IN LISTS not_required_str)
   if(NOT DEFINED $ENV{${var}})
@@ -66,6 +66,7 @@ set (CTEST_CMAKE_COMMAND  "${CMAKE_COMMAND}" )
 set (CTEST_CTEST_COMMAND  "${CMAKE_CTEST_COMMAND}" )
 set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
 set (CTEST_CHECK_HTTP_ERROR ON )
+set (CTEST_SITE "$ENV{CTEST_SITE}")
 
 # Platform specific setup:
 if(UNIX)
