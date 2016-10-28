@@ -27,8 +27,8 @@ set (not_required_bool "ENABLE_PREPARE_KNIME_PACKAGE;PACKAGE_TEST;EXTERNAL_CODE_
 
 foreach(var IN LISTS not_required_bool)
   ## if undefined or not configured:
-  if(NOT DEFINED $ENV{${var}} OR $ENV{${var}} MATCHES "\@*\@")
-    set($ENV{${var}} Off)
+  if(NOT DEFINED ENV{${var}} OR ENV{${var}} MATCHES "\@*\@")
+    set(ENV{${var}} Off)
   endif()
 endforeach()
 
@@ -40,7 +40,7 @@ if (UNIX)
 endif()
 
 foreach(var IN LISTS required_variables)
-  if(NOT DEFINED $ENV{${var}})
+  if(NOT DEFINED ENV{${var}})
     safe_message(FATAL_ERROR "Environment variable <${var}> needs to be set to run this script")
   endif()
 endforeach()
@@ -50,7 +50,7 @@ endforeach()
 set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_SITE;CTEST_COVERAGE_COMMAND;BUILD_TYPE;QT_QMAKE_BIN_PATH")
 
 foreach(var IN LISTS not_required_str)
-  if(NOT DEFINED $ENV{${var}})
+  if(NOT DEFINED ENV{${var}})
     safe_message("Environment variable <${var}> not defined. Using default.")
   endif()
 endforeach()
@@ -82,7 +82,7 @@ if(UNIX)
 	endif()
 elseif(WIN32)
     ## Coverage and other stuff will crash at configure time
-    if($ENV{PACKAGE_TEST})
+    if("$ENV{PACKAGE_TEST}" STREQUAL "ON")
         safe_message("Packaging not covered by CMake under Windows. Please use the NSIS installer scripts.")
     endif()
 	# check if generator is VS (e.g., Visual Studio 10 Win64)
@@ -97,7 +97,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{CONTRIB})
 ## For parallel building
 
 ## CTEST_BUILD_FLAGS will be used in later ctest_build()'s
-if(DEFINED $ENV{NUMBER_THREADS})
+if(DEFINED ENV{NUMBER_THREADS})
   if(WIN32) ## and MSVC Generator
     set(CTEST_BUILD_FLAGS "/maxcpucount:$ENV{NUMBER_THREADS}")
   elseif(${GENERATOR} MATCHES "XCode") ## and Darwin
@@ -109,7 +109,7 @@ else()
   # not defined. Set to serial for further usage.
   # We could determine max nr of cpus with the ProcessorCount module but especially with Jenkins
   # You do not want to always use ALL cores possible.
-  set($ENV{NUMBER_THREADS} "1")
+  set(ENV{NUMBER_THREADS} "1")
 endif()
 
 ## Compiler identifier is e.g. MSVC10x64 or gcc4.9 or clang3.3
@@ -119,8 +119,8 @@ SET (CTEST_BUILD_NAME "$ENV{OPENMS_BUILDNAME_PREFIX}-$ENV{SYSTEM_IDENTIFIER}-$EN
 ## TODO Requires GCC or newer Clang as compiler, maybe test here.
 ## TODO Think about putting these settings into own CMakes like the other options.
 ## TODO Use new OpenMS_coverage target
-if($ENV{TEST_COVERAGE})
-  if (NOT $ENV{CTEST_COVERAGE_COMMAND})
+if("$ENV{TEST_COVERAGE}" STREQUAL "ON")
+  if (NOT DEFINED ENV{CTEST_COVERAGE_COMMAND})
       FIND_PROGRAM( GCOV_PATH gcov )
       if (NOT GCOV_PATH)
         safe_message(FATAL_ERROR "Coverage tests enabled but no coverage command given. Default gcov is also not in PATH.")
@@ -129,7 +129,7 @@ if($ENV{TEST_COVERAGE})
   endif()
   # Holds additional excluding tests for coverage
   include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
-  if(NOT $ENV{BUILD_TYPE} STREQUAL Debug)
+  if(NOT "$ENV{BUILD_TYPE}" STREQUAL "Debug")
     safe_message(FATAL_ERROR "For coverage check, the library should be built in Debug mode with Debug symbols.")
   endif()
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Coverage")
@@ -138,16 +138,16 @@ endif()
 ## Package dependent requirements
 ## TODO Actually KNIME_TEST needs full Java SDK because of jar.exe.
 find_package(Java)
-if(NOT $ENV{SEARCH_ENGINES_DIRECTORY})
-  if($ENV{ENABLE_PREPARE_KNIME_PACKAGE} OR $ENV{PACKAGE_TEST})
+if(NOT DEFINED ENV{SEARCH_ENGINES_DIRECTORY})
+  if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON" OR "$ENV{PACKAGE_TEST}" STREQUAL "ON")
     safe_message(FATAL_ERROR "Trying to build a package or KNIME plugin without setting the path to the Thirdparty binaries (SEARCH_ENGINES_DIRECTORY)")
   else()
-    if($ENV{ENABLE_TOPP_TESTING})
+    if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON")
       safe_message("Warning: Trying to test OpenMS without setting the path to the Thirdparty binaries (SEARCH_ENGINES_DIRECTORY). This will disable their tests.")
     endif()
   endif()
 else()
-  if($ENV{ENABLE_TOPP_TESTING})
+  if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON")
       if(NOT Java_JAVA_EXECUTABLE)
         safe_message(FATAL_ERROR "Error: Trying to test Thirdparty tools without Java. Some of them require a JRE. Please add it to the path environment variable or the CMAKE_PREFIX_PATH")
       endif()
@@ -178,7 +178,7 @@ else()
   endif()
 endif()
 
-if($ENV{ENABLE_PREPARE_KNIME_PACKAGE} AND NOT Java_JAR_EXECUTABLE)
+if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON" AND NOT Java_JAR_EXECUTABLE)
   safe_message(FATAL_ERROR "Packaging binaries for KNIME requires the JAR executable (usually installed with the SDK). Put it in the (CMAKE_PREFIX_)PATH.")
 endif()
 
@@ -199,12 +199,12 @@ if(WIN32)
 
   # Setup additional environment variables for windows, so that dependencies are foudn during execution
   ## Add rest (e.g. QT, CONTRIB)
-  set (CTEST_ENVIRONMENT "PATH=${QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
+  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
   set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}")
   set (ENV{Path} "$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
 else(WIN32)
   ## Multi config like Xcode?
-  if(GENERATOR STREQUAL "XCode")
+  if("$ENV{GENERATOR}" STREQUAL "XCode")
     set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/$ENV{BUILD_TYPE}")
   else()
     set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/")
@@ -215,9 +215,9 @@ endif()
 # Decide on CDash Dashboard model to use
 # Mainly cosmetic reasons since we do not use ctest_update
 # Though, it might change how the Testing folders are generated and named.
-if (OPENMS_BUILDNAME_PREFIX MATCHES "pr-.*")
+if ("$ENV{OPENMS_BUILDNAME_PREFIX}" MATCHES "pr-.*")
   set(DASHBOARD_MODEL Continuous)
-elseif(OPENMS_BUILDNAME_PREFIX STREQUAL "develop" OR OPENMS_BUILDNAME_PREFIX STREQUAL "master")
+elseif("$ENV{OPENMS_BUILDNAME_PREFIX}" STREQUAL "develop" OR "$ENV{OPENMS_BUILDNAME_PREFIX}" STREQUAL "master")
   set(DASHBOARD_MODEL Nightly)
 else()
   set(DASHBOARD_MODEL Experimental)
@@ -234,9 +234,9 @@ CMAKE_GENERATOR:INTERNAL=$ENV{GENERATOR}
 ")
 
 ## Add only if present
-set (additional_vars ENABLE_TOPP_TESTING ENABLE_CLASS_TESTING ENABLE_STYLE_TESTING WITH_GUI DISABLE_WAVELET2DTEST ADDRESS_SANITIZER)
+set (additional_vars ENABLE_USAGE_STATISTICS ENABLE_TOPP_TESTING ENABLE_CLASS_TESTING ENABLE_STYLE_TESTING WITH_GUI DISABLE_WAVELET2DTEST ADDRESS_SANITIZER)
 foreach(var IN LISTS additional_vars)
-    if (DEFINED $ENV{$var})
+    if (DEFINED ENV{$var})
       SET(INITIAL_CACHE "${INITIAL_CACHE}
         ${var}=$ENV{${var}}
       ")
@@ -244,14 +244,14 @@ foreach(var IN LISTS additional_vars)
 endforeach()
 
 ## Special cases
-if ($ENV{QT_QMAKE_BIN_PATH})
+if (DEFINED $ENV{QT_QMAKE_BIN_PATH})
       SET(INITIAL_CACHE "${INITIAL_CACHE}
         QT_QMAKE_EXECUTABLE=$ENV{QT_QMAKE_BIN_PATH}/qmake
       ")
 endif()
 # If it was set, use custom install dir (e.g. because of missing write permissions in system paths)
 # Packaging calls the install target.
-if($ENV{OPENMS_INSTALL_DIR})
+if(DEFINED ENV{OPENMS_INSTALL_DIR})
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     CMAKE_INSTALL_PREFIX:PATH=$ENV{OPENMS_INSTALL_DIR}
     ")
@@ -274,7 +274,7 @@ endif(WIN32)
 ## This is a precheck before you build everything. During build it will be tested again.
 find_package(Doxygen)
 find_package(LATEX)
-if($ENV{BUILD_DOCU} OR $ENV{PACKAGE_TEST})
+if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR $ENV{PACKAGE_TEST} STREQUAL "ON")
   message("You seem to want to build the full documentation. Searching for (PDF)LaTeX and Doxygen before building...")
   ## Copied from lemon build system. Added newer versions. Actually there are more...
   FIND_PROGRAM(GHOSTSCRIPT_EXECUTABLE
@@ -303,7 +303,7 @@ if($ENV{BUILD_DOCU} OR $ENV{PACKAGE_TEST})
 endif()
 
 ## If you set a custom compiler, pass it to the CMake calls
-if(DEFINED $ENV{CC})
+if(DEFINED ENV{CC} AND DEFINED ENV{CXX})
   SET(INITIAL_CACHE "${INITIAL_CACHE}
 CMAKE_C_COMPILER:FILEPATH=$ENV{CC}
 CMAKE_CXX_COMPILER:FILEPATH=$ENV{CXX}
@@ -315,7 +315,7 @@ endif()
 ## Fixed in 2.8.7, but soon reverted in favor of CTEST_COVERAGE_EXTRA_FLAGS variable. However, until CMake 3.1 this variable is not respected
 ## in Ctest scripts but only from the CLI of ctest
 ## TODO require CMake 3.1 for coverage or use new make target OpenMS_coverage
-if($ENV{TEST_COVERAGE})
+if("$ENV{TEST_COVERAGE}" STREQUAL "ON")
   SET(CTEST_COVERAGE_EXTRA_FLAGS "-l -p -r -s ${CTEST_SOURCE_DIRECTORY}")
   SET(INITIAL_CACHE "${INITIAL_CACHE}
 CMAKE_C_FLAGS:STRING=-fprofile-arcs -ftest-coverage
@@ -343,7 +343,7 @@ endif()
 file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
 ##TODO check which OSX version
-if($ENV{PYOPENMS})
+if("$ENV{PYOPENMS}" STREQUAL "ON")
 	set(INITIAL_CACHE "${INITIAL_CACHE} PYOPENMS=$ENV{PYOPENMS}")
           
 	# http://stackoverflow.com/questions/22313407/clang-error-unknown-argument-mno-fused-madd-python-package-installation-fa
@@ -368,7 +368,7 @@ ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
 # runs cppcheck/lint on every file and parses the output with a regex)
 # TODO requires python??
 # TODO put in own cmake script
-if($ENV{ENABLE_STYLE_TESTING)
+if("$ENV{ENABLE_STYLE_TESTING" STREQUAL "ON")
     set(OLD_CTEST_BUILD_NAME ${CTEST_BUILD_NAME})
     set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}-Style)
     ctest_start(${DASHBOARD_MODEL} TRACK Style)
@@ -382,7 +382,7 @@ if($ENV{ENABLE_STYLE_TESTING)
     set(CTEST_BUILD_NAME ${OLD_CTEST_BUILD_NAME})
 endif()
 
-if($ENV{ENABLE_TOPP_TESTING} OR $ENV{ENABLE_CLASS_TESTING})
+if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STREQUAL "ON")
     # Do actual tool and class tests
     ctest_start  (${DASHBOARD_MODEL})
     # Reconfigure with style testing off. Class&TOPP are already in the InitialCache but "shadowed" by Style.
@@ -408,7 +408,7 @@ if($ENV{ENABLE_TOPP_TESTING} OR $ENV{ENABLE_CLASS_TESTING})
     # Coverage only makes sense with normal testing suite. (no style)
     # TODO Test it more thoroughly and/or switch to the new method for generating a coverage report.
     # Because I think Coverage reports are a bit hidden in CDash
-    if($ENV{TEST_COVERAGE})
+    if("$ENV{TEST_COVERAGE}" STREQUAL "ON")
         ctest_coverage(BUILD "${CTEST_BINARY_DIRECTORY}")
     endif()
     # E.g. for use with Jenkins or other Dashboards you can disable submission
@@ -417,7 +417,7 @@ if($ENV{ENABLE_TOPP_TESTING} OR $ENV{ENABLE_CLASS_TESTING})
         ctest_submit()
     endif()
     # Checker needs tests to be executed. Overwrites current Test.xml but creates a backup.
-    if($ENV{RUN_CHECKER})
+    if("$ENV{RUN_CHECKER}" STREQUAL "ON")
         include( "${SCRIPT_PATH}/FindPHP.cmake")
         find_package(php)
         if(NOT DOXYGEN_FOUND OR NOT PHP_EXECUTABLE)
@@ -431,13 +431,13 @@ endif()
 ## The python-checker tool only needs the class documentation in xml (target: doc_xml)
 ## Otherwise it can be executed independently from building pyOpenMS
 ## Nonetheless group the outputs into a single CDash submission entry when both are executed.
-if($ENV{PYOPENMS} OR $ENV{RUN_PYTHON_CHECKER})
+if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
-    if($ENV{PYOPENMS})
+    if("$ENV{PYOPENMS}" STREQUAL "ON")
         ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
         set(PYOPENMS_BUILT On)
     endif()
-    if($ENV{RUN_PYTHON_CHECKER})
+    if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
         ##TODO cleanup the include script. Remove ctest_start, ctest_submit, change of buildname
         include ( "${SCRIPT_PATH}/python_checker.cmake" )
     endif()
@@ -445,22 +445,22 @@ if($ENV{PYOPENMS} OR $ENV{RUN_PYTHON_CHECKER})
 endif()
 
 ## To build full html documentation with Tutorials.
-if($ENV{BUILD_DOCU})
+if("$ENV{BUILD_DOCU}" STREQUAL "ON")
   include ( "${SCRIPT_PATH}/docu.cmake" )
 endif()
 
 ## Needs only our libraries
-if($ENV{EXTERNAL_CODE_TESTS})
+if("$ENV{EXTERNAL_CODE_TESTS}" STREQUAL "ON")
   include ( "${SCRIPT_PATH}/external_code.cmake" )
 endif()
 
 ## Additionally builds full documentation.
 ## TODO check if it actually is not executed twice. It probably is -.-
-if($ENV{PACKAGE_TEST})
+if("$ENV{PACKAGE_TEST}" STREQUAL "ON")
   include ( "${SCRIPT_PATH}/package_test.cmake" )
 endif()
 
 ## Relatively independent from the rest. Needs THIRDPARTY binaries and TOPP, UTILS.
-if($ENV{ENABLE_PREPARE_KNIME_PACKAGE})
+if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON")
   include ( "${SCRIPT_PATH}/knime_test.cmake" )
 endif()
