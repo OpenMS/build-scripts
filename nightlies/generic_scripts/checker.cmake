@@ -22,7 +22,7 @@ MACRO (CTEST_CHECKER)
   safe_message("Starting checker with log in ${CHECKER_LOG}")
   
   execute_process(
-    COMMAND php ${CTEST_SOURCE_DIRECTORY}/tools/checker.php ${CTEST_SOURCE_DIRECTORY} ${CTEST_BINARY_DIRECTORY} -r
+    COMMAND ${PHP_EXECUTABLE} ${CTEST_SOURCE_DIRECTORY}/tools/checker.php ${CTEST_SOURCE_DIRECTORY} ${CTEST_BINARY_DIRECTORY} -r
     OUTPUT_FILE ${CHECKER_LOG}
     WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY}
   )
@@ -31,7 +31,7 @@ MACRO (CTEST_CHECKER)
 ENDMACRO(CTEST_CHECKER)
 
 # test again and execute checker on track/group Checker
-CTEST_START     (Nightly TRACK Checker)
+CTEST_START     (${DASHBOARD_MODEL} TRACK Checker)
 # In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
 # With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash 
 # Otherwise skip update completely
