@@ -97,7 +97,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{CONTRIB})
 ## For parallel building
 
 ## CTEST_BUILD_FLAGS will be used in later ctest_build()'s
-if($ENV{NUMBER_THREADS})
+if(DEFINED $ENV{NUMBER_THREADS})
   if(WIN32) ## and MSVC Generator
     set(CTEST_BUILD_FLAGS "/maxcpucount:$ENV{NUMBER_THREADS}")
   elseif(${GENERATOR} MATCHES "XCode") ## and Darwin
@@ -373,7 +373,7 @@ if($ENV{ENABLE_STYLE_TESTING)
     set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}-Style)
     ctest_start(${DASHBOARD_MODEL} TRACK Style)
     ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=On")
-    ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${NUMBER_THREADS})
+    ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL $ENV{NUMBER_THREADS})
     # E.g. for use with Jenkins or other Dashboards you can disable submission
     if(CDASH_SUBMIT)
         # Submit all
@@ -403,7 +403,7 @@ if($ENV{ENABLE_TOPP_TESTING} OR $ENV{ENABLE_CLASS_TESTING})
         set(CTEST_PROJECT_NAME "OpenMS")
     endif(WIN32)
     
-    ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${NUMBER_THREADS})
+    ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL $ENV{NUMBER_THREADS})
 
     # Coverage only makes sense with normal testing suite. (no style)
     # TODO Test it more thoroughly and/or switch to the new method for generating a coverage report.
