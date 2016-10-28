@@ -1,67 +1,134 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
+
+## See https://itk.org/Bug/bug_relationship_graph.php?bug_id=9599&graph=dependency (to get rid of CMake warnings)
+if(COMMAND CMAKE_POLICY) # CMake 2.4 does not have this command
+  if(POLICY CMP0011)
+    cmake_policy(SET CMP0011 NEW)
+  endif(POLICY CMP0011)
+endif(COMMAND CMAKE_POLICY)
+
+# Verbosity (off for now)
+set (CMAKE_VERBOSE_MAKEFILE OFF)
+
+# Additional scripts:
+# Path to look for additional scripts with macros.
+# Defaults to directory of this script.
+set (SCRIPT_PATH $ENV{SCRIPT_PATH})
+if (NOT EXISTS ${SCRIPT_PATH})
+	set (SCRIPT_PATH ${CMAKE_CURRENT_LIST_DIR})
+endif()
+# Loads general macros from the script dir.
+if(NOT DEFINED TEST_MACROS_INCLUDED)
+  include( "${SCRIPT_PATH}/global_macros.cmake" )
+endif()
+
 ## Set non-required boolean variables to "Off" if not present
-set (not_required_bool "KNIME_TEST;PACKAGE_TEST;EXTERNAL_CODE_TESTS;TEST_COVERAGE;TEST_STYLE;BUILD_PYOPENMS;RUN_CHECKER;RUN_PYTHON_CHECKER;BUILD_DOCU;RERUN")
+set (not_required_bool "ENABLE_PREPARE_KNIME_PACKAGE;PACKAGE_TEST;EXTERNAL_CODE_TESTS;TEST_COVERAGE;ENABLE_STYLE_TESTING;PYOPENMS;RUN_CHECKER;RUN_PYTHON_CHECKER;BUILD_DOCU")
 
 foreach(var IN LISTS not_required_bool)
   ## if undefined or not configured:
-  if(NOT DEFINED ${var} OR ${var} MATCHES "\@*\@")
-    set(${var} Off)
+  if(NOT DEFINED $ENV{${var}} OR $ENV{${var}} MATCHES "\@*\@")
+    set($ENV{${var}} Off)
   endif()
 endforeach()
 
 ## Check for all required variables that have to be set in the main script and raise errors
-set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_IDENTIFIER;COMPILER_IDENTIFIER;SCRIPT_PATH;CTEST_SOURCE_DIRECTORY;CONTRIB;BUILD_TYPE;QT_QMAKE_BIN_PATH;GENERATOR")
+set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SCRIPT_PATH;CTEST_SOURCE_DIRECTORY;CONTRIB;GENERATOR")
+if (UNIX)
+  ## On Unix please always specify compiler to choose the right one.
+  set (required_variables ${required_variables} CC CXX)
+endif()
 
 foreach(var IN LISTS required_variables)
-  if(NOT DEFINED ${var})
-    safe_message(FATAL_ERROR "Variable <${var}> needs to be set to run this script")
+  if(NOT DEFINED $ENV{${var}})
+    safe_message(FATAL_ERROR "Environment variable <${var}> needs to be set to run this script")
   endif()
 endforeach()
 
 ## Unset non-required string variables if not present
-set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_COVERAGE_COMMAND")
+## TODO remove. We can check for undefined.
+set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_COVERAGE_COMMAND;BUILD_TYPE;QT_QMAKE_BIN_PATH")
 
 foreach(var IN LISTS not_required_str)
-  if(NOT DEFINED ${var} OR ${var} MATCHES "\@*\@")
-    unset(${var})
+  if(NOT DEFINED $ENV{${var}})
+    safe_message("Environment variable <${var}> not defined. Using default.")
   endif()
 endforeach()
 
-## Add user paths to CMAKE_PREFIX_PATH to help in the search of libraries and programs
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CONTRIB})
+## TODO we could convert to ENV everywhere. Leave it for now.
+set (CDASH_SUBMIT $ENV{CDASH_SUBMIT})
+
+# Git is actually not needed if you do not use ctest_update() but it should be present anyway
+find_package(Git)
+set (CTEST_GIT_COMMAND    "${GIT_EXECUTABLE}" )
+# Setup important CTest variables (dependent on the ctest/cmake binary used to call this script)
+set (CTEST_CMAKE_COMMAND  "${CMAKE_COMMAND}" )
+set (CTEST_CTEST_COMMAND  "${CMAKE_CTEST_COMMAND}" )
+set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
+set (CTEST_CHECK_HTTP_ERROR ON )
+
+# Platform specific setup:
+if(UNIX)
+	# Warn if it is not Makefiles or XCode
+	if (NOT GENERATOR MATCHES "Unix Makefiles")
+	    if (APPLE)
+	        if (NOT GENERATOR MATCHES "XCode")
+		    message(FATAL_ERROR "Only XCode or Unix Makefiles supported on Mac")
+		endif()
+            else()
+	        message(FATAL_ERROR "Only Unix Makefiles supported on Linux")
+	    endif()
+	endif()
+elseif(WIN32)
+    ## Coverage and other stuff will crash at configure time
+    if($ENV{PACKAGE_TEST})
+        safe_message("Packaging not covered by CMake under Windows. Please use the NSIS installer scripts.")
+    endif()
+	# check if generator is VS (e.g., Visual Studio 10 Win64)
+	if (NOT $ENV{GENERATOR} MATCHES "Visual Studio*")
+		   message(FATAL_ERROR "Only Visual Studio supported on Windows")
+	endif()
+endif()
+
+## Add contrib path to CMAKE_PREFIX_PATH to help in the search of libraries
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{CONTRIB})
 
 ## For parallel building
 
 ## CTEST_BUILD_FLAGS will be used in later ctest_build()'s
-if(NUMBER_THREADS)
+if($ENV{NUMBER_THREADS})
   if(WIN32) ## and MSVC Generator
-    set(CTEST_BUILD_FLAGS "/maxcpucount:${NUMBER_THREADS}")
+    set(CTEST_BUILD_FLAGS "/maxcpucount:$ENV{NUMBER_THREADS}")
   elseif(${GENERATOR} MATCHES "XCode") ## and Darwin
-    set(CTEST_BUILD_FLAGS "-jobs" "${NUMBER_THREADS}")
+    set(CTEST_BUILD_FLAGS "-jobs" "$ENV{NUMBER_THREADS}")
   else() ## Unix and Makefiles
-    set(CTEST_BUILD_FLAGS "-j${NUMBER_THREADS}")
+    set(CTEST_BUILD_FLAGS "-j$ENV{NUMBER_THREADS}")
   endif()
 else()
   # not defined. Set to serial for further usage.
   # We could determine max nr of cpus with the ProcessorCount module but especially with Jenkins
   # You do not want to always use ALL cores possible.
-  set(NUMBER_THREADS "1")
+  set($ENV{NUMBER_THREADS} "1")
 endif()
 
 ## Compiler identifier is e.g. MSVC10x64 or gcc4.9 or clang3.3
-SET (CTEST_BUILD_NAME "${OPENMS_BUILDNAME_PREFIX}-${SYSTEM_IDENTIFIER}-${COMPILER_IDENTIFIER}-${BUILD_TYPE}")
+SET (CTEST_BUILD_NAME "$ENV{OPENMS_BUILDNAME_PREFIX}-$ENV{SYSTEM_IDENTIFIER}-$ENV{COMPILER_IDENTIFIER}-$ENV{BUILD_TYPE}")
 
 ## check requirements for special CTest features (style/coverage) and append additional information to the build name
 ## TODO Requires GCC or newer Clang as compiler, maybe test here.
 ## TODO Think about putting these settings into own CMakes like the other options.
 ## TODO Use new OpenMS_coverage target
-if(TEST_COVERAGE)
-  if (NOT CTEST_COVERAGE_COMMAND)
-      safe_message("Warning: Coverage tests enabled but no coverage command given: Defaulting to /usr/bin/gcov")
-      set (CTEST_COVERAGE_COMMAND "/usr/bin/gcov")
+if($ENV{TEST_COVERAGE})
+  if (NOT $ENV{CTEST_COVERAGE_COMMAND})
+      FIND_PROGRAM( GCOV_PATH gcov )
+      if (NOT GCOV_PATH)
+        safe_message(FATAL_ERROR "Coverage tests enabled but no coverage command given. Default gcov is also not in PATH.")
+      endif()
+      set (CTEST_COVERAGE_COMMAND "${GCOV_PATH}")
   endif()
   # Holds additional excluding tests for coverage
   include( "${SCRIPT_PATH}/exclude_for_coverage.cmake" )
-  if(NOT BUILD_TYPE STREQUAL Debug)
+  if(NOT $ENV{BUILD_TYPE} STREQUAL Debug)
     safe_message(FATAL_ERROR "For coverage check, the library should be built in Debug mode with Debug symbols.")
   endif()
   set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}-Coverage")
@@ -74,7 +141,9 @@ if(NOT $ENV{SEARCH_ENGINES_DIRECTORY})
   if($ENV{ENABLE_PREPARE_KNIME_PACKAGE} OR $ENV{PACKAGE_TEST})
     safe_message(FATAL_ERROR "Trying to build a package or KNIME plugin without setting the path to the Thirdparty binaries (SEARCH_ENGINES_DIRECTORY)")
   else()
-    safe_message("Warning: Trying to test OpenMS without setting the path to the Thirdparty binaries (SEARCH_ENGINES_DIRECTORY). This will disable their tests.")
+    if($ENV{ENABLE_TOPP_TESTING})
+      safe_message("Warning: Trying to test OpenMS without setting the path to the Thirdparty binaries (SEARCH_ENGINES_DIRECTORY). This will disable their tests.")
+    endif()
   endif()
 else()
   if($ENV{ENABLE_TOPP_TESTING})
@@ -119,7 +188,7 @@ set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 set (CTEST_CMAKE_GENERATOR "$ENV{GENERATOR}" )
 set (CTEST_BUILD_CONFIGURATION "$ENV{BUILD_TYPE}")
 
-# Setup Paths for the tests (e.g. ExecutePipeline)
+# Setup Paths for the tests to where the binaries will be generated (e.g. for ExecutePipeline test)
 if(WIN32)
   ## VS is always multiconf
   set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}")
@@ -144,7 +213,7 @@ endif()
 
 # Decide on CDash Dashboard model to use
 # Mainly cosmetic reasons since we do not use ctest_update
-# Might change how the Testing folders are generated.
+# Though, it might change how the Testing folders are generated and named.
 if (OPENMS_BUILDNAME_PREFIX MATCHES "pr-.*")
   set(DASHBOARD_MODEL Continuous)
 elseif(OPENMS_BUILDNAME_PREFIX STREQUAL "develop" OR OPENMS_BUILDNAME_PREFIX STREQUAL "master")
@@ -155,27 +224,38 @@ endif()
 # ensure the config is known to ctest
 set(CTEST_COMMAND "${CTEST_COMMAND} -D ${DASHBOARD_MODEL} -C ${BUILD_TYPE} ")
 
-# If it was set, use custom install dir (e.g. because of missing write permissions in system paths)
-# Packaging calls the install target.
-if(OPENMS_INSTALL_DIR)
-  SET(INITIAL_CACHE "${INITIAL_CACHE}
-    CMAKE_INSTALL_PREFIX:PATH=${OPENMS_INSTALL_DIR}
-    ")
-  message("Warning: CMAKE_INSTALL_PREFIX cache variable for following CMake calls is overwritten/set to ${OPENMS_INSTALL_DIR}.")
-endif()
-
+################################# Set initial cache for the following ctest runs #########################################
+## Add always
 SET(INITIAL_CACHE "${INITIAL_CACHE}
 CMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
 CMAKE_BUILD_TYPE:STRING=$ENV{BUILD_TYPE}
 CMAKE_GENERATOR:INTERNAL=$ENV{GENERATOR}
-QT_QMAKE_EXECUTABLE:FILEPATH=$ENV{QT_QMAKE_BIN_PATH}/qmake
-ENABLE_TOPP_TESTING:BOOL=$ENV{ENABLE_TOPP_TESTING}
-ENABLE_CLASS_TESTING:BOOL=$ENV{ENABLE_CLASS_TESTING}
-ENABLE_STYLE_TESTING:BOOL=$ENV{ENABLE_STYLE_TESTING}
-WITH_GUI:BOOL=$ENV{WITH_GUI}
-DISABLE_WAVELET2DTEST:BOOL=$ENV{DISABLE_WAVELET2DTEST}
-ADDRESS_SANITIZER:BOOL=$ENV{ADDRESS_SANITIZER}
 ")
+
+## Add only if present
+set (additional_vars ENABLE_TOPP_TESTING ENABLE_CLASS_TESTING ENABLE_STYLE_TESTING WITH_GUI DISABLE_WAVELET2DTEST ADDRESS_SANITIZER)
+foreach(var IN LISTS additional_vars)
+    if (DEFINED $ENV{$var})
+      SET(INITIAL_CACHE "${INITIAL_CACHE}
+        ${var}=$ENV{${var}}
+      ")
+    endif()
+endforeach()
+
+## Special cases
+if ($ENV{QT_QMAKE_BIN_PATH})
+      SET(INITIAL_CACHE "${INITIAL_CACHE}
+        QT_QMAKE_EXECUTABLE=$ENV{QT_QMAKE_BIN_PATH}/qmake
+      ")
+endif()
+# If it was set, use custom install dir (e.g. because of missing write permissions in system paths)
+# Packaging calls the install target.
+if($ENV{OPENMS_INSTALL_DIR})
+  SET(INITIAL_CACHE "${INITIAL_CACHE}
+    CMAKE_INSTALL_PREFIX:PATH=$ENV{OPENMS_INSTALL_DIR}
+    ")
+  message("Warning: CMAKE_INSTALL_PREFIX cache variable for following CMake calls is overwritten/set to $ENV{OPENMS_INSTALL_DIR}.")
+endif()
 
 ## On win, we use unity builds
 ## On unixes, we try not to link boost statically (mostly because of OSX)
@@ -245,7 +325,7 @@ CMAKE_SHARED_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage
 COVERAGE_COMMAND:STRING=${CTEST_COVERAGE_COMMAND}
 CTEST_COVERAGE_COMMAND:STRING=${CTEST_COVERAGE_COMMAND}
 " )
-endif(TEST_COVERAGE)
+endif()
 
 ## Please specify the deployment target yourself, if you want to build OpenMS backwards compatible.
 ## TODO needs more testing if this works reliably.
@@ -289,7 +369,7 @@ ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
 # TODO put in own cmake script
 if($ENV{ENABLE_STYLE_TESTING)
     set(OLD_CTEST_BUILD_NAME ${CTEST_BUILD_NAME})
-    set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}_Style)
+    set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}-Style)
     ctest_start(${DASHBOARD_MODEL} TRACK Style)
     ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=On")
     ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${NUMBER_THREADS})
