@@ -44,7 +44,7 @@ foreach(var IN LISTS not_required_bool)
 endforeach()
 
 ## Check for all required variables that have to be set in the main script and raise errors
-set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SCRIPT_PATH;CTEST_SOURCE_DIRECTORY;CONTRIB;GENERATOR")
+set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SCRIPT_PATH;SOURCE_PATH;CONTRIB;GENERATOR")
 if (UNIX)
   ## On Unix please always specify compiler to choose the right one.
   set (required_variables ${required_variables} CC CXX)
@@ -82,6 +82,8 @@ set (CTEST_CTEST_COMMAND  "${CMAKE_CTEST_COMMAND}" )
 set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
 set (CTEST_CHECK_HTTP_ERROR ON )
 set (CTEST_SITE "$ENV{CTEST_SITE}")
+set (CTEST_SOURCE_DIRECTORY "$ENV{SOURCE_PATH}" )
+set (BUILD_DIRECTORY        "$ENV{BUILD_PATH}" )
 
 # Platform specific setup:
 if(UNIX)
