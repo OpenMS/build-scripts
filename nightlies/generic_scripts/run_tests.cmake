@@ -44,7 +44,7 @@ foreach(var IN LISTS not_required_bool)
 endforeach()
 
 ## Check for all required variables that have to be set in the main script and raise errors
-set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SCRIPT_PATH;SOURCE_PATH;CONTRIB;GENERATOR")
+set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SCRIPT_PATH;SOURCE_PATH;BUILD_PATH;CONTRIB;GENERATOR")
 if (UNIX)
   ## On Unix please always specify compiler to choose the right one.
   set (required_variables ${required_variables} CC CXX)
