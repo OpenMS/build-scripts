@@ -131,4 +131,4 @@ endif()
 
 # Next steps, found in test_macros.cmake
 prepare_notes()
-run_tests()
+run_tests_from_config()
