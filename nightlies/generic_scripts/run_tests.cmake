@@ -25,7 +25,7 @@ endif()
 set (DEBUG ON)
 macro (debug_message mymessage)
   if(DEBUG)
-   safe_message(mymessage)
+   safe_message(${mymessage})
   endif()
 endmacro(debug_message)
 
