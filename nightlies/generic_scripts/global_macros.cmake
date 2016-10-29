@@ -87,3 +87,8 @@ macro(run_tests)
   safe_message("Starting tests!!")
   include ( ${SCRIPT_PATH}/run_tests.cmake)
 endmacro()
+
+macro(run_tests_from_config)
+  safe_message("Starting tests!!")
+  include ( ${SCRIPT_PATH}/run_tests_with_config.cmake)
+endmacro()
