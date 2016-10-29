@@ -385,7 +385,7 @@ ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
 # runs cppcheck/lint on every file and parses the output with a regex)
 # TODO requires python??
 # TODO put in own cmake script
-if("$ENV{ENABLE_STYLE_TESTING" STREQUAL "ON")
+if("$ENV{ENABLE_STYLE_TESTING}" STREQUAL "ON")
     set(OLD_CTEST_BUILD_NAME ${CTEST_BUILD_NAME})
     set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}-Style)
     ctest_start(${DASHBOARD_MODEL} TRACK Style)
