@@ -36,7 +36,7 @@ set (not_required_bool "ENABLE_PREPARE_KNIME_PACKAGE;PACKAGE_TEST;EXTERNAL_CODE_
 foreach(var IN LISTS not_required_bool)
   ## if undefined or not configured:
   if(NOT DEFINED ENV{${var}})
-    set(ENV{${var}} Off)
+    set(ENV{${var}} OFF)
     debug_message("${var} is undefined. Defaulting to OFF.")
   else()
     debug_message("${var} is defined as $ENV{${var}}")
