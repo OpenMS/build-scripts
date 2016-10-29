@@ -88,9 +88,9 @@ set (BUILD_DIRECTORY        "$ENV{BUILD_PATH}" )
 # Platform specific setup:
 if(UNIX)
 	# Warn if it is not Makefiles or XCode
-	if (NOT GENERATOR MATCHES "Unix Makefiles")
+	if (NOT "$ENV{GENERATOR}" STREQUAL "Unix Makefiles")
 	    if (APPLE)
-	        if (NOT GENERATOR MATCHES "XCode")
+	        if (NOT "$ENV{GENERATOR}" STREQUAL "XCode")
 		    message(FATAL_ERROR "Only XCode or Unix Makefiles supported on Mac")
 		endif()
             else()
