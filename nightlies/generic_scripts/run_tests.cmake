@@ -44,7 +44,7 @@ foreach(var IN LISTS not_required_bool)
 endforeach()
 
 ## Check for all required variables that have to be set in the main script and raise errors
-set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SOURCE_PATH;BUILD_PATH;CONTRIB;GENERATOR")
+set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SOURCE_PATH;BUILD_PATH;CONTRIB_PATH;GENERATOR")
 if (UNIX)
   ## On Unix please always specify compiler to choose the right one.
   set (required_variables ${required_variables} CC CXX)
@@ -109,7 +109,7 @@ elseif(WIN32)
 endif()
 
 ## Add contrib path to CMAKE_PREFIX_PATH to help in the search of libraries
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{CONTRIB})
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{CONTRIB_PATH})
 
 ## For parallel building
 
@@ -216,9 +216,9 @@ if(WIN32)
 
   # Setup additional environment variables for windows, so that dependencies are foudn during execution
   ## Add rest (e.g. QT, CONTRIB)
-  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
-  set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}")
-  set (ENV{Path} "$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{Path}")
+  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB_PATH}/lib\;$ENV{Path}")
+  set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB_PATH}/lib\;$ENV{PATH}")
+  set (ENV{Path} "$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB_PATH}/lib\;$ENV{Path}")
 else(WIN32)
   ## Multi config like Xcode?
   if("$ENV{GENERATOR}" STREQUAL "XCode")
