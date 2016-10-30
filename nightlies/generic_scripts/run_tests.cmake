@@ -240,7 +240,7 @@ else()
   set(DASHBOARD_MODEL Experimental)
 endif()
 # ensure the config is known to ctest
-set(CTEST_COMMAND "${CTEST_COMMAND} -D ${DASHBOARD_MODEL} -C ${BUILD_TYPE} ")
+set(CTEST_COMMAND "${CTEST_COMMAND} -D ${DASHBOARD_MODEL} -C $ENV{BUILD_TYPE} ")
 
 ################################# Set initial cache for the following ctest runs #########################################
 ## Add always
