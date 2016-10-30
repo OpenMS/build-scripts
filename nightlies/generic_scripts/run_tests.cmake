@@ -75,16 +75,25 @@ set (CDASH_SUBMIT $ENV{CDASH_SUBMIT})
 
 # Git is actually not needed if you do not use ctest_update() but it should be present anyway
 find_package(Git)
-set (CTEST_GIT_COMMAND    "${GIT_EXECUTABLE}" )
+set (CTEST_GIT_COMMAND        "${GIT_EXECUTABLE}" )
 # Setup important CTest variables (dependent on the ctest/cmake binary used to call this script)
-set (CTEST_CMAKE_COMMAND  "${CMAKE_COMMAND}" )
-set (CTEST_CTEST_COMMAND  "${CMAKE_CTEST_COMMAND}" )
-set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}" )
-set (CTEST_CHECK_HTTP_ERROR ON )
-set (CTEST_SITE "$ENV{CTEST_SITE}")
-set (CTEST_SOURCE_DIRECTORY "$ENV{SOURCE_PATH}" )
-set (BUILD_DIRECTORY        "$ENV{BUILD_PATH}" )
-set (CTEST_BINARY_DIRECTORY "$ENV{BUILD_PATH}" )
+set (CTEST_COMMAND            "${CMAKE_CTEST_COMMAND}" )
+set (CTEST_UPDATE_COMMAND     "${CTEST_GIT_COMMAND}" )
+set (CTEST_CHECK_HTTP_ERROR   ON )
+set (CTEST_SITE               "$ENV{CTEST_SITE}")
+set (CTEST_SOURCE_DIRECTORY   "$ENV{SOURCE_PATH}" )
+## TODO remove next and always use ctest_binary_directory
+set (BUILD_DIRECTORY          "$ENV{BUILD_PATH}" )
+set (CTEST_BINARY_DIRECTORY   "$ENV{BUILD_PATH}" )
+set (CTEST_CMAKE_GENERATOR    "$ENV{GENERATOR}" )
+set (CTEST_CONFIGURATION_TYPE "$ENV{BUILD_TYPE}")
+## Not sure if the next one is needed
+set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
+## Compiler identifier is e.g. MSVC10x64 or gcc4.9 or clang3.3
+SET (CTEST_BUILD_NAME "$ENV{OPENMS_BUILDNAME_PREFIX}-$ENV{SYSTEM_IDENTIFIER}-$ENV{COMPILER_IDENTIFIER}-$ENV{BUILD_TYPE}")
+
+## Add contrib path to CMAKE_PREFIX_PATH to help in the search of libraries
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{CONTRIB_PATH})
 
 # Platform specific setup:
 if(UNIX)
@@ -109,9 +118,6 @@ elseif(WIN32)
 	endif()
 endif()
 
-## Add contrib path to CMAKE_PREFIX_PATH to help in the search of libraries
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{CONTRIB_PATH})
-
 ## For parallel building
 
 ## CTEST_BUILD_FLAGS will be used in later ctest_build()'s
@@ -130,8 +136,7 @@ else()
   set(ENV{NUMBER_THREADS} "1")
 endif()
 
-## Compiler identifier is e.g. MSVC10x64 or gcc4.9 or clang3.3
-SET (CTEST_BUILD_NAME "$ENV{OPENMS_BUILDNAME_PREFIX}-$ENV{SYSTEM_IDENTIFIER}-$ENV{COMPILER_IDENTIFIER}-$ENV{BUILD_TYPE}")
+
 
 ## check requirements for special CTest features (style/coverage) and append additional information to the build name
 ## TODO Requires GCC or newer Clang as compiler, maybe test here.
@@ -200,12 +205,6 @@ if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON" AND NOT Java_JAR_EXECUTABL
   safe_message(FATAL_ERROR "Packaging binaries for KNIME requires the JAR executable (usually installed with the SDK). Put it in the (CMAKE_PREFIX_)PATH.")
 endif()
 
-## Translate to "official" CTEST variables
-## Not sure if the next one is needed
-set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
-set (CTEST_CMAKE_GENERATOR "$ENV{GENERATOR}" )
-set (CTEST_BUILD_CONFIGURATION "$ENV{BUILD_TYPE}")
-
 # Setup Paths for the tests to where the binaries will be generated (e.g. for ExecutePipeline test)
 if(WIN32)
   ## VS is always multiconf
@@ -230,7 +229,7 @@ else(WIN32)
 endif()
 
 # Decide on CDash Dashboard model to use
-# Mainly cosmetic reasons since we do not use ctest_update
+# Mainly cosmetic reasons for the Dashboard since we do not use ctest_update and only do a single build per CMake script.
 # Though, it might change how the Testing folders are generated and named.
 if ("$ENV{OPENMS_BUILDNAME_PREFIX}" MATCHES "pr-.*")
   set(DASHBOARD_MODEL Continuous)
