@@ -201,7 +201,6 @@ if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON" AND NOT Java_JAR_EXECUTABL
 endif()
 
 ## Translate to "official" CTEST variables
-set (CTEST_BINARY_DIRECTORY "$ENV{BUILD_DIR}")
 ## Not sure if the next one is needed
 set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 set (CTEST_CMAKE_GENERATOR "$ENV{GENERATOR}" )
