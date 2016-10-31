@@ -244,7 +244,7 @@ set(CTEST_COMMAND "${CTEST_COMMAND} -D ${DASHBOARD_MODEL} -C $ENV{BUILD_TYPE} ")
 ################################# Set initial cache for the following ctest runs #########################################
 ## Add always
 SET(INITIAL_CACHE "${INITIAL_CACHE}
-CMAKE_PREFIX_PATH:STRING="${CMAKE_PREFIX_PATH}"
+CMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
 CMAKE_BUILD_TYPE:STRING=$ENV{BUILD_TYPE}
 CMAKE_GENERATOR:INTERNAL=$ENV{GENERATOR}
 ")
