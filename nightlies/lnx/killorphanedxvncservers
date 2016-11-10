@@ -1,8 +1,0 @@
-#!/bin/bash
-
-locks=$(find /tmp/ -user aiche -print | egrep "X" | egrep "lock")
-for lock in $locks;
-do
-	echo "killing $lock"
-  kill $(cat $lock)
-done
