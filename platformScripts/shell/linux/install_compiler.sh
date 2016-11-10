@@ -1,1 +1,1 @@
-source $DISTRO/install_compiler.sh
+source $DISTRO/install_compiler.sh $1
