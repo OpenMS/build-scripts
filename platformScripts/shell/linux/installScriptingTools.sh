@@ -1,0 +1,1 @@
+source $DISTRO/installScriptingTools.sh

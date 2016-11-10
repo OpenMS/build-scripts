@@ -1,0 +1,1 @@
+source $DISTRO/setupXvfb.sh
