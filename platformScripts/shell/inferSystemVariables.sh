@@ -1,3 +1,4 @@
+source utilityFunctions.sh
 OPSYS_detect
 source $OPSYS/inferSystemVariables.sh
 ## Should work on almost all distros
