@@ -56,8 +56,15 @@ OPSYS_detect() {
   # is not our $_OSTYPE. The choice is not very good because
   # a typo can just break the logic of the program.
   if [[ "$OSTYPE" != "darwin"* ]]; then
-    _error "Can't detect OS type from /etc/issue. Please add it to setup script."
+    echo "Can't detect OS type from /etc/issue. Please add it to setup script."
+    exit 1
   else
-    command -v brew >/dev/null && _set_arch macOS macOS macOS brew || echo "On macOS but hombrew was not found. Please install it with '/usr/bin/ruby -e \$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)' and put it in the PATH." && exit 1
+    if [[ -z $(command -v brew >/dev/null) ]]
+      then 
+      _set_arch macOS macOS macOS brew
+    else 
+      echo "On macOS but hombrew was not found. Please install it with '/usr/bin/ruby -e \$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)' and put it in the PATH."
+      exit 1
+    fi
   fi
 }
