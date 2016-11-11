@@ -31,7 +31,7 @@ function checkGitRepo {
 function sourceHere {
   currDir=$(dirname $(echo "\$0"))
   inputDir=$(dirname $1)
-  pushd inputDir
+  pushd $inputDir
     source $(basename $1)
   popd
 }
