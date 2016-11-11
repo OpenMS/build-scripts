@@ -40,7 +40,7 @@ _set_arch() {
 }
 
 # Detect package type
-OSYS_detect() {
+OPSYS_detect() {
   _found_arch linux arch arch pacman "Arch Linux" && return
   _found_arch linux debian gnu apt-get "Debian GNU/Linux" && return
   _found_arch linux debian ubuntu apt-get "Ubuntu" && return
