@@ -1,8 +1,3 @@
-# Rough check of the setup
-mkdir $LOG_PATH
-mkdir $BUILD_PATH
-mkdir $INSTALL_PATH
-
 tick "Updating package manager"
 sourceHere $OPSYS/updatePackageManager.sh
 tock

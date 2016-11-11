@@ -31,9 +31,9 @@ function checkGitRepo {
 function sourceHere {
   currDir=$(dirname $(echo "\$0"))
   inputDir=$(dirname $1)
-  pushd $inputDir
+  pushd $inputDir > /dev/null
     source $(basename $1)
-  popd
+  popd > /dev/null
 }
 
 # Detect package type from /etc/issue
