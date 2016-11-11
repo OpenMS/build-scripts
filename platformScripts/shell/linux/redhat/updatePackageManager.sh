@@ -1,1 +1,1 @@
-sudo apt-get -y update
+sudo yum -y upgrade
