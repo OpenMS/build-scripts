@@ -1,2 +1,1 @@
-sudo yum -y upgrade
-sudo yum -y install redhat-lsb-core
+sudo yum -y install redhat-lsb-core >> $LOG_PATH/packages.log 2>&1
