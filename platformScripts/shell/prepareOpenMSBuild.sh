@@ -1,5 +1,3 @@
-sourceHere utilityFunctions.sh
-
 # Rough check of the setup
 mkdir $LOG_PATH
 mkdir $BUILD_PATH

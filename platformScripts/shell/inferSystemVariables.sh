@@ -1,4 +1,3 @@
-sourceHere utilityFunctions.sh
 OPSYS_detect
 sourceHere $OPSYS/inferSystemVariables.sh
 ## Should work on almost all distros
