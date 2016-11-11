@@ -1,1 +1,1 @@
-echo "Expecting running Xserver on Mac.."
+echo "Quartz should be running on Mac.."

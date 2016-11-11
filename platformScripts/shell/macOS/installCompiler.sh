@@ -1,11 +1,15 @@
 if [[ $1 =~ ^appleclang*$ ]]
   then
   sourceHere installCommandlineTools.sh
+  export COMPILER_ID="$1"
+  export CXX=$(which clang++)
+  export CC=$(which clang)
+  echo "Installed $COMPILER_ID"
 elif [[ $1 =~ ^g++*$ ]]
     then
     formulaname=${1/+/c}
-    brew tap homebrew/versions
-    brew install $formulaname
+    brew tap homebrew/versions >> $LOG_PATH/packages.log 2>&1
+    brew install $formulaname >> $LOG_PATH/packages.log 2>&1
     if [[ -z $($1 -dumpversion) ]]
     then
       export COMPILER_ID="g++-$(g++ -dumpversion)"
@@ -16,6 +20,7 @@ elif [[ $1 =~ ^g++*$ ]]
       echo "Compiler installation failed. Check package name, repo settings/availability and the script $0."    
     fi
 elif [[ $1 =~ ^clang*$ ]]
+    ## TODO check how to set CXX and CC so that the right clang is used.
     echo "Not supported yet"
     exit 1
 else
