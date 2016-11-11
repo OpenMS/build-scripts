@@ -21,9 +21,15 @@ tock
 # Virtual Xserver for OpenMS -WITH_GUI option
 if [ "$WITH_GUI" == "ON" ]
   then
-    tick "Setting up virtual X-Server"
-    sourceHere $OPSYS/setupXvfb.sh
-    tock
+    ## TODO And not Windows
+    if [[ -z $DISPLAY ]]
+      then
+      tick "Setting up virtual X-Server"
+      sourceHere $OPSYS/setupXvfb.sh
+      tock
+    else
+      echo "Window System running on Display $DISPLAY. Using this.."
+    fi
 fi
 
 # Install OpenMS dependencies

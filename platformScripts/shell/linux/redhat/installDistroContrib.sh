@@ -4,10 +4,10 @@
 
 # If not installed through contrib
 # libzip might actually not be necessary but it is very small
-sudo apt-get -y install libboost-regex-dev libboost-iostreams-dev libboost-date-time-dev libboost-math-dev \
-                        libsvm-dev \
-                        libglpk-dev \
+sudo yum -y install     boost-devel\
+                        libsvm-devel \
+                        glpk-devel \
                         libzip-dev \
-                        zlib1g-dev \
-                        libxerces-c-dev \
-                        libbz2-dev >> $LOG_PATH/packages.log 2>&1
+                        zlib-devel \
+                        xerces-c-devel \ 
+                        bzip2-devel >> $LOG_PATH/packages.log 2>&1

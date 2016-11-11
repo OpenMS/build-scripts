@@ -1,1 +1,1 @@
-sudo apt-get -y install curl git tar vim wget zip openssh-server subversion lsb-release > $LOG_PATH/packages.log 2>&1
+sudo yum -y install curl perl git tar vim wget zip openssh-server subversion > $LOG_PATH/packages.log 2>&1
