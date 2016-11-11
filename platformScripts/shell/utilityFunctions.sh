@@ -29,7 +29,11 @@ function checkGitRepo {
 
 # Source from current script dir
 function sourceHere {
-  source $(dirname $(echo "\$0"))/$1
+  currDir=$(dirname $(echo "\$0"))
+  inputDir=$(dirname $1)
+  pushd inputDir
+    source $(basename $1)
+  popd
 }
 
 # Detect package type from /etc/issue
