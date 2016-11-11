@@ -60,8 +60,12 @@ OPSYS_detect() {
   _found_arch linux redhat fedora yum "Fedora" && return
   _found_arch linux suse suse zypper "SUSE" && return
 
-  [[ -z "$OPSYS" ]] || return
+  if [[ $(uname -s) =~ ^CYGWIN.*$ ]]
+    then
+    _set_arch cygwin cygwin cygwin none
+  fi
 
+  [[ -z "$OPSYS" ]] || return
   # See also https://github.com/icy/pacapt/pull/22
   # Please not that $OSTYPE (which is `linux-gnu` on Linux system)
   # is not our $_OSTYPE. The choice is not very good because
