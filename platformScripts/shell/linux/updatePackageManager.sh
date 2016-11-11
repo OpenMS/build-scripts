@@ -1,1 +1,1 @@
-source $DISTRO/updatePackageManager.sh
+sourceHere $DISTRO/updatePackageManager.sh

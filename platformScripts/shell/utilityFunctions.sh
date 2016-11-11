@@ -27,6 +27,11 @@ function checkGitRepo {
   cd -
 }
 
+# Source from current script dir
+function sourceHereHere {
+  source $(dirname "$0")/$1
+}
+
 # Detect package type from /etc/issue
 _found_arch() {
   grep -qis "$5" /etc/issue && _set_arch $1 $2 $3 $4

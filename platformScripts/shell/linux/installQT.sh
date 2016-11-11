@@ -1,1 +1,1 @@
-source $DISTRO/installQT.sh
+sourceHere $DISTRO/installQT.sh

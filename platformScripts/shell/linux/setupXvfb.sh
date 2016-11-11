@@ -1,1 +1,1 @@
-source $DISTRO/setupXvfb.sh
+sourceHere $DISTRO/setupXvfb.sh

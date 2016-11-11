@@ -1,1 +1,1 @@
-source $SUBDISTRO_VERSION/installJDK.sh
+sourceHere $SUBDISTRO_VERSION/installJDK.sh

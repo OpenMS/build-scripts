@@ -1,1 +1,1 @@
-source $DISTRO/installJRE.sh
+sourceHere $DISTRO/installJRE.sh

@@ -1,6 +1,6 @@
 if [[ $1 ~= ^appleclang*$ ]]
   then
-  source installCommandlineTools.sh
+  sourceHere installCommandlineTools.sh
 elif [[ $1 ~= ^g++*$ ]]
     then
     formulaname=${1/+/c}

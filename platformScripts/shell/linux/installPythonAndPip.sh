@@ -1,1 +1,1 @@
-source $DISTRO/installPythonAndPip.sh
+sourceHere $DISTRO/installPythonAndPip.sh

@@ -1,1 +1,1 @@
-source $DISTRO/installDocuTools.sh
+sourceHere $DISTRO/installDocuTools.sh

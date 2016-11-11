@@ -1,40 +1,37 @@
-source utilityFunctions.sh
+sourceHere utilityFunctions.sh
 
 # Rough check of the setup
 mkdir $LOG_PATH
 mkdir $BUILD_PATH
 mkdir $INSTALL_PATH
 
-#Should be called in Jenkins
-#source inferSystemVariables.sh
-
 tick "Updating package manager"
-source $OPSYS/updatePackageManager.sh
+sourceHere $OPSYS/updatePackageManager.sh
 tock
 
 tick "Installing scripting tools"
-source $OPSYS/installScriptingTools.sh
+sourceHere $OPSYS/installScriptingTools.sh
 tock
 
 # Rough check of the setup, needs Git
 checkGitRepo $SOURCE_PATH
 
 tick "Installing required build tools for OpenMS"
-source $OPSYS/installBuildTools.sh
+sourceHere $OPSYS/installBuildTools.sh
 tock
 
 # Virtual Xserver for OpenMS -WITH_GUI option
 if [ "$WITH_GUI" == "ON" ]
   then
     tick "Setting up virtual X-Server"
-    source $OPSYS/setupXvfb.sh
+    sourceHere $OPSYS/setupXvfb.sh
     tock
 fi
 
 # Install OpenMS dependencies
 # QT is not in the contrib. Always download if possible.
 tick "Installing QT"
-source $OPSYS/installQT.sh
+sourceHere $OPSYS/installQT.sh
 tock
 
 ## Skip if you already have it installed.
@@ -51,7 +48,7 @@ if $DOWNLOAD_CONTRIB
   else
     # Install as much as possible from the package managers
     # Build or download prebuild for the rest
-    source $OPSYS/installDistroContrib.sh
+    sourceHere $OPSYS/installDistroContrib.sh
   fi
   tock
 fi
@@ -60,7 +57,7 @@ fi
 if [ "$PYOPENMS" == "ON" ]
 then
   tick "Installing Python and PIP"
-  source $OPSYS/installPythonAndPip.sh
+  sourceHere $OPSYS/installPythonAndPip.sh
   tock
   # I think on a Docker image we do not need virtualenv?
   tick "Installing Python packages"
@@ -72,7 +69,7 @@ then
     #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
     virtualenv /home/jenkins/pyopenms_venv
     chmod +x /home/jenkins/pyopenms_venv/bin/activat*
-    #sudo -Hu jenkins /bin/bash -c "source /home/jenkins/pyopenms_venv/bin/activate \
+    #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
     #                               && pip install -U setuptools pip autowrap nose numpy wheel"
     source /home/jenkins/pyopenms_venv/bin/activate \
     pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
@@ -87,7 +84,7 @@ fi
 if ! [ -z ${SEARCH_ENGINES_DIRECTORY+x} ]
 then
   tick "Installing JRE and Thirdparty binaries"
-  source $OPSYS/installJRE.sh
+  sourceHere $OPSYS/installJRE.sh
   mkdir $SEARCH_ENGINES_DIRECTORY || true
   ## Caution: with svn 1.8.8 the link /branches/master/ had to be substituted with /trunk/. Error seems to be relatively unknown on the in
 ternet.
@@ -107,18 +104,18 @@ fi
 if [ "${ENABLE_PREPARE_KNIME_PACKAGE}" == "ON" ]
 then
   tick "Installing JDK for KNIME packaging"
-  source $OPSYS/installJDK.sh 
+  sourceHere $OPSYS/installJDK.sh 
   tock
 fi
 
 if [ "${PACKAGE_TEST}" == "ON" ] || [ "${BUILD_DOCU}" == "ON" ]
 then
   tick "Setting up Docu tools"
-  source $OPSYS/installDocuTools.sh
+  sourceHere $OPSYS/installDocuTools.sh
   tock
   # For full docu we need latex (formulas in html) and
   # pdflatex (tutorials) with some packages
   tick "Setting up LaTeX"
-  source $OPSYS/installLaTeX.sh
+  sourceHere $OPSYS/installLaTeX.sh
   tock
 fi

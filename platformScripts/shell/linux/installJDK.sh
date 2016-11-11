@@ -1,1 +1,1 @@
-source $DISTRO/installJDK.sh
+sourceHere $DISTRO/installJDK.sh

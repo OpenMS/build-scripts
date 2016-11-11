@@ -96,7 +96,7 @@ then
     pip install virtualenv
     virtualenv ~/pyopenms_venv
     chmod +x ~/pyopenms_venv/bin/activat*
-    source ~/pyopenms_venv/bin/activate \
+    sourceHere ~/pyopenms_venv/bin/activate \
     pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   else
     #Just install system wide
@@ -185,7 +185,7 @@ if $DOWNLOAD_CONTRIB
   tock
 fi
 #else
-## Contrib build with our git sources: seqan wildmagic
+## Contrib build with our git sourceHeres: seqan wildmagic
 #git clone https://github.com/OpenMS/contrib.git
 #mkdir contrib-build
 #cd contrib-build

@@ -1,2 +1,2 @@
-source installCommandlineTools.sh
+sourceHere installCommandlineTools.sh
 brew install cmake

@@ -1,1 +1,1 @@
-source $DISTRO/installDistroContrib.sh
+sourceHere $DISTRO/installDistroContrib.sh
