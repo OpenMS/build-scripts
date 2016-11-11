@@ -1,7 +1,7 @@
-if [[ $1 ~= ^appleclang*$ ]]
+if [[ $1 =~ ^appleclang*$ ]]
   then
   sourceHere installCommandlineTools.sh
-elif [[ $1 ~= ^g++*$ ]]
+elif [[ $1 =~ ^g++*$ ]]
     then
     formulaname=${1/+/c}
     brew tap homebrew/versions
@@ -15,7 +15,7 @@ elif [[ $1 ~= ^g++*$ ]]
     else
       echo "Compiler installation failed. Check package name, repo settings/availability and the script $0."    
     fi
-elif [[ $1 ~= ^clang*$ ]]
+elif [[ $1 =~~ ^clang*$ ]]
     echo "Not supported yet"
     exit 1
 else
