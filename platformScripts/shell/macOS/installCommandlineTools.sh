@@ -1,5 +1,5 @@
 #http://apple.stackexchange.com/questions/107307/how-can-i-install-the-command-line-tools-completely-from-the-command-line
-## install xcode command-line-tools (clang, make, svn) with something like below.
+## install xcode command-line-tools (appleclang, make, svn) with something like below.
 
 if [[ -z $(xcodebuild -version) ]]
 then
