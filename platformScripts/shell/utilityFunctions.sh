@@ -28,7 +28,7 @@ function checkGitRepo {
 }
 
 # Source from current script dir
-function sourceHereHere {
+function sourceHere {
   source $(dirname "$0")/$1
 }
 
