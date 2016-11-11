@@ -35,6 +35,8 @@ function sourceHereHere {
 # Detect package type from /etc/issue
 _found_arch() {
   grep -qis "$5" /etc/issue && _set_arch $1 $2 $3 $4
+  ## omg since centos7 there is no /etc/issue.
+  grep -qis "$5" /etc/redhat-release && _set_arch $1 $2 $3 $4
 }
 
 _set_arch() {
