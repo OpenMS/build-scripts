@@ -84,8 +84,7 @@ then
   tick "Installing JRE and Thirdparty binaries"
   sourceHere $OPSYS/installJRE.sh
   mkdir $SEARCH_ENGINES_DIRECTORY || true
-  ## Caution: with svn 1.8.8 the link /branches/master/ had to be substituted with /trunk/. Error seems to be relatively unknown on the in
-ternet.
+  ## Caution: with svn 1.8.8 the link /branches/master/ had to be substituted with /trunk/. Error seems to be relatively unknown on the internet.
   ## Maybe /branches/master/ first occurs if there are multiple branches. I have no clue! It also seems to depend on the
   ## recent changes.
   ## Alternative: 1) Git archive (does not work with github). 2) A "local" git repo mounted as volume.
