@@ -1,7 +1,7 @@
 if [[ $1 =~ ^msvc-.*$ ]]
 then
     export VS_NR=${1/msvc-/}
-    if (( VS_NR -lt 11 ))
+    if (( VS_NR < "11" ))
     then
       ((VS_YEAR=VS_NR+2000))
     else
