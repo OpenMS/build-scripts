@@ -32,7 +32,7 @@ function sourceHere {
   currDir=$(dirname $(echo "\$0"))
   inputDir=$(dirname $1)
   pushd $inputDir > /dev/null
-    source $(basename $1) $*
+    source $(basename $1) "$@"
   popd > /dev/null
 }
 
