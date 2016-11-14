@@ -1,1 +1,0 @@
-echo "skip on win"

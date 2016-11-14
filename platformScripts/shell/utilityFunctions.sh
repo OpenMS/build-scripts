@@ -62,7 +62,7 @@ function OPSYS_detect {
 
   if [[ $(uname -s) =~ ^CYGWIN.*$ ]]
     then
-    _set_arch cygwin cygwin cygwin none
+    _set_arch windows cygwin cygwin none
   fi
 
   [[ -z "$OPSYS" ]] || return
