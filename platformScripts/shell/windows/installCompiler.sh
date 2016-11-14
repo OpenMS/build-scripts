@@ -7,6 +7,7 @@ if [[ $1 =~ ^msvc-.*$ ]]
       export ((VS_YEAR=VS_NR+2001))
     fi
   export GENERATOR="Visual Studio ${VS_NR}${GENERATOR_ARCH_SUFFIX}"
+  echo "Using GENERATOR=$GENERATOR"
 else
   echo "Unsupported compiler $1 on windows."
 fi
