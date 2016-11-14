@@ -31,8 +31,10 @@ function checkGitRepo {
 function sourceHere {
   currDir=$(dirname $(echo "\$0"))
   inputDir=$(dirname $1)
+  toSource=$(basename $1)
+  shift
   pushd $inputDir > /dev/null
-    source $(basename $1) "$@"
+    source $toSource "$@"
   popd > /dev/null
 }
 
