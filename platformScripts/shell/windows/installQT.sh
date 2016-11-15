@@ -5,6 +5,6 @@ if [[ -z $QT_VERSIONS_PATH ]]
   echo "Then set the QT_VERSIONS_PATH on a slave level by configuring the slave in Jenkins."
 else
   echo "Searching for matching subfolder in $QT_VERSIONS_PATH"
-  export QT_QMAKE_BIN_PATH=$(find $(cygpath -m $QT_VERSIONS_PATH) -type d -name "qt-4*_vs${VS_NR}_${ARCH_NO_BIT}bit" | head -1)/bin
+  export QT_QMAKE_BIN_PATH=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 1 -type d -name "qt-4*_vs${VS_NR}_${ARCH_NO_BIT}bit" | head -1)/bin
   echo "Found matching QT bin dir at: $QT_QMAKE_BIN_PATH"
 fi
