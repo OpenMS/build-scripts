@@ -5,6 +5,7 @@ if [[ $1 =~ ^appleclang*$ ]]
   export COMPILER_ID="$1"
   export CXX=$(which clang++)
   export CC=$(which clang)
+  export GENERATOR="Unix Makefiles"
   echo "Installed $COMPILER_ID"
 elif [[ $1 =~ ^g++*$ ]]
     then
