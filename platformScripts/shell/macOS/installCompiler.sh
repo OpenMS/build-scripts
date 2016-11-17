@@ -22,6 +22,7 @@ elif [[ $1 =~ ^g++*$ ]]
       echo "Compiler installation failed. Check package name, repo settings/availability and the script $0."    
     fi
 elif [[ $1 =~ ^clang*$ ]]
+    then
     ## TODO check how to set CXX and CC so that the right clang is used.
     echo "Not supported yet"
     exit 1
