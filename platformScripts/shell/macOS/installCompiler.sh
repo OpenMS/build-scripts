@@ -6,6 +6,7 @@ if [[ $1 =~ ^appleclang.*$ ]]
   export CXX=$(which clang++)
   export CC=$(which clang)
   export GENERATOR="Unix Makefiles"
+  export ADDITIONAL_CMAKE_ARGUMENTS="-DCMAKE_OSX_SYSROOT="
   echo "Installed $COMPILER_ID"
 elif [[ $1 =~ ^g++.*$ ]]
     then
