@@ -17,7 +17,7 @@ export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openm
 ## We need that wrapper for CMake to load all the correct environment variables. We could also replicate what the bat file does.
 function runNative {
     
-    eval vssetup="\$VS${VS_NR}0COMNTOOLS\\..\\..\\VC\\vsvarsall.bat"
+    eval vssetup="\$VS${VS_NR}0COMNTOOLS\\\\..\\\\..\\\\VC\\\\vsvarsall.bat"
     vssetup="$vssetup ${TARGET_ARCH}"
     cmd /Q /C call "$vssetup" "&&" "${@}"
 }
