@@ -21,6 +21,9 @@ elif [[ $1 =~ ^~clang.*$ ]]
     export COMPILER_ID="$1"
     export CXX=$(which clang++)
     export CC=$(which clang)
+  else
+    echo "Compiler $1 not supported on Debian. Extend $0 , write your own installation routine or install beforehand."
+  fi
 else
-  echo "Compiler $1 not supported on Debian. Extend $0 , write your own installation routine or install beforehand."
+   echo "Unsupported compiler on Debian."
 fi
