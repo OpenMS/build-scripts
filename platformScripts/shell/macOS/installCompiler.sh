@@ -1,5 +1,5 @@
 ## TODO set Generator here and check if xcode is wanted.
-if [[ $1 =~ ^appleclang*$ ]]
+if [[ $1 =~ ^appleclang.*$ ]]
   then
   sourceHere installCommandlineTools.sh
   export COMPILER_ID="$1"
@@ -7,7 +7,7 @@ if [[ $1 =~ ^appleclang*$ ]]
   export CC=$(which clang)
   export GENERATOR="Unix Makefiles"
   echo "Installed $COMPILER_ID"
-elif [[ $1 =~ ^g++*$ ]]
+elif [[ $1 =~ ^g++.*$ ]]
     then
     formulaname=${1/+/c}
     brew tap homebrew/versions >> $LOG_PATH/packages.log 2>&1
@@ -21,7 +21,7 @@ elif [[ $1 =~ ^g++*$ ]]
     else
       echo "Compiler installation failed. Check package name, repo settings/availability and the script $0."    
     fi
-elif [[ $1 =~ ^clang*$ ]]
+elif [[ $1 =~ ^clang.*$ ]]
     then
     ## TODO check how to set CXX and CC so that the right clang is used.
     echo "Not supported yet"
