@@ -10,7 +10,7 @@ if [[ $1 =~ ^g++.*$ ]]
   else
     echo "Compiler installation failed. Check package name, repo settings/availability and the script $0."
   fi
-elif [[ $1 =~ ^~clang.*$ ]]
+elif [[ $1 =~ ^clang.*$ ]]
   then
   sudo apt-get -y install $1
   if ! [[ -z $(clang++ --version) ]]
