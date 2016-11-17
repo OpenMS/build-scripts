@@ -1,0 +1,1 @@
+sourceHere $OPSYS/installContribBuildTools.sh
