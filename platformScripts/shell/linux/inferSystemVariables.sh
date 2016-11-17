@@ -9,6 +9,6 @@ export REMOTE_CONTRIB_FOLDER="contrib/$OPSYS/$DISTRO/$SUBDISTRO_NAME/$SUBDISTRO_
 export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/$REMOTE_CONTRIB_FOLDER/contrib_build.tar.gz"
 
 ## Just pass and execute the arguments
-export function runNative {
+function runNative {
   eval $(printf "%q " "$@")
 }
