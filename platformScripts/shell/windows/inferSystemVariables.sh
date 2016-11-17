@@ -14,7 +14,7 @@ export SUBDISTRO_VERSION=$(systeminfo | grep '^OS\ Name' | egrep -o "(XP|Vista|7
 export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib/$OPSYS/$TARGET_ARCH/$COMPILER/$BUILD_TYPE/contrib_build.tar.gz"
 
 ## We need that wrapper for CMake to load all the correct environment variables. We could also replicate what the bat file does.
-function runNative {
+export function runNative {
     eval vssetup="\$VS${VS_NR}0COMNTOOLS\\vsvarsall.bat ${TARGET_ARCH}"
     cmd /Q /C call "$vssetup" "&&" "${@}"
 }
