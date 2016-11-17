@@ -11,7 +11,8 @@ fi
 
 export SUBDISTRO_VERSION=$(systeminfo | grep '^OS\ Name' | egrep -o "(XP|Vista|7|8|10)")
 ## On Windows, only the visual studio version and the architecture should matter.
-export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib/$OPSYS/$TARGET_ARCH/$COMPILER/contrib_build.tar.gz"
+export REMOTE_CONTRIB_FOLDER="contrib/$OPSYS/$TARGET_ARCH/$COMPILER"
+export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/$REMOTE_CONTRIB_FOLDER/contrib_build.tar.gz"
 
 ## We need that wrapper for CMake to load all the correct environment variables. We could also replicate what the bat file does.
 export function runNative {
