@@ -20,5 +20,6 @@ else
       end tell
     end tell
   EOD
+
   sudo xcodebuild -license accept || echo "Cannot accept XCode license. XCode install not successful? Do you have sudo permissions?"
 fi
