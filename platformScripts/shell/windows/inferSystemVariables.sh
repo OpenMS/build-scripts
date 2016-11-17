@@ -10,4 +10,5 @@ else
 fi
 
 export SUBDISTRO_VERSION=$(systeminfo | grep '^OS\ Name' | egrep -o "(XP|Vista|7|8|10)")
-
+## On Windows, only the visual studio version and the architecture should matter.
+export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib/$OPSYS/$TARGET_ARCH/$COMPILER/$BUILD_TYPE/contrib_build.tar.gz"
