@@ -12,14 +12,14 @@ else
   echo "xcodebuild not found. Trying to install.. (mechanism only works on 10.9+)"
   sudo xcode-select --install
   sleep 1
-  osascript <<-EOD
+  osascript <<EOD
     tell application "System Events"
       tell process "Install Command Line Developer Tools"
         keystroke return
         click button "Agree" of window "License Agreement"
       end tell
     end tell
-  EOD
-
+EOD
   sudo xcodebuild -license accept || echo "Cannot accept XCode license. XCode install not successful? Do you have sudo permissions?"
 fi
+
