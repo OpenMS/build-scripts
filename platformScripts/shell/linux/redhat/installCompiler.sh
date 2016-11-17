@@ -3,7 +3,7 @@ if [[ $1 =~ ^g++.*$ ]]
     packageregex=${1/g/gcc-c}
     ## Careful: Maybe only take first match. Might install multiple versions, if version is not specific enough.
     sudo yum -y install "$packageregex*"
-    if [[ -z $(g++ -dumpversion) ]]
+    if ! [[ -z $(g++ -dumpversion) ]]
     then
       export COMPILER_ID="g++-$(g++ -dumpversion)"
       export CXX=$(which g++)
@@ -17,7 +17,7 @@ elif [[ $1 =~ ^clang.*$ ]]
     packageregex=$1
     ## Careful: Maybe only take first match. Might install multiple versions, if version is not specific enough.
     sudo yum -y install "$packageregex*"
-    if [[ -z $(clang --version) ]]
+    if ! [[ -z $(clang --version) ]]
     then
       ## clang version output is too different between distros. Just use what was given.
       echo "Installed:"

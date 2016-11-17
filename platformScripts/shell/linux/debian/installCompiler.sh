@@ -1,7 +1,7 @@
 if [[ $1 =~ ^g++.*$ ]] 
   then
   sudo apt-get -y install $1
-  if [[ -z $(g++ -dumpversion) ]]
+  if ! [[ -z $(g++ -dumpversion) ]]
   then
     export COMPILER_ID="g++-$(g++ -dumpversion)"
     export CXX=$(which g++)
@@ -13,7 +13,7 @@ if [[ $1 =~ ^g++.*$ ]]
 elif [[ $1 =~ ^~clang.*$ ]]
   then
   sudo apt-get -y install $1
-  if [[ -z $(clang++ --version) ]]
+  if ! [[ -z $(clang++ --version) ]]
   then
     echo "Installed:"
     clang++ --version
