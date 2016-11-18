@@ -16,7 +16,7 @@ export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openm
 
 ## We need that wrapper for CMake to load all the correct environment variables. We could also replicate what the bat file does.
 function runNative {
-    eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\..\\VC"
+    eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
     echo $vcpath
     vcpathcyg=$(cygpath -m "$vcpath")
     echo $vcpathcyg
