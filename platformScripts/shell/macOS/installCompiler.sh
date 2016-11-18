@@ -8,7 +8,7 @@ if [[ $1 =~ ^appleclang.*$ ]]
   export GENERATOR="Unix Makefiles"
   export ADDITIONAL_CMAKE_ARGUMENTS="-DCMAKE_OSX_SYSROOT=$SYSROOT"
   echo "Installed $COMPILER_ID"
-elif [[ $1 =~ ^g++.*$ ]]
+elif [[ $1 =~ ^g\+\+.*$ ]]
     then
     formulaname=${1/+/c}
     brew tap homebrew/versions >> $LOG_PATH/packages.log 2>&1
