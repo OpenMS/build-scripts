@@ -7,5 +7,5 @@ export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openm
 ## Just pass and execute the arguments
 function runNative {
   echo "Running $@"
-  eval "$@"
+  "$@"
 }
