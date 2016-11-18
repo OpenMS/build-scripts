@@ -28,7 +28,7 @@ elif [[ $1 =~ ^clang.*$ ]]
     echo "Not supported yet"
     exit 1
 else
-    echo "Unsupported compiler on macOS. Aborting."
+    echo "Unsupported compiler $1 on macOS. Aborting."
     exit 1
 fi
     
