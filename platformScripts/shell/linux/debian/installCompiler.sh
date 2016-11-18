@@ -19,6 +19,8 @@ elif [[ $1 =~ ^clang.*$ ]]
   ver=${1#*-}
   if ! [[ -z $($1 --version) ]]
   then
+    sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$ver 100 --slave /usr/bin/clang++ g++ /usr/bin/clang++-$ver
+    sudo update-alternatives --set clang /usr/bin/clang-$ver
     echo "Installed:"
     clang++-$ver --version
     ## Outputs of clang version change on different distros. Just use what was given.
