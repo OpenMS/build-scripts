@@ -7,6 +7,8 @@ if [[ $1 =~ ^g++.*$ ]]
     export COMPILER_ID="g++-$($1 -dumpversion)"
     export CXX=$(which g++-$ver)
     export CC=$(which gcc-$ver)
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$ver 100 --slave /usr/bin/g++ g++ /usr/bin/g++-$ver
+    sudo update-alternatives --set gcc /usr/bin/gcc-$ver
     echo "Installed $COMPILER_ID"
   else
     echo "Compiler installation failed. Check package name, repo settings/availability and the script $0."
