@@ -15,9 +15,12 @@ elif [[ $1 =~ ^g\+\+.*$ ]]
     brew install $formulaname >> $LOG_PATH/packages.log 2>&1
     if [[ -z $($1 -dumpversion) ]]
     then
-      export COMPILER_ID="g++-$(g++ -dumpversion)"
+      export COMPILER_ID="g++-$($1 -dumpversion)"
       export CXX=$(which $1)
       export CC=$(which $formulaname)
+      export GENERATOR="Unix Makefiles"
+      ## TODO probably not gonna work. I think you NEED the command line tools then
+      export ADDITIONAL_CMAKE_ARGUMENTS="-DCMAKE_OSX_SYSROOT=$SYSROOT"
       echo "Installed $COMPILER_ID"
     else
       echo "Compiler installation failed. Check package name, repo settings/availability and the script $0."    
