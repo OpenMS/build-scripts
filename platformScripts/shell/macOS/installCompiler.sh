@@ -1,7 +1,8 @@
 ## TODO set Generator here and check if xcode is wanted.
+sourceHere installCommandlineTools.sh
+
 if [[ $1 =~ ^appleclang.*$ ]]
   then
-  sourceHere installCommandlineTools.sh
   export COMPILER_ID="$1"
   export CXX=$(which clang++)
   export CC=$(which clang)
