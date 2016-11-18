@@ -15,9 +15,9 @@ elif [[ $1 =~ ^g\+\+.*$ ]]
     #formulaname=${1/+/c}
     #brew tap homebrew/versions >> $LOG_PATH/packages.log 2>&1
     #brew install $formulaname >> $LOG_PATH/packages.log 2>&1
-    if [[ -z $($1 -dumpversion) ]]
+    if [[ -z $($1 --version) ]]
     then
-      export COMPILER_ID="g++-$($1 -dumpversion)"
+      export COMPILER_ID="g++-$($1 --version)"
       export CXX=$(which $1)
       export CC=$(which ${1/+/c})
       export GENERATOR="Unix Makefiles"
