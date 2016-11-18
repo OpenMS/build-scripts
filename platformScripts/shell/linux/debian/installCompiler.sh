@@ -2,7 +2,7 @@ if [[ $1 =~ ^g++.*$ ]]
   then
   sudo apt-get -y install $1
   ver=${1#*-}
-  if ! [[ -z $(g++ -dumpversion) ]]
+  if ! [[ -z $($1 -dumpversion) ]]
   then
     export COMPILER_ID="g++-$($1 -dumpversion)"
     export CXX=$(which g++-$ver)
