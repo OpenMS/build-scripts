@@ -20,10 +20,7 @@ elif [[ $1 =~ ^g\+\+.*$ ]]
     then
       export COMPILER_ID="g++-$($1 -dumpversion)"
       export CXX=$(which $1)
-      echo CC
-      echo ${1/\+/c}
-      echo ${1/+/c}
-      export CC=$(which ${1/\+/c})
+      export CC=$(which ${1/++/cc})
       echo CC
       export GENERATOR="Unix Makefiles"
       ## TODO probably not gonna work. I think you NEED the command line tools then
