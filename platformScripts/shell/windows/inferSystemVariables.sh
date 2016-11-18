@@ -18,7 +18,8 @@ export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openm
 function runNative {
     eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
     vcpathcyg=$(cygpath -m "$vcpath")
-    vssetup="$vcpathcyg/bin/vsvarsall.bat"
-    cmd /Q /C call "$vssetup" "${TARGET_ARCH}" "&&" "${@}"
+    vssetup="$vcpathcyg/vsvarsall.bat"
+    echo Calling: cmd /Q /C call "$vssetup" "${TARGET_ARCH}" "&&" "${@}" 
+    cmd /Q /C call "$vssetup" "${TARGET_ARCH}" "&&" call "${@}"
 }
 
