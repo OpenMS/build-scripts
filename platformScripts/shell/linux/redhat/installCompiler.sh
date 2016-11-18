@@ -1,8 +1,9 @@
+sudo yum -y install epel-release && sudo yum -y update >> $LOG_PATH/packages.log 2>&1
 if [[ $1 =~ ^g++.*$ ]]
     then
     packageregex=${1/g/gcc-c}
     ## Careful: Maybe only take first match. Might install multiple versions, if version is not specific enough.
-    sudo yum -y install "$packageregex*"
+    sudo yum -y install "$packageregex*" >> $LOG_PATH/packages.log 2>&1
     if ! [[ -z $(g++ -dumpversion) ]]
     then
       export COMPILER_ID="g++-$(g++ -dumpversion)"
@@ -16,7 +17,7 @@ elif [[ $1 =~ ^clang.*$ ]]
     then
     packageregex=$1
     ## Careful: Maybe only take first match. Might install multiple versions, if version is not specific enough.
-    sudo yum -y install "$packageregex*"
+    sudo yum -y install "$packageregex*" >> $LOG_PATH/packages.log 2>&1
     if ! [[ -z $(clang --version) ]]
     then
       ## clang version output is too different between distros. Just use what was given.
