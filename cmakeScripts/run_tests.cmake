@@ -19,6 +19,9 @@ if (NOT EXISTS ${OPENMS_CMAKE_SCRIPT_PATH})
   set (OPENMS_CMAKE_SCRIPT_PATH ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
+# Transform to absolute path
+get_filename_component(OPENMS_CMAKE_SCRIPT_PATH ${OPENMS_CMAKE_SCRIPT_PATH} REALPATH)
+message("Looking for CMake scripts in ${OPENMS_CMAKE_SCRIPT_PATH}")
 # Loads general macros from the script dir.
 include( "${OPENMS_CMAKE_SCRIPT_PATH}/global_macros.cmake" RESULT_VARIABLE OPENMS_INCLUDES_FOUND)
 if(NOT OPENMS_INCLUDES_FOUND)
@@ -346,17 +349,6 @@ COVERAGE_COMMAND:STRING=${CTEST_COVERAGE_COMMAND}
 CTEST_COVERAGE_COMMAND:STRING=${CTEST_COVERAGE_COMMAND}
 " )
 endif()
-
-## Please specify the deployment target yourself, if you want to build OpenMS backwards compatible.
-## TODO needs more testing if this works reliably.
-#if(APPLE)
-## if you want to use another SDK add the following also to the cache (usually not necessary)
-## CMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/
-## Anyway, we try to build relatively backwards compatible (10.6)
-#  SET(INITIAL_CACHE "${INITIAL_CACHE}
-#    CMAKE_OSX_DEPLOYMENT_TARGET=10.6
-#  ")
-#endif()
   
 # Copy config file to customize errors (will be loaded later)
 file(COPY "${OPENMS_CMAKE_SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
