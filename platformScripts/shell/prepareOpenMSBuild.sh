@@ -43,13 +43,14 @@ if $DOWNLOAD_CONTRIB
     wget -O $WORKSPACE/contrib_build.tar.gz $CONTRIB_URL > $LOG_PATH/contrib_setup.log 2>&1
     # Archive should contain contrib_build as root folder
     # TODO check
-    tar -xvzf $WORKSPACE/contrib_build.tar.gz >> $LOG_PATH/contrib_setup.log 2>&1
+    tar -xvzf $WORKSPACE/contrib_build.tar.gz --directory $WORKSPACE >> $LOG_PATH/contrib_setup.log 2>&1
   else
     # Install as much as possible from the package managers
     # Build or download prebuild for the rest
     sourceHere $OPSYS/installDistroContrib.sh
   fi
   tock
+  ls -la $CONTRIB_PATH || ( echo "Error: Could not find CONTRIB_PATH after download and extraction of contrib. Check logs." && exit 1)
 fi
 
 # PyOpenMS:
