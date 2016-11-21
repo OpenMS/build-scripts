@@ -1,6 +1,7 @@
+## TODO Merge the two cases since they share a lot!
 if [[ $1 =~ ^g++.*$ ]] 
   then
-  sudo apt-get -y install $1
+  sudo apt-get -y install $1 >> $LOG_PATH/packages.log 2>&1
   ver=${1#*-}
   if ! [[ -z $($1 -dumpversion) ]]
   then
@@ -15,7 +16,7 @@ if [[ $1 =~ ^g++.*$ ]]
   fi
 elif [[ $1 =~ ^clang.*$ ]]
   then
-  sudo apt-get -y install $1
+  sudo apt-get -y install $1 >> $LOG_PATH/packages.log 2>&1
   ver=${1#*-}
   if ! [[ -z $($1 --version) ]]
   then
