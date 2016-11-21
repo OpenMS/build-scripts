@@ -43,7 +43,7 @@ if $DOWNLOAD_CONTRIB
     wget -O contrib_build.tar.gz $CONTRIB_URL > $LOG_PATH/contrib_setup.log 2>&1
     # Archive should contain contrib_build as root folder
     # TODO check
-    tar -xzf contrib_build.tar.gz
+    tar -xzf contrib_build.tar.gz > $LOG_PATH/contrib_setupd.log 2>&1
   else
     # Install as much as possible from the package managers
     # Build or download prebuild for the rest

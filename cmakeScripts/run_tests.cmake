@@ -429,13 +429,13 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     endif()
     # Checker needs tests to be executed. Overwrites current Test.xml but creates a backup.
     if("$ENV{RUN_CHECKER}" STREQUAL "ON")
-        include( "${SCRIPT_PATH}/FindPHP.cmake")
+        include( "${OPENMS_CMAKE_SCRIPT_PATH}/FindPHP.cmake")
         find_package(php)
         if(NOT DOXYGEN_FOUND OR NOT PHP_EXECUTABLE)
           safe_message(FATAL_ERROR "The Checker script needs PHP and Doxygen to check for errors.")
         endif()
         # TODO Clean up checker script. Add dependency on doc_xml and doc_internal.
-        include ( "${SCRIPT_PATH}/checker.cmake" )
+        include ( "${OPENMS_CMAKE_SCRIPT_PATH}/checker.cmake" )
     endif()
 endif()
 
@@ -450,28 +450,28 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     endif()
     if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
         ##TODO cleanup the include script. Remove ctest_start, ctest_submit, change of buildname
-        include ( "${SCRIPT_PATH}/python_checker.cmake" )
+        include ( "${OPENMS_CMAKE_SCRIPT_PATH}/python_checker.cmake" )
     endif()
     ctest_submit()
 endif()
 
 ## To build full html documentation with Tutorials.
 if("$ENV{BUILD_DOCU}" STREQUAL "ON")
-  include ( "${SCRIPT_PATH}/docu.cmake" )
+  include ( "${OPENMS_CMAKE_SCRIPT_PATH}/docu.cmake" )
 endif()
 
 ## Needs only our libraries
 if("$ENV{EXTERNAL_CODE_TESTS}" STREQUAL "ON")
-  include ( "${SCRIPT_PATH}/external_code.cmake" )
+  include ( "${OPENMS_CMAKE_SCRIPT_PATH}/external_code.cmake" )
 endif()
 
 ## Additionally builds full documentation.
 ## TODO check if it actually is not executed twice. It probably is -.-
 if("$ENV{PACKAGE_TEST}" STREQUAL "ON")
-  include ( "${SCRIPT_PATH}/package_test.cmake" )
+  include ( "${OPENMS_CMAKE_SCRIPT_PATH}/package_test.cmake" )
 endif()
 
 ## Relatively independent from the rest. Needs THIRDPARTY binaries and TOPP, UTILS.
 if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON")
-  include ( "${SCRIPT_PATH}/knime_test.cmake" )
+  include ( "${OPENMS_CMAKE_SCRIPT_PATH}/knime_test.cmake" )
 endif()

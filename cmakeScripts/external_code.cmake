@@ -1,6 +1,6 @@
 ## Should not happen if called from mainscript. remove and/or add warning if called alone
 if(NOT DEFINED TEST_MACROS_INCLUDED)
-  include(${SCRIPT_PATH}/test_macros.cmake)
+  include(${OPENMS_CMAKE_SCRIPT_PATH}/test_macros.cmake)
 endif()
 
 # Check for required variables.
