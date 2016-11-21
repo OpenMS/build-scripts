@@ -15,7 +15,7 @@ set (CMAKE_VERBOSE_MAKEFILE OFF)
 # Defaults to directory of this script.
 set (OPENMS_CMAKE_SCRIPT_PATH $ENV{OPENMS_CMAKE_SCRIPT_PATH})
 if (NOT EXISTS ${OPENMS_CMAKE_SCRIPT_PATH})
-  message("Path in OPENMS_CMAKE_SCRIPT_PATH not found. Looking in the directory of the current script for helper includes.")
+  message("Path ${OPENMS_CMAKE_SCRIPT_PATH} in env. variable OPENMS_CMAKE_SCRIPT_PATH not found. Default to looking in the directory of the current script for helper includes.")
   set (OPENMS_CMAKE_SCRIPT_PATH ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
