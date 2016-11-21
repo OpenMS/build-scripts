@@ -61,14 +61,14 @@ MACRO(SUBDIRLIST result curdir)
 ENDMACRO()
 
 ## !!! For Unix builds only
-if(UNIX)
-  include(${CTEST_SCRIPT_DIRECTORY}/unix_macros.cmake)
-endif(UNIX)
+#if(UNIX)
+#  include(${CTEST_SCRIPT_DIRECTORY}/unix_macros.cmake)
+#endif(UNIX)
 
 ## !!! For Win builds only (includes correct selection and setting of Searchengine paths)
-if(WIN32)
-  include(${CTEST_SCRIPT_DIRECTORY}/win_macros.cmake)
-endif(WIN32)
+#if(WIN32)
+#  include(${CTEST_SCRIPT_DIRECTORY}/win_macros.cmake)
+#endif(WIN32)
 ###
 
 macro(prepare_notes)

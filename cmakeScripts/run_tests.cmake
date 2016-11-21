@@ -13,13 +13,16 @@ set (CMAKE_VERBOSE_MAKEFILE OFF)
 # Additional scripts:
 # Path to look for additional scripts with macros.
 # Defaults to directory of this script.
-set (SCRIPT_PATH $ENV{SCRIPT_PATH})
-if (NOT EXISTS ${SCRIPT_PATH})
-	set (SCRIPT_PATH ${CMAKE_CURRENT_LIST_DIR})
+set (OPENMS_CMAKE_SCRIPT_PATH $ENV{OPENMS_CMAKE_SCRIPT_PATH})
+if (NOT EXISTS ${OPENMS_CMAKE_SCRIPT_PATH})
+  message("Path in OPENMS_CMAKE_SCRIPT_PATH not found. Looking in the directory of the current script for helper includes.")
+  set (OPENMS_CMAKE_SCRIPT_PATH ${CMAKE_CURRENT_LIST_DIR})
 endif()
+
 # Loads general macros from the script dir.
-if(NOT DEFINED TEST_MACROS_INCLUDED)
-  include( "${SCRIPT_PATH}/global_macros.cmake" )
+include( "${OPENMS_CMAKE_SCRIPT_PATH}/global_macros.cmake" RESULT_VARIABLE OPENMS_INCLUDES_FOUND)
+if(NOT OPENMS_INCLUDES_FOUND)
+  message(FATAL_ERROR "Helper scripts not found. Are you using the structure from the build-scripts Git? Try to set the OPENMS_CMAKE_SCRIPT_PATH env variable to the cmakeScripts folder.")
 endif()
 
 set (DEBUG ON)
