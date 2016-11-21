@@ -359,7 +359,7 @@ endif()
 #endif()
   
 # Copy config file to customize errors (will be loaded later)
-file(COPY "${SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
+file(COPY "${OPENMS_CMAKE_SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
 ##TODO check which OSX version
 if("$ENV{PYOPENMS}" STREQUAL "ON")
