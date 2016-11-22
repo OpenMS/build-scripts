@@ -10,7 +10,7 @@ else
   export GENERATOR_ARCH_SUFFIX=" Win64"
 fi
 
-if [[ $os_label =~ ^win.*32$ ]]
+if [[ $OS_LABEL =~ ^win.*32$ ]]
   then
     export OPENMS_TARGET_ARCH=x86
   else
