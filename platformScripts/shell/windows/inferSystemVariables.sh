@@ -10,6 +10,13 @@ else
   export GENERATOR_ARCH_SUFFIX=" Win64"
 fi
 
+if [[ $os_label =~ ^win.*32$ ]]
+  then
+    export OPENMS_TARGET_ARCH=x86
+  else
+    export OPENMS_TARGET_ARCH=x64
+fi
+
 export OPENMS_TARGET_ARCH=$ARCH
 export SUBDISTRO_VERSION=$(systeminfo | grep '^OS\ Name' | egrep -o "(XP|Vista|7|8|10)")
 ## On Windows, only the visual studio version and the architecture should matter.
