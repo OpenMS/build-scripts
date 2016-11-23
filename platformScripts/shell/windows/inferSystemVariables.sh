@@ -19,6 +19,7 @@ fi
 
 export OPENMS_TARGET_ARCH=$ARCH
 export SUBDISTRO_VERSION=$(systeminfo | grep '^OS\ Name' | egrep -o "(XP|Vista|7|8|10)")
+export SUBDISTRO_NAME="Windows"
 ## On Windows, only the visual studio version and the architecture should matter.
 export REMOTE_CONTRIB_FOLDER="contrib/$OPSYS/$OPENMS_TARGET_ARCH/$COMPILER"
 export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/$REMOTE_CONTRIB_FOLDER/contrib_build.tar.gz"
