@@ -67,15 +67,15 @@ function OPSYS_detect {
     _set_arch windows cygwin cygwin none
   fi
 
-  [[ -z "$OPSYS" ]] || return
-  # See also https://github.com/icy/pacapt/pull/22
-  # Please not that $OSTYPE (which is `linux-gnu` on Linux system)
-  # is not our $_OSTYPE. The choice is not very good because
-  # a typo can just break the logic of the program.
+  # If OPSYS was found already, return.
+  [[ -z "${OPSYS-}" ]] || return
+
+  # For macOS check the OSTYPE variable
   if [[ "$OSTYPE" != "darwin"* ]]; then
     echo "Can't detect OS type from /etc/issue. Please add it to setup script."
     exit 1
   else
+  # On macOS we need brwe
     if [[ -z $(command -v brew >/dev/null) ]]
       then 
       _set_arch macOS macOS macOS brew
