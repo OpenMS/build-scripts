@@ -24,7 +24,8 @@ elif [[ $1 =~ ^g\+\+.*$ ]]
       echo CC
       export GENERATOR="Unix Makefiles"
       ## TODO probably not gonna work. I think you NEED the command line tools then
-      export ADDITIONAL_CMAKE_ARGUMENTS="-DCMAKE_OSX_SYSROOT=$SYSROOT"
+      ## Yes, let's try without.
+      ##export ADDITIONAL_CMAKE_ARGUMENTS="-DCMAKE_OSX_SYSROOT=$SYSROOT"
       echo "Installed $COMPILER_ID"
     else
       echo "Compiler installation of $1 failed. Check package name, repo settings/availability and the script $0."    
