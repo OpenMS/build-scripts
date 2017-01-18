@@ -30,6 +30,8 @@ function checkGitRepo {
 # Source from current script dir
 function sourceHere {
   currDir=$(dirname $(echo "\$0"))
+  pwd
+  echo $currDir
   inputDir=$(dirname $1)
   toSource=$(basename $1)
   shift
