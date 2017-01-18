@@ -17,14 +17,14 @@ function tock {
 
 # Rough check of the setup
 function checkGitRepo {
-  cd $1
+  pushd $1 > /dev/null
   REPO=$(git config --get remote.origin.url)
   if [[ "$REPO" != *OpenMS ]]
     then
     echo "Given SOURCE_PATH $1 does not seem to be a clone of the OpenMS git repo."
     exit 1
   fi
-  cd -
+  popd > /dev/null
 }
 
 # Source from current script dir
