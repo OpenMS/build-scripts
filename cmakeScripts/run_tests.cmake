@@ -36,8 +36,13 @@ macro (debug_message mymessage)
 endmacro(debug_message)
 
 
+## Check for all required variables that have to be set in the main script and raise errors
+set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SOURCE_PATH;BUILD_PATH;CONTRIB_PATH;GENERATOR")
+## Unset non-required string variables if not present
+## TODO remove. We can check for undefined.
+set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_SITE;CTEST_COVERAGE_COMMAND;BUILD_TYPE;QT_QMAKE_BIN_PATH")
 ## Set non-required boolean variables to "Off" if not present
-set (not_required_bool "ENABLE_PREPARE_KNIME_PACKAGE;PACKAGE_TEST;EXTERNAL_CODE_TESTS;TEST_COVERAGE;ENABLE_STYLE_TESTING;PYOPENMS;RUN_CHECKER;RUN_PYTHON_CHECKER;BUILD_DOCU")
+set (not_required_bool "CDASH_SUBMIT;ENABLE_PREPARE_KNIME_PACKAGE;PACKAGE_TEST;EXTERNAL_CODE_TESTS;TEST_COVERAGE;ENABLE_STYLE_TESTING;PYOPENMS;RUN_CHECKER;RUN_PYTHON_CHECKER;BUILD_DOCU")
 
 foreach(var IN LISTS not_required_bool)
   ## if undefined or not configured:
@@ -49,11 +54,16 @@ foreach(var IN LISTS not_required_bool)
   endif()
 endforeach()
 
-## Check for all required variables that have to be set in the main script and raise errors
-set(required_variables "OPENMS_BUILDNAME_PREFIX;SYSTEM_ID;COMPILER_ID;SOURCE_PATH;BUILD_PATH;CONTRIB_PATH;GENERATOR")
 if (UNIX)
   ## On Unix please always specify compiler to choose the right one.
   set (required_variables ${required_variables} CC CXX)
+endif()
+
+## From a Cont.Deployment view we want to have thirdparties in these two cases. Not necessarily for private builds.
+if ("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON" OR "$ENV{PACKAGE_TEST}" STREQUAL "ON")
+  set (required_variables ${required_variables} SEARCH_ENGINES_DIRECTORY)
+else()
+  set (not_required_str ${not_required_str} SEARCH_ENGINES_DIRECTORY)
 endif()
 
 foreach(var IN LISTS required_variables)
@@ -64,10 +74,6 @@ foreach(var IN LISTS required_variables)
   endif()
 endforeach()
 
-## Unset non-required string variables if not present
-## TODO remove. We can check for undefined.
-set (not_required_str "OPENMS_INSTALL_DIR;NUMBER_THREADS;CTEST_SITE;CTEST_COVERAGE_COMMAND;BUILD_TYPE;QT_QMAKE_BIN_PATH")
-
 foreach(var IN LISTS not_required_str)
   if(NOT DEFINED ENV{${var}})
     safe_message("Environment variable <${var}> not defined. Using default.")
@@ -75,9 +81,6 @@ foreach(var IN LISTS not_required_str)
     debug_message("${var} is defined as $ENV{${var}}")
   endif()
 endforeach()
-
-## TODO we could convert to ENV everywhere. Leave it for now.
-set (CDASH_SUBMIT $ENV{CDASH_SUBMIT})
 
 # Git is actually not needed if you do not use ctest_update() but it should be present anyway
 find_package(Git)
@@ -116,11 +119,11 @@ if(UNIX)
 elseif(WIN32)
     ## Coverage and other stuff will crash at configure time
     if("$ENV{PACKAGE_TEST}" STREQUAL "ON")
-        safe_message("Packaging not covered by CMake under Windows. Please use the NSIS installer scripts.")
+        safe_message("Warning: Packaging not covered by CMake under Windows. Please use the NSIS installer scripts when tests succeed.")
     endif()
 	# check if generator is VS (e.g., Visual Studio 10 Win64)
 	if (NOT $ENV{GENERATOR} MATCHES "Visual Studio*")
-		   message(FATAL_ERROR "Only Visual Studio supported on Windows")
+            message(FATAL_ERROR "Only Visual Studio supported on Windows")
 	endif()
 endif()
 
@@ -353,17 +356,18 @@ endif()
 # Copy config file to customize errors (will be loaded later)
 file(COPY "${OPENMS_CMAKE_SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
-##TODO check which OSX version
+
 if("$ENV{PYOPENMS}" STREQUAL "ON")
 	set(INITIAL_CACHE "${INITIAL_CACHE} PYOPENMS=$ENV{PYOPENMS}")
-          
+	
+        ## TODO check if OSX and which version
 	# http://stackoverflow.com/questions/22313407/clang-error-unknown-argument-mno-fused-madd-python-package-installation-fa
 	# UPDATE [2014-05-16]: Apple has fixed this problem with updated system Pythons (2.7, 2.6, and 2.5) in OS X 10.9.3
 	# so the workaround is no longer necessary when using the latest Mavericks and Xcode 5.1+.
 	# However, as of now, the workaround is still required for OS X 10.8.x (Mountain Lion, currently 10.8.5)
 	# if you are using Xcode 5.1+ there.
-	set(ENV{CFLAGS} "-Qunused-arguments")
-	set(ENV{CPPFLAGS} "-Qunused-arguments")
+	#set(ENV{CFLAGS} "-Qunused-arguments")
+	#set(ENV{CPPFLAGS} "-Qunused-arguments")
 endif()
 
 
