@@ -35,9 +35,8 @@ if $DOWNLOAD_CONTRIB
   then
     echo "Downloading full contrib build from archive $CONTRIB_URL..."
     wget -O $WORKSPACE/contrib_build.tar.gz $CONTRIB_URL > $LOG_PATH/contrib_setup.log 2>&1
-    # Archive should contain contrib_build as root folder
-    # TODO check
-    tar -xvzf $WORKSPACE/contrib_build.tar.gz --directory $WORKSPACE >> $LOG_PATH/contrib_setup.log 2>&1
+    # Archive should contain no root folder, only bin, lib, include etc. (see the archiving step of the openms_contrib_all job)
+    tar -xvzf $WORKSPACE/contrib_build.tar.gz --directory $CONTRIB_PATH >> $LOG_PATH/contrib_setup.log 2>&1
   else
     # Install as much as possible from the package managers
     # Build or download prebuild for the rest
