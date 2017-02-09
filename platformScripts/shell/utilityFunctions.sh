@@ -62,7 +62,7 @@ function OPSYS_detect {
   _found_arch linux redhat fedora yum "Fedora" && return
   _found_arch linux suse suse zypper "SUSE" && return
 
-  if [[ $(uname -s) =~ ^CYGWIN.*$ ]] || [[ $(uname -s) =~ ^windows.*$ ]]
+  if [[ $(uname -s) =~ ^CYGWIN.*$ ]] || [[ $(uname -s) =~ ^windows.*$ ]] || [[ $(uname -s) =~ ^MINGW.*$ ]]
     then
     _set_arch windows cygwin cygwin none
   fi
