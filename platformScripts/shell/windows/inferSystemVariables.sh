@@ -35,7 +35,7 @@ function runNative {
       else
         slashes="/"
     fi
-    echo Calling: cmd /Q /C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}" 
-    cmd $slashesQ $slashesC call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}"
+    echo Calling: cmd ${slashes}Q ${slashes}C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}" 
+    cmd ${slashes}Q ${slashes}C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}"
 }
 
