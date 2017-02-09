@@ -84,7 +84,7 @@ then
   ## recent changes.
   ## Alternative: 1) Git archive (does not work with github). 2) A "local" git repo mounted as volume.
   svn export --non-interactive --trust-server-cert  --force https://github.com/OpenMS/THIRDPARTY/trunk/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || echo "Cloning of multiplatform Thirdparty binaries went wrong"
-  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/Linux/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || echo "Cloning of Linux Thirdparty binaries went wrong"
+  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/${OPSYS^}/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || echo "Cloning of Linux Thirdparty binaries went wrong"
   #svn export --force https://github.com/OpenMS/THIRDPARTY/branches/master/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/git.log || echo "Cloning of multiplatform Thirdparty binaries went wrong"
   #svn export --force https://github.com/OpenMS/THIRDPARTY/branches/master/Linux/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/git.log || echo "Cloning of Linux Thirdparty binaries went wrong"
   tock
