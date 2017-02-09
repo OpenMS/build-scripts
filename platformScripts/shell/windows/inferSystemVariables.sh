@@ -29,7 +29,13 @@ function runNative {
     eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
     vcpathcyg=$(cygpath -m "$vcpath")
     vssetup="$vcpathcyg/vcvarsall.bat"
+    if [[ $DISTRO == "mingw" ]]
+      then
+        slashes="//"
+      else
+        slashes="/"
+    fi
     echo Calling: cmd /Q /C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}" 
-    cmd /Q /C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}"
+    cmd $slashesQ $slashesC call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}"
 }
 
