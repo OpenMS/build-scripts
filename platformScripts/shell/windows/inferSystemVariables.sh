@@ -29,12 +29,16 @@ function runNative {
     eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
     vcpathcyg=$(cygpath -m "$vcpath")
     vssetup="$vcpathcyg/vcvarsall.bat"
+    ## In MinGW/Git for Windows the slashes need to be escaped additionally
+    ## Not for cygwin
     if [[ $DISTRO == "mingw" ]]
       then
         slashes="//"
       else
         slashes="/"
     fi
+    ## Be careful. Might suffer from "Input line too long" problem if the CMake command is too long.
+    ## Did not happen yet.
     echo Calling: cmd ${slashes}Q ${slashes}C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}" 
     cmd ${slashes}Q ${slashes}C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}"
 }
