@@ -287,7 +287,7 @@ endif()
 ## On unixes, we try not to link boost statically (mostly because of OSX)
 if(WIN32)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
-    ENABLE_UNITYBUILD=On
+    ENABLE_UNITYBUILD=Off
   " )
 else(WIN32)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
