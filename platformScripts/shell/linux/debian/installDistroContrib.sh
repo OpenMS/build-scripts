@@ -10,4 +10,5 @@ sudo apt-get -y install libboost-regex-dev libboost-iostreams-dev libboost-date-
                         libzip-dev \
                         zlib1g-dev \
                         libxerces-c-dev \
+                        libsqlite3-dev \
                         libbz2-dev >> $LOG_PATH/packages.log 2>&1
