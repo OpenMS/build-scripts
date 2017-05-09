@@ -9,5 +9,6 @@ sudo yum -y install     boost-devel\
                         glpk-devel \
                         libzip-dev \
                         zlib-devel \
-                        xerces-c-devel \ 
+                        xerces-c-devel \
+                        sqlite-devel \
                         bzip2-devel >> $LOG_PATH/packages.log 2>&1
