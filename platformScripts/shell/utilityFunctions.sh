@@ -66,7 +66,7 @@ function OPSYS_detect {
     then
     _set_arch windows cygwin cygwin none
   fi
-  if [[ $(uname -s) =~ ^MINGW.*$ ]]
+  if [[ $(uname -s) =~ ^MINGW.*$ ]] || [[ $(uname -s) =~ ^MSYS.*$ ]]
     then
     _set_arch windows mingw mingw none
   fi
