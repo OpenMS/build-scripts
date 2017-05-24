@@ -304,7 +304,7 @@ if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR $ENV{PACKAGE_TEST} STREQUAL "ON")
   ## Copied from lemon build system. Added newer versions. Actually there are more...
   FIND_PROGRAM(GHOSTSCRIPT_EXECUTABLE
 	  NAMES gs gswin32c
-	  PATHS "$ENV{ProgramFiles}/gs"
+	  PATHS "$ENV{ProgramFiles}/gs" "$ENV{ProgramFiles(x86)}/gs"
 	  PATH_SUFFIXES gs8.61/bin gs8.62/bin gs8.63/bin gs8.64/bin gs8.65/bin gs8.70/bin gs8.71/bin gs9.05/bin gs9.10/bin gs9.18/bin gs9.19/bin gs9.20/bin
 	  DOC "Ghostscript: PostScript and PDF language interpreter and previewer."
 	)
