@@ -34,7 +34,7 @@ if $DOWNLOAD_CONTRIB
   if ! $USE_DISTRO_CONTRIB
   then
     echo "Downloading full contrib build from archive $CONTRIB_URL..."
-    wget -O $WORKSPACE/contrib_build.tar.gz $CONTRIB_URL > $LOG_PATH/contrib_setup.log 2>&1
+    curl --remote-name $CONTRIB_URL > $LOG_PATH/contrib_setup.log 2>&1
     # Archive should contain no root folder, only bin, lib, include etc. (see the archiving step of the openms_contrib_all job)
     # force-local to allow usage of mixed POSIX/Win paths (e.g. starting with C:), otherwise interpreted as remote location
     tar --force-local -xvzf $WORKSPACE/contrib_build.tar.gz --directory $CONTRIB_PATH >> $LOG_PATH/contrib_setup.log 2>&1
