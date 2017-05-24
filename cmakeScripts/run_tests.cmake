@@ -302,23 +302,23 @@ find_package(LATEX)
 if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR $ENV{PACKAGE_TEST} STREQUAL "ON")
   message("You seem to want to build the full documentation. Searching for (PDF)LaTeX and Doxygen before building...")
   ## Copied from lemon build system. Added newer versions. Actually there are more...
+  ## TODO put in module
+  set(MYPROGRAMFILES "ProgramFiles(x86)") 
   FIND_PROGRAM(GHOSTSCRIPT_EXECUTABLE
 	  NAMES gs gswin32c
-	  PATHS "$ENV{ProgramFiles}/gs" "$ENV{ProgramFiles(x86)}/gs"
+	  PATHS "$ENV{ProgramFiles}/gs" "$ENV{${MYPROGRAMFILES}}/gs"
 	  PATH_SUFFIXES gs8.61/bin gs8.62/bin gs8.63/bin gs8.64/bin gs8.65/bin gs8.70/bin gs8.71/bin gs9.05/bin gs9.10/bin gs9.18/bin gs9.19/bin gs9.20/bin
 	  DOC "Ghostscript: PostScript and PDF language interpreter and previewer."
 	)
   if (NOT LATEX_COMPILER OR NOT DVIPS_CONVERTER OR NOT GHOSTSCRIPT_EXECUTABLE)
     safe_message("Latex, dvips or ghostscript not found. You will need them to build the standard html documentation with formulas. ")
-  else()
-    safe_message("Latex found at ${LATEX_COMPILER}, dvips found at ${DVIPS_CONVERTER}, ghostscript found at ${GHOSTSCRIPT_EXECUTABLE}")
   endif()
+  safe_message("Latex found at ${LATEX_COMPILER}, dvips found at ${DVIPS_CONVERTER}, ghostscript found at ${GHOSTSCRIPT_EXECUTABLE}")
   
   if (NOT PDFLATEX_COMPILER OR NOT MAKEINDEX_COMPILER)
     safe_message("pdflatex/makeindex not found. You will need it to build the tutorials. ")
-  else()
-    safe_message("PDFLatex found at ${PDFLATEX_COMPILER}")
   endif()
+  safe_message("PDFLatex found at ${PDFLATEX_COMPILER}. MakeIndex found at ${MAKEINDEX_COMPILER}")
 
   if(NOT DOXYGEN_FOUND)
     safe_message("Doxygen not found. You will need it to build any part of the documentation.")
