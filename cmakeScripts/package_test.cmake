@@ -15,7 +15,7 @@ endif()
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Package")
 
 if(WIN32)
-    safe_message(FATAL_ERROR "Please use NSIS Installer scripts under github.com/OpenMS/windows-installer instead of CPack on Windows.")
+    set ( MY_PACK_TYPE "nsis")
 elseif(APPLE)
     set ( MY_PACK_TYPE "dmg")
 elseif(UNIX)
