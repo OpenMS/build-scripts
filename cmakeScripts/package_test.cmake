@@ -31,8 +31,9 @@ else()
 endif()
 
 # Not sure why this was needed. Evaluate removal.
-SET( $ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}" )
+# SET( $ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}" )
 
+message("Starting package build:")
 # build the package and submit the results to cdash  
 CTEST_START   (${DASHBOARD_MODEL} TRACK Package)
 # In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
