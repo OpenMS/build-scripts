@@ -50,6 +50,7 @@ endif()
 ## (re)define build name and test directories
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Documentation")
 
+message("Starting documentation build:")
 ## If BUILD_DOCU is called with other parameters that lead to a build of the docu before,
 ## this will generate the docu multiple times and waste resources.
 ## TODO prevent in parent script.
