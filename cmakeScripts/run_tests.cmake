@@ -225,9 +225,9 @@ if(WIN32)
 
   # Setup additional environment variables for windows, so that dependencies are foudn during execution
   ## Add rest (e.g. QT, CONTRIB)
-  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB}/lib\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB_PATH}/lib\;$ENV{Path}")
-  set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB_PATH}/lib\;$ENV{PATH}")
-  set (ENV{Path} "$ENV{QT_QMAKE_BIN_PATH}\;${CONTRIB_PATH}/lib\;$ENV{Path}")
+  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{Path}")
+  set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{PATH}")
+  set (ENV{Path} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{Path}")
 else(WIN32)
   ## Multi config like Xcode?
   if("$ENV{GENERATOR}" STREQUAL "XCode")
