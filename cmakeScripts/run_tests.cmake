@@ -307,11 +307,12 @@ CMAKE_CXX_COMPILER:FILEPATH=$ENV{CXX}
   " )
 endif()
 
+## TODO make fatal_errors to stop building?
 ## Docu needs latex, packaging requires full docu (although it might be copied from somewhere with a custom script).
 ## This is a precheck before you build everything. During build it will be tested again.
 find_package(Doxygen)
 find_package(LATEX)
-if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR $ENV{PACKAGE_TEST} STREQUAL "ON")
+if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR "$ENV{PACKAGE_TEST}" STREQUAL "ON")
   message("You seem to want to build the full documentation. Searching for (PDF)LaTeX and Doxygen before building...")
   ## Copied from lemon build system. Added newer versions. Actually there are more...
   ## TODO put in module
@@ -336,6 +337,11 @@ if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR $ENV{PACKAGE_TEST} STREQUAL "ON")
     safe_message("Doxygen not found. You will need it to build any part of the documentation.")
   else()
     safe_message("Doxygen found at ${DOXYGEN_EXECUTABLE}")
+  endif()
+endif()
+if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON" OR "$ENV{RUN_CHECKER}" STREQUAL "ON")
+  if(NOT DOXYGEN_FOUND)
+    safe_message("Doxygen not found. You will need it to build any part of the documentation.")
   endif()
 endif()
   
@@ -366,6 +372,7 @@ if("$ENV{ENABLE_STYLE_TESTING}" STREQUAL "ON")
         # Submit all
         ctest_submit()
     endif()
+    backup_test_results("Style")
     set(CTEST_BUILD_NAME ${OLD_CTEST_BUILD_NAME})
 endif()
 
@@ -397,12 +404,14 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
         # Submit all
         ctest_submit()
     endif()
+    backup_test_results("General")
     
     # Coverage only makes sense with normal testing suite. (no style)
     # TODO Test it more thoroughly and/or switch to the new method for generating a coverage report.
     # Because I think Coverage reports are a bit hidden in CDash
     if("$ENV{OPENMS_COVERAGE}" STREQUAL "ON")
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/coverage.cmake" )
+	backup_test_results("Coverage")
     endif()
     
     # Checker needs tests to be executed. Overwrites current Test.xml but creates a backup.
@@ -414,6 +423,7 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
         endif()
         # TODO Clean up checker script. Add dependency on doc_xml and doc_internal.
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/checker.cmake" )
+	backup_test_results("Checker")
     endif()
 endif()
 
@@ -423,33 +433,40 @@ endif()
 if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
     if("$ENV{PYOPENMS}" STREQUAL "ON")
-        ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms APPEND)
+        ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms)
         set(PYOPENMS_BUILT On)
     endif()
+    if(CDASH_SUBMIT)
+      ctest_submit(PARTS Build)
+    endif()
+    backup_test_results("PyOpenMS")
     if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
-        ##TODO cleanup the include script. Remove ctest_start, ctest_submit, change of buildname
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/python_checker.cmake" )
     endif()
-    ctest_submit()
+    backup_test_results("PyOpenMS-Checker")
 endif()
 
 ## To build full html documentation with Tutorials.
 if("$ENV{BUILD_DOCU}" STREQUAL "ON")
   include ( "${OPENMS_CMAKE_SCRIPT_PATH}/docu.cmake" )
+  backup_test_results("Documentation")
 endif()
 
 ## Needs only our libraries
 if("$ENV{EXTERNAL_CODE_TESTS}" STREQUAL "ON")
   include ( "${OPENMS_CMAKE_SCRIPT_PATH}/external_code.cmake" )
+  backup_test_results("External")
 endif()
 
 ## Additionally builds full documentation.
 ## TODO check if it actually is not executed twice. It probably is -.-
 if("$ENV{PACKAGE_TEST}" STREQUAL "ON")
   include ( "${OPENMS_CMAKE_SCRIPT_PATH}/package_test.cmake" )
+  backup_test_results("Package")
 endif()
 
 ## Relatively independent from the rest. Needs THIRDPARTY binaries and TOPP, UTILS.
 if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON")
   include ( "${OPENMS_CMAKE_SCRIPT_PATH}/knime_test.cmake" )
+  backup_test_results("KNIMEPackage")
 endif()
