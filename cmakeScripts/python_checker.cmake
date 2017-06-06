@@ -28,7 +28,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # --------------------------------------------------------------------------
-# $Maintainer: Stephan Aiche $
+# $Maintainer: Julianus Pfeuffer $
 # $Authors: Stephan Aiche $
 # --------------------------------------------------------------------------
 
@@ -72,20 +72,20 @@ macro(CTEST_CHECKER)
 		${CTEST_BINARY_DIRECTORY}/pychecker.log
 		WORKING_DIRECTORY
 		${CTEST_SOURCE_DIRECTORY})
-
-	safe_message("Finished checker with log in ${CHECKER_LOG}")
+	# Where should CHECKER_LOG come from?
+	#safe_message("Finished checker with log in ${CHECKER_LOG}")
 endmacro()
 
 # test again and execute checker, use Track to specify Track (Dart2) / Build group (Dart1)
 # in CDash
 if(NOT PYOPENMS_BUILT)
-  ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
+  ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS-Checker)
 	# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
 	# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash
 	# Otherwise skip update completely
   if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
-    SET(CTEST_UPDATE_VERSION_ONLY On)
-    CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
+    set(CTEST_UPDATE_VERSION_ONLY On)
+    ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}")
   endif()
 endif()
 
