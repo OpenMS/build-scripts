@@ -54,23 +54,17 @@ then
   sourceHere $OPSYS/installPythonAndPip.sh
   tock
   # I think on a Docker image we do not need virtualenv?
-  tick "Installing Python packages"
-  if (false)
-  then
-    # Install virtualenv
-    pip install virtualenv
-    # Setup python for pyOpenMS. You have to start virtualenv when you want to use it.
-    #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
-    virtualenv /home/jenkins/pyopenms_venv
-    chmod +x /home/jenkins/pyopenms_venv/bin/activat*
-    #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
-    #                               && pip install -U setuptools pip autowrap nose numpy wheel"
-    source /home/jenkins/pyopenms_venv/bin/activate \
-    pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
-  else
-    #Just install system wide
-    sudo pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
-  fi
+  tick "Installing Python packages in a virtualenv"
+  # Install virtualenv
+  pip install -U virtualenv
+  # Setup python for pyOpenMS. You have to start virtualenv when you want to use it.
+  #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
+  virtualenv ./pyopenms_venv
+  chmod +x ./pyopenms_venv/bin/activat*
+  #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
+  #                               && pip install -U setuptools pip autowrap nose numpy wheel"
+  source ./pyopenms_venv/bin/activate
+  pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   tock
 fi
 
