@@ -66,8 +66,14 @@ then
   source ./pyopenms_venv/bin/activate
   # We are in a virtualenv. We can install it without --user
   pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
+  if [ "$RUN_PYTHON_CHECKER" == "ON" ]
+  then
+    pip install -U breathe
+  fi
   tock
 fi
+
+
 
 # For Thirdparty tests (e.g. MSGF+, LuciPhor)
 if ! [ -z ${SEARCH_ENGINES_DIRECTORY+x} ]
