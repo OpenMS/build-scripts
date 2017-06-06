@@ -1,5 +1,4 @@
 ## TODO set Generator here and check if xcode is wanted.
-sourceHere installCommandlineTools.sh
 
 if [[ $1 =~ ^appleclang.*$ ]]
   then
