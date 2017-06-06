@@ -68,7 +68,7 @@ then
   pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   if [ "$RUN_PYTHON_CHECKER" == "ON" ]
   then
-    pip install -U breathe
+    pip install -U breathe >> $LOG_PATH/pip_packages.log 2>&1
   fi
   tock
 fi
