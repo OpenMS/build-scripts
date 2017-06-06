@@ -262,7 +262,7 @@ CMAKE_GENERATOR:INTERNAL=$ENV{GENERATOR}
 ")
 
 ## Add only if present
-set (additional_bool_vars ENABLE_USAGE_STATISTICS ENABLE_TOPP_TESTING ENABLE_CLASS_TESTING ENABLE_STYLE_TESTING WITH_GUI DISABLE_WAVELET2DTEST OPENMS_COVERAGE ADDRESS_SANITIZER)
+set (additional_bool_vars ENABLE_USAGE_STATISTICS ENABLE_TOPP_TESTING ENABLE_CLASS_TESTING ENABLE_STYLE_TESTING WITH_GUI DISABLE_WAVELET2DTEST PYOPENMS OPENMS_COVERAGE ADDRESS_SANITIZER)
 foreach(var IN LISTS additional_bool_vars)
     if (DEFINED ENV{${var}})
       SET(INITIAL_CACHE "${INITIAL_CACHE}
@@ -299,6 +299,14 @@ else(WIN32)
   " )
 endif(WIN32)
 
+## If you set a custom compiler, pass it to the CMake calls
+if(DEFINED ENV{CC} AND DEFINED ENV{CXX})
+  SET(INITIAL_CACHE "${INITIAL_CACHE}
+CMAKE_C_COMPILER:FILEPATH=$ENV{CC}
+CMAKE_CXX_COMPILER:FILEPATH=$ENV{CXX}
+  " )
+endif()
+
 ## Docu needs latex, packaging requires full docu (although it might be copied from somewhere with a custom script).
 ## This is a precheck before you build everything. During build it will be tested again.
 find_package(Doxygen)
@@ -330,49 +338,9 @@ if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR $ENV{PACKAGE_TEST} STREQUAL "ON")
     safe_message("Doxygen found at ${DOXYGEN_EXECUTABLE}")
   endif()
 endif()
-
-## If you set a custom compiler, pass it to the CMake calls
-if(DEFINED ENV{CC} AND DEFINED ENV{CXX})
-  SET(INITIAL_CACHE "${INITIAL_CACHE}
-CMAKE_C_COMPILER:FILEPATH=$ENV{CC}
-CMAKE_CXX_COMPILER:FILEPATH=$ENV{CXX}
-  " )
-endif()
-
-##Error(s) while accumulating results:
-##  Problem reading source file: /home/jenkins/workspace/openms_linux/025a6a2d/source/src/openms/include/OpenMS/DATASTRUCTURES/Map.h line:166  out total: 191
-## Fixed in 2.8.7, but soon reverted in favor of CTEST_COVERAGE_EXTRA_FLAGS variable. However, until CMake 3.1 this variable is not respected
-## in Ctest scripts but only from the CLI of ctest
-## TODO require CMake 3.1 for coverage or use new make target OpenMS_coverage
-if("$ENV{TEST_COVERAGE}" STREQUAL "ON")
-  SET(CTEST_COVERAGE_EXTRA_FLAGS "-l -p -r -s ${CTEST_SOURCE_DIRECTORY}")
-  SET(INITIAL_CACHE "${INITIAL_CACHE}
-CMAKE_C_FLAGS:STRING=-fprofile-arcs -ftest-coverage
-CMAKE_CXX_FLAGS:STRING=-fprofile-arcs -ftest-coverage
-CMAKE_EXE_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage
-CMAKE_MODULE_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage
-CMAKE_SHARED_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage
-COVERAGE_COMMAND:STRING=${CTEST_COVERAGE_COMMAND}
-CTEST_COVERAGE_COMMAND:STRING=${CTEST_COVERAGE_COMMAND}
-" )
-endif()
   
 # Copy config file to customize errors (will be loaded later)
 file(COPY "${OPENMS_CMAKE_SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
-
-
-if("$ENV{PYOPENMS}" STREQUAL "ON")
-	set(INITIAL_CACHE "${INITIAL_CACHE} PYOPENMS=$ENV{PYOPENMS}")
-	
-        ## TODO check if OSX and which version
-	# http://stackoverflow.com/questions/22313407/clang-error-unknown-argument-mno-fused-madd-python-package-installation-fa
-	# UPDATE [2014-05-16]: Apple has fixed this problem with updated system Pythons (2.7, 2.6, and 2.5) in OS X 10.9.3
-	# so the workaround is no longer necessary when using the latest Mavericks and Xcode 5.1+.
-	# However, as of now, the workaround is still required for OS X 10.8.x (Mountain Lion, currently 10.8.5)
-	# if you are using Xcode 5.1+ there.
-	#set(ENV{CFLAGS} "-Qunused-arguments")
-	#set(ENV{CPPFLAGS} "-Qunused-arguments")
-endif()
 
 
 ## Configuration finished!
@@ -436,6 +404,7 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     if("$ENV{OPENMS_COVERAGE}" STREQUAL "ON")
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/coverage.cmake" )
     endif()
+    
     # Checker needs tests to be executed. Overwrites current Test.xml but creates a backup.
     if("$ENV{RUN_CHECKER}" STREQUAL "ON")
         include( "${OPENMS_CMAKE_SCRIPT_PATH}/FindPHP.cmake")
