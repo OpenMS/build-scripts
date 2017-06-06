@@ -272,11 +272,12 @@ foreach(var IN LISTS additional_bool_vars)
 endforeach()
 
 ## Special cases
-if (DEFINED $ENV{QT_QMAKE_BIN_PATH})
+if (DEFINED ENV{QT_QMAKE_BIN_PATH})
       SET(INITIAL_CACHE "${INITIAL_CACHE}
         QT_QMAKE_EXECUTABLE=$ENV{QT_QMAKE_BIN_PATH}/qmake
       ")
 endif()
+
 # If it was set, use custom install dir (e.g. because of missing write permissions in system paths)
 # Packaging calls the install target.
 if(DEFINED ENV{OPENMS_INSTALL_DIR})
@@ -423,16 +424,17 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     
     ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL $ENV{NUMBER_THREADS})
 
-    # Coverage only makes sense with normal testing suite. (no style)
-    # TODO Test it more thoroughly and/or switch to the new method for generating a coverage report.
-    # Because I think Coverage reports are a bit hidden in CDash
-    if("$ENV{TEST_COVERAGE}" STREQUAL "ON")
-        ctest_coverage(BUILD "${CTEST_BINARY_DIRECTORY}")
-    endif()
     # E.g. for use with Jenkins or other Dashboards you can disable submission
     if(CDASH_SUBMIT)
         # Submit all
         ctest_submit()
+    endif()
+    
+    # Coverage only makes sense with normal testing suite. (no style)
+    # TODO Test it more thoroughly and/or switch to the new method for generating a coverage report.
+    # Because I think Coverage reports are a bit hidden in CDash
+    if("$ENV{OPENMS_COVERAGE}" STREQUAL "ON")
+        include ( "${OPENMS_CMAKE_SCRIPT_PATH}/coverage.cmake" )
     endif()
     # Checker needs tests to be executed. Overwrites current Test.xml but creates a backup.
     if("$ENV{RUN_CHECKER}" STREQUAL "ON")
