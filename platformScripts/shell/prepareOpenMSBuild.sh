@@ -44,6 +44,7 @@ if $DOWNLOAD_CONTRIB
     sourceHere $OPSYS/installDistroContrib.sh
   fi
   tock
+  echo "Checking extraction results of contrib..."
   ls -la $CONTRIB_PATH || ( echo "Error: Could not find CONTRIB_PATH after download and extraction of contrib. Check logs." && exit 1)
 fi
 
@@ -72,8 +73,6 @@ then
   fi
   tock
 fi
-
-
 
 # For Thirdparty tests (e.g. MSGF+, LuciPhor)
 if ! [ -z ${SEARCH_ENGINES_DIRECTORY+x} ]
