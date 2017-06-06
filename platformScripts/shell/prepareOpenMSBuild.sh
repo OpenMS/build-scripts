@@ -84,8 +84,6 @@ then
   ## Maybe /branches/master/ first occurs if there are multiple branches. I have no clue! It also seems to depend on the
   ## recent changes.
   ## Alternative: 1) Git archive (does not work with github). 2) A "local" git repo mounted as volume.
-  echo "Running shell:"
-  echo $(ps -o args= -p "$$")
   svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || echo "Cloning of multiplatform Thirdparty binaries went wrong"
   opsysfirst=`echo $OPSYS|cut -c1|tr [a-z] [A-Z]`
   opsyssecond=`echo $OPSYS|cut -c2-`
