@@ -341,7 +341,7 @@ if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR "$ENV{PACKAGE_TEST}" STREQUAL "ON")
 endif()
 if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON" OR "$ENV{RUN_CHECKER}" STREQUAL "ON")
   if(NOT DOXYGEN_FOUND)
-    safe_message("Doxygen not found. You will need it to build any part of the documentation.")
+    safe_message("Doxygen not found. You will need it to run the (Python-)Checker scripts. They read the xml class docu.")
   endif()
 endif()
   
@@ -364,6 +364,7 @@ ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
 if("$ENV{ENABLE_STYLE_TESTING}" STREQUAL "ON")
     set(OLD_CTEST_BUILD_NAME ${CTEST_BUILD_NAME})
     set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}-Style)
+    safe_message("Starting style tests...")
     ctest_start(${DASHBOARD_MODEL} TRACK Style)
     ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=On")
     ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL $ENV{NUMBER_THREADS})
@@ -373,11 +374,13 @@ if("$ENV{ENABLE_STYLE_TESTING}" STREQUAL "ON")
         ctest_submit()
     endif()
     backup_test_results("Style")
+    safe_message("Finished style tests...")
     set(CTEST_BUILD_NAME ${OLD_CTEST_BUILD_NAME})
 endif()
 
 if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STREQUAL "ON")
     # Do actual tool and class tests
+    
     ctest_start  (${DASHBOARD_MODEL})
     # Reconfigure with style testing off. Class&TOPP are already in the InitialCache but "shadowed" by Style.
     ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=Off")
@@ -390,6 +393,7 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     endif(WIN32)
 
     ## i.e. make all target
+    safe_message("Building all target...")
     ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
 
     if(WIN32)
@@ -397,6 +401,7 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
         set(CTEST_PROJECT_NAME "OpenMS")
     endif(WIN32)
     
+    safe_message("Starting class and or tool tests...")
     ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL $ENV{NUMBER_THREADS})
 
     # E.g. for use with Jenkins or other Dashboards you can disable submission
@@ -433,8 +438,10 @@ endif()
 if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
     if("$ENV{PYOPENMS}" STREQUAL "ON")
+        safe_message("Building pyopenms...")
         ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms)
         set(PYOPENMS_BUILT On)
+	safe_message("Finished building pyopenms...")
     endif()
     if(CDASH_SUBMIT)
       ctest_submit(PARTS Build)
