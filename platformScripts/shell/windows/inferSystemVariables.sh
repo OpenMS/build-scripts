@@ -24,6 +24,9 @@ export SUBDISTRO_NAME="Windows"
 export REMOTE_CONTRIB_FOLDER="contrib/$OPSYS/$OPENMS_TARGET_ARCH/$COMPILER"
 export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/$REMOTE_CONTRIB_FOLDER/contrib_build.tar.gz"
 
+## Only needed on Windows to escape C: when using tar. Only supported by gnutar. Not usable on Mac.
+export force_local_flag=--force-local
+
 ## We need that wrapper for CMake to load all the correct environment variables. We could also replicate what the bat file does.
 function runNative {
     eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
