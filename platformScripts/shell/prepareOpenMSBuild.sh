@@ -56,7 +56,7 @@ then
   # I think on a Docker image we do not need virtualenv?
   tick "Installing Python packages in a virtualenv"
   # Install virtualenv
-  pip install -U virtualenv
+  pip install --user -U virtualenv
   # Setup python for pyOpenMS. You have to start virtualenv when you want to use it.
   #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
   virtualenv ./pyopenms_venv
@@ -64,6 +64,7 @@ then
   #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
   #                               && pip install -U setuptools pip autowrap nose numpy wheel"
   source ./pyopenms_venv/bin/activate
+  # We are in a virtualenv. We can install it without --user
   pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   tock
 fi
