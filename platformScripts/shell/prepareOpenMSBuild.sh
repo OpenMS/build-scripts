@@ -66,10 +66,10 @@ then
   #                               && pip install -U setuptools pip autowrap nose numpy wheel"
   source ./pyopenms_venv/bin/activate
   # We are in a virtualenv. We can install it without --user
-  pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
+  pip install -U setuptools pip autowrap nose Cython numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   if [ "$RUN_PYTHON_CHECKER" == "ON" ]
   then
-    pip install -U breathe >> $LOG_PATH/pip_packages.log 2>&1
+    pip install -U breathe pyyaml >> $LOG_PATH/pip_packages.log 2>&1
   fi
   tock
 fi
