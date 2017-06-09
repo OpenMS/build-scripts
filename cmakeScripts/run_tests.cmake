@@ -468,7 +468,8 @@ endif()
 ## Needs only our libraries
 if("$ENV{EXTERNAL_CODE_TESTS}" STREQUAL "ON")
   include ( "${OPENMS_CMAKE_SCRIPT_PATH}/external_code.cmake" )
-  backup_test_results("External")
+  ##backup is located in the included script. Will do so for others, too.
+  ##backup_test_results("External")
 endif()
 
 ## Additionally builds full documentation.
