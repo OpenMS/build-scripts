@@ -103,7 +103,13 @@ set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 SET (CTEST_BUILD_NAME "$ENV{OPENMS_BUILDNAME_PREFIX}-$ENV{SYSTEM_ID}-$ENV{COMPILER_ID}-$ENV{BUILD_TYPE}-$ENV{TARGET_ARCH}")
 
 ## Add contrib path to CMAKE_PREFIX_PATH to help in the search of libraries
-set(CMAKE_PREFIX_PATH "$ENV{CONTRIB_PATH}\;$ENV{QT_QMAKE_BIN_PATH}")
+## TODO remove CONTRIB_PATH from prefix path so that it gets priority in OPENMS_CONTRIB_LIBS
+## Once the new flag is established.
+##set(CMAKE_PREFIX_PATH "$ENV{CONTRIB_PATH}\;$ENV{OPENMS_BREW_FOLDER}\;$ENV{QT_QMAKE_BIN_PATH}")
+## QT_QMAKE_BIN_PATH should in theory not be needed here. If it is set, QT_QMAKE_EXECUTABLE will
+## be set to QT_QMAKE_BIN_PATH/qmake and this should be enough to find all the libraries.
+set(CMAKE_PREFIX_PATH "$ENV{CONTRIB_PATH}\;$ENV{OPENMS_BREW_FOLDER}")
+
 set(OPENMS_CONTRIB_LIBS "$ENV{CONTRIB_PATH}")
 safe_message("Using as CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 # Platform specific setup:
