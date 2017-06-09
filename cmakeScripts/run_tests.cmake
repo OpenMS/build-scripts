@@ -452,11 +452,11 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     if(CDASH_SUBMIT)
       ctest_submit(PARTS Build)
     endif()
-    backup_test_results("PyOpenMS")
+    ## PyChecker needs the pyOpenMS test results to append to. Backup afterwards.
     if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/python_checker.cmake" )
     endif()
-    backup_test_results("PyOpenMS-Checker")
+    backup_test_results("PyOpenMS")
 endif()
 
 ## To build full html documentation with Tutorials.
