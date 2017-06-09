@@ -57,3 +57,6 @@ if(CDASH_SUBMIT)
 endif()
 
 restore_variables(required_variables)
+## Cannot use global macro. We want to copy the results to the main build dir.
+safe_message("Backing up test results. Adding prefix External.")
+file(COPY ${CTEST_BINARY_TESTEXTERNAL_DIRECTORY}/Testing DESTINATION ${CTEST_BINARY_DIRECTORY}/External_Testing)
