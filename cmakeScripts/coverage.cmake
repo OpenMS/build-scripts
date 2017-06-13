@@ -40,6 +40,8 @@ set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;CTEST_BUIL
 backup_and_check_variables(required_variables)
 
 ## OpenMS_Coverage target looks for this file. Since we backup stuff, it might be moved. Touch to create.
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CTEST_BINARY_DIRECTORY}/Testing)
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CTEST_BINARY_DIRECTORY}/Testing/Temporary)
 execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${CTEST_BINARY_DIRECTORY}/Testing/Temporary/LastTest.log)
 
 if(NOT DEFINED CDASH_SUBMIT)
