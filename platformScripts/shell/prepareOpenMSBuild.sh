@@ -110,6 +110,6 @@ then
   # For full docu we need latex (formulas in html) and
   # pdflatex (tutorials) with some packages
   tick "Setting up LaTeX"
-  sourceHere $OPSYS/installLaTeX.sh
+  sourceHere $OPSYS/installLatex.sh
   tock
 fi
