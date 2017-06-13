@@ -125,10 +125,6 @@ if(UNIX)
 	    endif()
 	endif()
 elseif(WIN32)
-    ## Coverage and other stuff will crash at configure time
-    if("$ENV{PACKAGE_TEST}" STREQUAL "ON")
-        safe_message("Warning: Packaging not covered by CMake under Windows. Please use the NSIS installer scripts when tests succeed.")
-    endif()
 	# check if generator is VS (e.g., Visual Studio 10 Win64)
 	if (NOT $ENV{GENERATOR} MATCHES "Visual Studio*")
             message(FATAL_ERROR "Only Visual Studio supported on Windows")
@@ -417,8 +413,7 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     endif()
     backup_test_results("General")
     
-    # Coverage only makes sense with normal testing suite. (no style)
-    # TODO Test it more thoroughly and/or switch to the new method for generating a coverage report.
+    # Coverage only makes sense with normal testing suite and debug mode. (no style)
     # Because I think Coverage reports are a bit hidden in CDash
     if("$ENV{OPENMS_COVERAGE}" STREQUAL "ON")
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/coverage.cmake" )
