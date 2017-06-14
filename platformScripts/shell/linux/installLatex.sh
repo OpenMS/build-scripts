@@ -1,13 +1,16 @@
 TL=install-tl
 mkdir -p $TL
+echo "Working dir during tex-install:"
+pwd
+cp openmsdocu_texlive.profile $TL/
 # texlive net batch installation
 wget -nv -O $TL.tar.gz http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
 tar -xzf $TL.tar.gz -C $TL --strip-components=1
-cd $TL
-  wget https://abibuilder.informatik.uni-tuebingen.de/archive/contrib/os_support/openmsdocu_texlive.profile
+pushd $TL
   sudo ./install-tl --persistent-downloads --profile openmsdocu_texlive.profile > $LOG_PATH/texlive.log 2>&1
-cd ..
+popd
 sudo ln -s /usr/local/texlive/bin/x86_64-linux /opt/texbin
+# TODO think about putting this in etc/profile.d/
 export PATH=$PATH:/usr/local/texlive/bin/x86_64-linux
 # cleanup
 rm $TL.tar.gz && rm -r $TL
