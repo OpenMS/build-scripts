@@ -1,23 +1,19 @@
-## TODO make dependent on jenkins variable.
-if [[ -z $(wmic OS get OSArchitecture | grep "64-bit") ]]
-  then
+## Legacy. This is how you get the actual host architecture.
+## But we read from Jenkins variable to be able to cross-compile
+#if [[ -z $(wmic OS get OSArchitecture | grep "64-bit") ]]
+if [[ $OS_LABEL =~ ^win.*32$ ]]
+then
   export ARCH=x86
+  export OPENMS_TARGET_ARCH=x86
   export ARCH_NO_BIT=32
   export GENERATOR_ARCH_SUFFIX=""
 else
   export ARCH=x64
+  export OPENMS_TARGET_ARCH=x64
   export ARCH_NO_BIT=64
   export GENERATOR_ARCH_SUFFIX=" Win64"
 fi
 
-if [[ $OS_LABEL =~ ^win.*32$ ]]
-  then
-    export OPENMS_TARGET_ARCH=x86
-  else
-    export OPENMS_TARGET_ARCH=x64
-fi
-
-export OPENMS_TARGET_ARCH=$ARCH
 export SUBDISTRO_VERSION=$(systeminfo | grep '^OS\ Name' | egrep -o "(XP|Vista|7|8|10)")
 export SUBDISTRO_NAME="Windows"
 ## On Windows, only the visual studio version and the architecture should matter.
