@@ -1,0 +1,1 @@
+sourceHere $DISTRO/installPackagingTools.sh
