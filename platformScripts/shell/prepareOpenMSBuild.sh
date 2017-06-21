@@ -113,3 +113,10 @@ then
   sourceHere $OPSYS/installLatex.sh
   tock
 fi
+
+if [ "${PACKAGE_TEST}" == "ON" ]
+then
+  tick "Setting up packaging tools"
+  sourceHere $OPSYS/installPackagingTools.sh
+  tock
+fi
