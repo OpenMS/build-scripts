@@ -62,6 +62,11 @@ else()
 endif()
 CTEST_BUILD(TARGET ${PACKAGE_TARGET} APPEND)
 
+if (APPLE AND DEFINED ENV{CPACK_BUNDLE_APPLE_CERT_APP})
+  message("Codesigning the dmg image with CPACK_BUNDLE_APPLE_CERT_APP=$ENV{CPACK_BUNDLE_APPLE_CERT_APP} ...")
+  execute_process(COMMAND codesign --deep --force --keychain /Library/Keychains/System.keychain --sign $ENV{CPACK_BUNDLE_APPLE_CERT_APP} OpenMS*.dmg WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY})
+endif()
+
 if(CDASH_SUBMIT)
     CTEST_SUBMIT  (PARTS Build)
 endif()
