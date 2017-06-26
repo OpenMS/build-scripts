@@ -46,7 +46,6 @@ endif()
 
 CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTORY=$ENV{SEARCH_ENGINES_DIRECTORY};-DSIGNING_IDENTITY=$ENV{SIGNING_IDENTITY}")
 
-## TODO Think about how to backup the results of intermediate build steps. (*.xmls in the Testing Dir)
 # The preinstall target that is called by "make package" will build the ALL target which includes
 # doc and doc_tutorial (if enabled)
 #CTEST_BUILD    (TARGET doc)
