@@ -6,7 +6,7 @@ then
   echo "Found xcodebuild. Checking accepted license."
   if [[ -z $(sudo xcodebuild -license accept) ]]
   then
-    echo "Could not check if license is accepted. Are you sudo? Skipping check."
+    echo "Could not check if license is accepted. Are you sudo? Skipping check. Please make sure xcodebuild is functional."
   fi
   export SYSROOT=$(xcrun --show-sdk-path | tail -1)
   if [[ -z $(ls /usr/include) ]]
