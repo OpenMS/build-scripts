@@ -54,7 +54,7 @@ CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTO
 if (APPLE AND DEFINED CMAKE_VERSION AND "${CMAKE_VERSION}" VERSION_LESS "3.5")
   set(PACKAGE_TARGET "finalized_dist")
 else()
-  if(APPLE)
+  if(APPLE) ## Always try to sign on Mac b/c of Gatekeeper issues. You will get an error if you did not set a signing identity.
     set(PACKAGE_TARGET "signed_dist")
   else()
     set(PACKAGE_TARGET "dist")
