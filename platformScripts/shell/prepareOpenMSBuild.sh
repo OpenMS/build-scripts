@@ -81,16 +81,22 @@ then
   sourceHere $OPSYS/installJRE.sh
   mkdir $SEARCH_ENGINES_DIRECTORY || true
   ## Caution: with svn 1.8.8 the link /branches/master/ had to be substituted with /trunk/. Error seems to be relatively unknown on the internet.
-  ## Maybe /branches/master/ first occurs if there are multiple branches. I have no clue! It also seems to depend on the
+  ## First guess was: /branches/master/ first occurs if there are multiple branches. Probably not. I have no clue! It also seems to depend on the
   ## recent changes.
-  ## Alternative: 1) Git archive (does not work with github). 2) A "local" git repo mounted as volume.
-  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || echo "Cloning of multiplatform Thirdparty binaries went wrong"
+  ## Alternatives: 1) Git archive (does not work with github). 2) A "local" git repo mounted as volume.
+  ## For now, check both
+  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || \
+  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/branches/master/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || \
+  echo "Cloning of multiplatform Thirdparty binaries went wrong"
+  
   opsysfirst=`echo $OPSYS|cut -c1|tr [a-z] [A-Z]`
   opsyssecond=`echo $OPSYS|cut -c2-`
   # ${OPSYS^} to make first letter uppercase only works in bash4+
-  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || echo "Cloning of Linux Thirdparty binaries went wrong"
-  #svn export --force https://github.com/OpenMS/THIRDPARTY/branches/master/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/git.log || echo "Cloning of multiplatform Thirdparty binaries went wrong"
-  #svn export --force https://github.com/OpenMS/THIRDPARTY/branches/master/Linux/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/git.log || echo "Cloning of Linux Thirdparty binaries went wrong"
+  
+  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || \
+  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/branches/master/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || \
+  echo "Cloning of platform-specific Thirdparty binaries went wrong"
+
   tock
 fi
 
