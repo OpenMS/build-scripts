@@ -6,6 +6,12 @@ if [[ -z $QT_VERSIONS_PATH ]]
   echo " e.g., C:/dev/qt-builds"
 else
   echo "Searching for matching subfolder in $QT_VERSIONS_PATH"
-  export QT_QMAKE_BIN_PATH=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 1 -type d -name "qt-4.8*-vs${VS_YEAR}-${ARCH_NO_BIT}bit" | head -1)/bin
+  if [[ ${GIT_BRANCH} =~ .*qt5.* ]]
+  then
+    QTVER=5.9
+  else
+    QTVER=4.8
+  fi
+  export QT_QMAKE_BIN_PATH=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 1 -type d -name "qt-${QTVER}*-vs${VS_YEAR}-${ARCH_NO_BIT}bit" | head -1)/bin
   echo "Found matching QT bin dir at: $QT_QMAKE_BIN_PATH"
 fi
