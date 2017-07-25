@@ -6,7 +6,15 @@ if [[ $1 =~ ^appleclang.*$ ]]
   export CXX=$(which clang++)
   export CC=$(which clang)
   export GENERATOR="Unix Makefiles"
-  export ADDITIONAL_CMAKE_ARGUMENTS="-DCMAKE_OSX_SYSROOT=$SYSROOT"
+  ## If you have multiple compilers installed you should set a correct
+  ## sysroot to find the right stdlibs for example
+  ##
+  if [[ -z ${SYSROOT+x} ]]
+    then
+    export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-} -DCMAKE_OSX_SYSROOT=$SYSROOT"
+  else
+    export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-}"
+  fi
   echo "Installed $COMPILER_ID"
 elif [[ $1 =~ ^g\+\+.*$ ]]
     then
