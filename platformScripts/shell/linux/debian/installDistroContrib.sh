@@ -9,5 +9,6 @@ sudo apt-get -y install libboost-regex-dev libboost-iostreams-dev libboost-date-
                         zlib1g-dev \
                         libxerces-c-dev \
                         libsqlite3-dev \
-                        libwildmagic-dev \ ##TODO first available in 16.04 (build in contrib otherwise)
+                        libeigen3-dev \
+                        libwildmagic-dev \ ##TODO first available in 16.04 (build in contrib otherwise). Probably incompatible for now.
                         libbz2-dev >> $LOG_PATH/packages.log 2>&1
