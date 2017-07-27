@@ -246,7 +246,7 @@ endif()
 # Though, it might change how the Testing folders are generated and named.
 if ("$ENV{OPENMS_BUILDNAME_PREFIX}" MATCHES "pr-.*")
   set(DASHBOARD_MODEL Continuous)
-elseif("$ENV{OPENMS_BUILDNAME_PREFIX}" STREQUAL "develop" OR "$ENV{OPENMS_BUILDNAME_PREFIX}" STREQUAL "master")
+elseif("$ENV{OPENMS_BUILDNAME_PREFIX}" STREQUAL "develop" OR "$ENV{OPENMS_BUILDNAME_PREFIX}" STREQUAL "master" OR "$ENV{OPENMS_BUILDNAME_PREFIX}" STREQUAL "nightly")
   set(DASHBOARD_MODEL Nightly)
 else()
   set(DASHBOARD_MODEL Experimental)
