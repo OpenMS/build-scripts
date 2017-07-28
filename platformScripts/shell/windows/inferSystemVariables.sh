@@ -25,9 +25,20 @@ export force_local_flag=--force-local
 
 ## We need that wrapper for CMake to load all the correct environment variables. We could also replicate what the bat file does.
 function runNative {
-    eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
-    vcpathcyg=$(cygpath -m "$vcpath")
-    vssetup="$vcpathcyg/vcvarsall.bat"
+    ## Starting from VS2017 MS will have vswhere in a certain path. No env vars.
+    if (( VS_NR < "15" ))
+      then
+      eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
+      vcpathcyg=$(cygpath -m "$vcpath")
+      vssetup="$vcpathcyg/vcvarsall.bat"
+      varsetupcommand="$vssetup ${OPENMS_TARGET_ARCH}"
+    else
+      vcpath=$("$PROGRAMFILES/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath)
+      vcpatchcyg=$(cygpath -m "$vcpath")/Common7/Tools
+      vssetup="$vcpathcyg/VsDevCmd.bat"
+      varsetupcommand="$vssetup"
+    fi
+    
     ## In MinGW/Git for Windows the slashes need to be escaped additionally
     ## Not for cygwin
     if [[ $DISTRO == "mingw" ]]
@@ -38,7 +49,7 @@ function runNative {
     fi
     ## Be careful. Might suffer from "Input line too long" problem if the CMake command is too long.
     ## Did not happen yet.
-    echo Calling: cmd ${slashes}Q ${slashes}C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}" 
-    cmd ${slashes}Q ${slashes}C call "$vssetup" "${OPENMS_TARGET_ARCH}" "&&" "${@}"
+    echo Calling: cmd ${slashes}Q ${slashes}C call "$varsetupcommand" "&&" "${@}" 
+    cmd ${slashes}Q ${slashes}C call "$varsetupcommand" "&&" "${@}"
 }
 
