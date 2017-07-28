@@ -395,7 +395,7 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     endif(WIN32)
 
     ## i.e. make all target
-    safe_message("Building all target...")
+    safe_message("Building the all target...")
     ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
 
     if(WIN32)
@@ -445,7 +445,7 @@ else()
     endif(WIN32)
 
     ## i.e. make all target
-    safe_message("Building all target...")
+    safe_message("Building OpenMS target...")
     ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" TARGET OpenMS)
 
     if(WIN32)
