@@ -34,7 +34,7 @@ function runNative {
       varsetupcommand="$vssetup ${OPENMS_TARGET_ARCH}"
     else
       vcpath=$("$PROGRAMFILES/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath)
-      vcpatchcyg=$(cygpath -m "$vcpath")/Common7/Tools
+      vcpathcyg=$(cygpath -m "$vcpath")/Common7/Tools
       vssetup="$vcpathcyg/VsDevCmd.bat"
       varsetupcommand="$vssetup"
     fi
