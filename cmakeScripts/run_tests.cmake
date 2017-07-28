@@ -431,6 +431,34 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/checker.cmake" )
 	backup_test_results("Checker")
     endif()
+else()
+    ## Only build library
+    ctest_start  (${DASHBOARD_MODEL})
+    # Reconfigure with style testing off. Class&TOPP are already in the InitialCache but "shadowed" by Style.
+    ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=Off")
+    ## The following might also be needed for XCode (e.g. all generators that build Projects)
+    ## On our Mac machines this does not seem to affect the Makefile-based generators,
+    ## so maybe we can always set it to OpenMS_host
+    if(WIN32)
+        # So that windows uses the correct sln file (see https://gitlab.kitware.com/cmake/cmake/issues/12623)
+        set(CTEST_PROJECT_NAME "OpenMS_host")
+    endif(WIN32)
+
+    ## i.e. make all target
+    safe_message("Building all target...")
+    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" TARGET OpenMS)
+
+    if(WIN32)
+        # Reset project name
+        set(CTEST_PROJECT_NAME "OpenMS")
+    endif(WIN32)
+    
+    # E.g. for use with Jenkins or other Dashboards you can disable submission
+    if(CDASH_SUBMIT)
+        # Submit all
+        ctest_submit()
+    endif()
+    backup_test_results("General")
 endif()
 
 ## The python-checker tool only needs the class documentation in xml (target: doc_xml)
