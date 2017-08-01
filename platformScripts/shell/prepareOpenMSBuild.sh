@@ -70,6 +70,7 @@ then
   if [ "$RUN_PYTHON_CHECKER" == "ON" ]
   then
     pip install -U breathe pyyaml >> $LOG_PATH/pip_packages.log 2>&1
+    sourceHere $OPSYS/installDocuTools.sh
   fi
   tock
 fi
