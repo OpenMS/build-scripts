@@ -30,7 +30,7 @@ function runNative {
       then
       eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
       vcpathcyg=$(cygpath -m "$vcpath")
-      vssetup="$vcpathcyg/vcvarsall.bat"
+      vssetup=\"\"\"$vcpathcyg/vcvarsall.bat\"\"\"
       varsetupcommand="$vssetup ${OPENMS_TARGET_ARCH}"
     else
       vcpath=$("$PROGRAMFILES/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath)
@@ -49,7 +49,7 @@ function runNative {
     fi
     ## Be careful. Might suffer from "Input line too long" problem if the CMake command is too long.
     ## Did not happen yet.
-    echo Calling: cmd ${slashes}Q ${slashes}C call "$varsetupcommand" "&&" "${@}" 
-    cmd ${slashes}Q ${slashes}C call "$varsetupcommand" "&&" "${@}"
+    echo Calling: cmd ${slashes}Q ${slashes}C call $varsetupcommand && "${@}" 
+    cmd ${slashes}Q ${slashes}C call $varsetupcommand && "${@}"
 }
 
