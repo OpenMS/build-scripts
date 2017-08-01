@@ -29,13 +29,13 @@ function runNative {
     if (( VS_NR < "15" ))
       then
       eval vcpath="\$VS${VS_NR}0COMNTOOLS..\\\\..\\\\VC"
-      vcpathcyg=$(cygpath -m "$vcpath")
-      vssetup='"'$vcpathcyg/vcvarsall.bat'"'
-      varsetupcommand="$vssetup \"${OPENMS_TARGET_ARCH}\""
+      vcpathcyg=$(cygpath -m $vcpath)
+      vssetup="$vcpathcyg/vcvarsall.bat"
+      varsetupcommand="$vssetup ${OPENMS_TARGET_ARCH}"
     else
       vcpath=$("$PROGRAMFILES/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath)
-      vcpathcyg=$(cygpath -m "$vcpath")/Common7/Tools
-      vssetup='"'$vcpathcyg/VsDevCmd.bat'"'
+      vcpathcyg=$(cygpath -m $vcpath)/Common7/Tools
+      vssetup="$vcpathcyg/VsDevCmd.bat"
       varsetupcommand="$vssetup"
     fi
     
