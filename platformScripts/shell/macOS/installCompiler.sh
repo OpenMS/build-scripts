@@ -11,7 +11,9 @@ if [[ $1 =~ ^appleclang.*$ ]]
   ##
   if [[ -z ${SYSROOT+x} ]]
     then
+    echo ${SYSROOT}
     export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-} -DCMAKE_OSX_SYSROOT=${SYSROOT-}"
+    echo ${ADDITIONAL_CMAKE_ARGUMENTS}
   else
     export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-}"
   fi
