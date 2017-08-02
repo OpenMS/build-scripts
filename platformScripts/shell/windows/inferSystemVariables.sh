@@ -53,7 +53,7 @@ function runNative {
     ##${slashes}Q ${slashes}C
     cmd << EOD
 call $varsetupcommand
-"${@}"
+${@}
 EOD
 }
 
