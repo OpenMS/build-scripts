@@ -8,8 +8,8 @@ export PATH="${PATH}:${OPENMS_BREW_FOLDER}/bin"
 export OPENMS_BREW="${OPENMS_BREW_FOLDER}/bin/brew"
 ## Just pass and execute the arguments
 function runNative {
-  echo "Running $@"
-  $*
+  echo "Running $*"
+  "$*"
 }
 
 sourceHere ./updatePackageManager.sh
