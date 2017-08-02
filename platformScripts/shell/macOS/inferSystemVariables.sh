@@ -9,7 +9,7 @@ export OPENMS_BREW="${OPENMS_BREW_FOLDER}/bin/brew"
 ## Just pass and execute the arguments
 function runNative {
   echo "Running $@"
-  $@
+  $*
 }
 
 sourceHere ./updatePackageManager.sh
