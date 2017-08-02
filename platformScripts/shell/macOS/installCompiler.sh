@@ -9,11 +9,11 @@ if [[ $1 =~ ^appleclang.*$ ]]
   ## If you have multiple compilers installed you should set a correct
   ## sysroot to find the right stdlibs for example
   ##
-  echo ${MYSYSROOT+x}
-  if [[ -z ${MYSYSROOT+x} ]]
+  echo ${SYSROOT-}
+  if [[ -z ${SYSROOT+x} ]]
     then
-    echo ${MYSYSROOT+x}
-    export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-} -DCMAKE_OSX_SYSROOT=${MYSYSROOT-}"
+    echo ${SYSROOT-}
+    export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-} -DCMAKE_OSX_SYSROOT=${SYSROOT-}"
     echo ${ADDITIONAL_CMAKE_ARGUMENTS}
   else
     export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-}"
