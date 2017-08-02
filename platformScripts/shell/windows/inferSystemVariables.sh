@@ -52,7 +52,7 @@ function runNative {
     echo Calling: cmd ${slashes}Q ${slashes}C \"call\" "$varsetupcommand" "&&" "${@}"
     ##${slashes}Q ${slashes}C
     cmd << EOD
- call $varsetupcommand "&&" "${@}"
-    EOD
+call $varsetupcommand "&&" "${@}"
+EOD
 }
 
