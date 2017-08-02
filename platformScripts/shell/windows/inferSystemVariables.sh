@@ -49,8 +49,10 @@ function runNative {
     fi
     ## Be careful. Might suffer from "Input line too long" problem if the CMake command is too long.
     ## Did not happen yet.
-    echo Calling: cmd ${slashes}Q ${slashes}C \"call\" "$varsetupcommand" "&&" "${@}" 
-    mycall=$(echo call $(echo $varsetupcommand) \"\&\&\" "${@}")
-    cmd ${slashes}Q ${slashes}C $(echo "$mycall")
+    echo Calling: cmd ${slashes}Q ${slashes}C \"call\" "$varsetupcommand" "&&" "${@}"
+    ##${slashes}Q ${slashes}C
+    cmd << EOD
+ call $varsetupcommand "&&" "${@}"
+    EOD
 }
 
