@@ -10,11 +10,9 @@ if [[ $1 =~ ^appleclang.*$ ]]
   ## sysroot to find the right stdlibs for example
   ##
   echo ${SYSROOT-}
-  if [[ -z ${SYSROOT+x} ]]
+  if [[ -n ${SYSROOT+x} ]]
     then
-    echo ${SYSROOT-}
     export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-} -DCMAKE_OSX_SYSROOT=${SYSROOT-}"
-    echo ${ADDITIONAL_CMAKE_ARGUMENTS}
   else
     export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-}"
   fi
