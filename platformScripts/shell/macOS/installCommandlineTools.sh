@@ -9,6 +9,8 @@ then
     echo "Could not check if license is accepted. Are you sudo? Skipping check. Please make sure xcodebuild is functional."
   fi
   export "MYSYSROOT=$(xcrun --show-sdk-path | tail -1)"
+  echo ${MYSYSROOT+x}
+  echo ${MYSYSROOT-}
   if [[ -z $(ls /usr/include) ]]
   then
     echo "xcodebuild found, but no /usr/include headers which are e.g. needed for contrib. Please install the Xcode Command Line Developer Tools with sudo xcode-select --install."
@@ -27,4 +29,4 @@ else
 #EOD
 #  sudo xcodebuild -license accept || echo "Cannot accept XCode license. XCode install not successful? Do you have sudo permissions?"
 fi
-
+echo ${MYSYSROOT-}
