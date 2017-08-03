@@ -312,7 +312,15 @@ endif()
 ## TODO make fatal_errors to stop building?
 ## Docu needs latex, packaging requires full docu (although it might be copied from somewhere with a custom script).
 ## This is a precheck before you build everything. During build it will be tested again.
-find_package(Doxygen)
+find_program(
+	DOXYGEN_EXECUTABLE
+	NAMES doxygen
+	PATHS
+	    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\doxygen_is1;Inno Setup: App Path]/bin"
+	    /Applications/Doxygen.app/Contents/Resources
+	    /Applications/Doxygen.app/Contents/MacOS
+	DOC "Doxygen documentation generation tool (http://www.doxygen.org)"
+)
 find_package(LATEX)
 if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR "$ENV{PACKAGE_TEST}" STREQUAL "ON")
   message("You seem to want to build the full documentation. Searching for (PDF)LaTeX and Doxygen before building...")
@@ -335,14 +343,14 @@ if("$ENV{BUILD_DOCU}" STREQUAL "ON" OR "$ENV{PACKAGE_TEST}" STREQUAL "ON")
   endif()
   safe_message("PDFLatex found at ${PDFLATEX_COMPILER}. MakeIndex found at ${MAKEINDEX_COMPILER}")
 
-  if(NOT DOXYGEN_FOUND)
+  if(DOXYGEN_EXECTUABLE-NOTFOUND)
     safe_message("Doxygen not found. You will need it to build any part of the documentation.")
   else()
     safe_message("Doxygen found at ${DOXYGEN_EXECUTABLE}")
   endif()
 endif()
 if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON" OR "$ENV{RUN_CHECKER}" STREQUAL "ON")
-  if(NOT DOXYGEN_FOUND)
+  if(DOXYGEN_EXECTUABLE-NOTFOUND)
     safe_message("Doxygen not found. You will need it to run the (Python-)Checker scripts. They read the xml class docu.")
   endif()
 endif()
