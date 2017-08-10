@@ -13,7 +13,7 @@ else
   else
     QTVER=4
   fi
-  tmp_qt_path=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 1 -type d -name "qt-${QTVER}*-vs${VS_YEAR}-${ARCH_NO_BIT}bit" | head -1)
+  tmp_qt_path=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 1 -type d -name "qt*${QTVER}*-vs${VS_YEAR}-${ARCH_NO_BIT}bit" | head -1)
   if [ ! -z "$tmp_qt_path" ]
   then
     export QT_QMAKE_BIN_PATH="${tmp_qt_path}/bin"
