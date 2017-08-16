@@ -5,11 +5,13 @@ if [[ $OS_LABEL =~ ^win.*32$ ]]
 then
   export ARCH=x86
   export OPENMS_TARGET_ARCH=x86
+  export OPENMS_TARGET_ARCH_VS2017=x86
   export ARCH_NO_BIT=32
   export GENERATOR_ARCH_SUFFIX=""
 else
   export ARCH=x64
   export OPENMS_TARGET_ARCH=x64
+  export OPENMS_TARGET_ARCH_VS2017=amd64
   export ARCH_NO_BIT=64
   export GENERATOR_ARCH_SUFFIX=" Win64"
 fi
@@ -35,7 +37,7 @@ function runNative {
     else
       vcpath=$("$PROGRAMFILES/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath)
       vcpathcyg=$(cygpath -m "$vcpath")/Common7/Tools
-      vssetup="\"$vcpathcyg/VsDevCmd.bat\""
+      vssetup="\"$vcpathcyg/VsDevCmd.bat\" -arch ${OPENMS_TARGET_ARCH_VS2017}"
       varsetupcommand=$vssetup
     fi
     
