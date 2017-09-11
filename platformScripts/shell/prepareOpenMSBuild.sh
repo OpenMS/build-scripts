@@ -38,6 +38,7 @@ if $DOWNLOAD_CONTRIB
     # Archive should contain no root folder, only bin, lib, include etc. (see the archiving step of the openms_contrib_all job)
     # force-local to allow usage of mixed POSIX/Win paths (e.g. starting with C:), otherwise interpreted as remote location
     tar ${force_local_flag:-} -xvzf contrib_build.tar.gz --directory $CONTRIB_PATH >> $LOG_PATH/contrib_setup.log 2>&1
+    sourceHere $OPSYS/fixContribInstallNames.sh
   else
     # Install as much as possible from the package managers
     # Build or download prebuild for the rest
