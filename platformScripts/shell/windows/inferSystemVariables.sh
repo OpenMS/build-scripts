@@ -56,6 +56,7 @@ function runNative {
     cmd << EOD
 call $varsetupcommand
 ${@}
+%COMSPEC% /C exit %ERRORLEVEL% >nul
 EOD
 }
 
