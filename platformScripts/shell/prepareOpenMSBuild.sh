@@ -42,9 +42,11 @@ if $DOWNLOAD_CONTRIB
 else
   if ! $USE_DISTRO_CONTRIB
   then ## Build contrib
-    [ "$(ls -A $CONTRIB_PATH)" ] || git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: Given CONTRIB_PATH is empty and no git submodule." && exit 1) 
+    [ "$(ls -A $CONTRIB_PATH)" ] || git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: Given CONTRIB_PATH is empty and no git submodule is present." && exit 1) 
     ## runNative is set in the inferSystemVariables.sh specifically for each platform
-    runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE=ALL ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$CONTRIB_PATH\""
+    pushd $CONTRIB_PATH
+    runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE=ALL ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$SOURCE_PATH/contrib\""
+    popd
   else
       # Install as much as possible from the package managers
     # Build or download prebuild for the rest
