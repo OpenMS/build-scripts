@@ -27,11 +27,9 @@ tick "Installing QT"
 sourceHere $OPSYS/installQT.sh
 tock
 
-## Skip if you already have it installed.
+
+tick "Installing other contrib libraries"
 if $DOWNLOAD_CONTRIB
-  then
-  tick "Installing other contrib libraries"
-  if ! $USE_DISTRO_CONTRIB
   then
     echo "Downloading full contrib build from archive $CONTRIB_URL..."
     curl -O $CONTRIB_URL > $LOG_PATH/contrib_setup.log 2>&1
@@ -39,14 +37,19 @@ if $DOWNLOAD_CONTRIB
     # force-local to allow usage of mixed POSIX/Win paths (e.g. starting with C:), otherwise interpreted as remote location
     tar ${force_local_flag:-} -xvzf contrib_build.tar.gz --directory $CONTRIB_PATH >> $LOG_PATH/contrib_setup.log 2>&1
     sourceHere $OPSYS/fixContribInstallNames.sh
+    echo "Checking extraction results of contrib..."
+    ls -la $CONTRIB_PATH || ( echo "Error: Could not find CONTRIB_PATH after download and extraction of contrib. Check logs." && exit 1)
+else
+  if ! $USE_DISTRO_CONTRIB
+  then ## Build contrib
+    [ "$(ls -A $CONTRIB_PATH)" ] || git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: Given CONTRIB_PATH is empty and no git submodule." && exit 1) 
+    ## runNative is set in the inferSystemVariables.sh specifically for each platform
+    runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE=ALL ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$CONTRIB_PATH\""
   else
-    # Install as much as possible from the package managers
+      # Install as much as possible from the package managers
     # Build or download prebuild for the rest
     sourceHere $OPSYS/installDistroContrib.sh
-  fi
-  tock
-  echo "Checking extraction results of contrib..."
-  ls -la $CONTRIB_PATH || ( echo "Error: Could not find CONTRIB_PATH after download and extraction of contrib. Check logs." && exit 1)
+  fi 
 fi
 
 # PyOpenMS:
