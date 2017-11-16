@@ -43,6 +43,7 @@ else
   if ! $USE_DISTRO_CONTRIB
   then ## Build contrib
     [ "$(ls -A $CONTRIB_PATH)" ] || git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: Given CONTRIB_PATH is empty and no git submodule is present." && exit 1) 
+    sourceHere $OPSYS/installContribBuildTools.sh
     ## runNative is set in the inferSystemVariables.sh specifically for each platform
     pushd $CONTRIB_PATH
     runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE=ALL ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$SOURCE_PATH/contrib\""
