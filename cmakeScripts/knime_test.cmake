@@ -1,7 +1,5 @@
-### TODO rework to make it more generic (e.g. on bundle name etc.)
-
-# Check for required variables.
-## TODO THIRDPARTY_ROOT could theoretically be made optional. Ships without thirdparty then.
+## Check for required variables.
+## THIRDPARTY_ROOT could theoretically be made optional. Ships without thirdparty then.
 set(required_variables "CTEST_SOURCE_DIRECTORY;CTEST_BINARY_DIRECTORY;INITIAL_CACHE;CTEST_BUILD_NAME")
 
 backup_and_check_variables(required_variables)
@@ -13,7 +11,6 @@ endif()
 if(NOT DEFINED DASHBOARD_MODEL)
     set(DASHBOARD_MODEL Experimental)
 endif()
-
 
 SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_KNIME")
 
@@ -28,17 +25,17 @@ if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
  CTEST_UPDATE (SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
-CTEST_CONFIGURE(OPTIONS "-DENABLE_PREPARE_KNIME_PACKAGE=On;-DSEARCH_ENGINES_DIRECTORY=$ENV{SEARCH_ENGINES_DIRECTORY}" RETURN_VALUE RECONFIGURE_FOR_PACKAGE_BUILD)
-  
-if( NOT RECONFIGURE_FOR_PACKAGE_BUILD EQUAL 0)
-	message("Could not reconfigure ${CTEST_BINARY_DIRECTORY} for KNIME build")
-	message(FATAL_ERROR "Reconfigure resulted in: ERROR LEVEL ${RECONFIGURE_FOR_PACKAGE_BUILD}")
-endif()
+CTEST_CONFIGURE(OPTIONS "-DENABLE_PREPARE_KNIME_PACKAGE=On;-DSEARCH_ENGINES_DIRECTORY=$ENV{SEARCH_ENGINES_DIRECTORY}" RETURN_VALUE _reconfig_knime_ret_val)
 
-CTEST_BUILD   (TARGET prepare_knime_package)
+CTEST_BUILD   (TARGET prepare_knime_package NUMBER_ERRORS knime_build_errors)
 
 if(CDASH_SUBMIT)
   CTEST_SUBMIT(PARTS Build)
 endif()
 
 restore_variables(required_variables)
+
+# indicate errors
+if(${_knime_build_errors} GREATER 0 OR NOT ${_reconfig_knime_ret_val} EQUAL 0)
+  file(WRITE "${CTEST_BINARY_DIRECTORY}/knime_failed" "knime_failed")
+endif()
