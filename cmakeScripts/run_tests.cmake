@@ -371,6 +371,7 @@ ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
 # runs cppcheck/lint on every file and parses the output with a regex)
 # TODO requires python??
 # TODO put in own cmake script
+# TODO add error catching during config
 if("$ENV{ENABLE_STYLE_TESTING}" STREQUAL "ON")
     set(OLD_CTEST_BUILD_NAME ${CTEST_BUILD_NAME})
     set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}-Style)
@@ -388,12 +389,13 @@ if("$ENV{ENABLE_STYLE_TESTING}" STREQUAL "ON")
     set(CTEST_BUILD_NAME ${OLD_CTEST_BUILD_NAME})
 endif()
 
+# TODO put general build in own cmake script?
 if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STREQUAL "ON")
     # Do actual tool and class tests
     
     ctest_start  (${DASHBOARD_MODEL})
     # Reconfigure with style testing off. Class&TOPP are already in the InitialCache but "shadowed" by Style.
-    ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=Off")
+    ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=Off" RETURN_VALUE _configure_ret_val)
     ## The following might also be needed for XCode (e.g. all generators that build Projects)
     ## On our Mac machines this does not seem to affect the Makefile-based generators,
     ## so maybe we can always set it to OpenMS_host
@@ -404,7 +406,7 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
 
     ## i.e. make all target
     safe_message("Building the all target...")
-    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}")
+    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS _general_openms_build_errors)
 
     if(WIN32)
         # Reset project name
@@ -443,7 +445,7 @@ else()
     ## Only build library
     ctest_start  (${DASHBOARD_MODEL})
     # Reconfigure with style testing off. Class&TOPP are already in the InitialCache but "shadowed" by Style.
-    ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=Off")
+    ctest_configure (BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DENABLE_STYLE_TESTING=Off" RETURN_VALUE _configure_ret_val)
     ## The following might also be needed for XCode (e.g. all generators that build Projects)
     ## On our Mac machines this does not seem to affect the Makefile-based generators,
     ## so maybe we can always set it to OpenMS_host
@@ -452,9 +454,9 @@ else()
         set(CTEST_PROJECT_NAME "OpenMS_host")
     endif(WIN32)
 
-    ## i.e. make all target
+    ## make only OpenMS target
     safe_message("Building OpenMS target...")
-    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" TARGET OpenMS)
+    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" TARGET OpenMS NUMBER_ERRORS _general_openms_build_errors)
 
     if(WIN32)
         # Reset project name
@@ -469,6 +471,11 @@ else()
     backup_test_results("General")
 endif()
 
+# indicate errors
+if(${_general_openms_build_errors} GREATER 0 OR NOT ${_configure_ret_val} EQUAL 0)
+  file(WRITE "$ENV{SOURCE_DIRECTORY}/general_build_failed" "see CDash or Testing/General/Build.xml or Config.xml")
+endif()
+
 ## The python-checker tool only needs the class documentation in xml (target: doc_xml)
 ## Otherwise it can be executed independently from building pyOpenMS
 ## Nonetheless group the outputs into a single CDash submission entry when both are executed.
@@ -476,7 +483,7 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
     if("$ENV{PYOPENMS}" STREQUAL "ON")
         safe_message("Building pyopenms...")
-        ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms)
+        ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms NUMBER_ERRORS _pyopenms_build_errors)
         set(PYOPENMS_BUILT On)
 	safe_message("Finished building pyopenms...")
     endif()
@@ -488,6 +495,11 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/python_checker.cmake" )
     endif()
     backup_test_results("PyOpenMS")
+endif()
+
+# indicate errors
+if(${_pyopenms_build_errors} GREATER 0)
+  file(WRITE "$ENV{SOURCE_DIRECTORY}/pyopenms_build_failed" "see CDash or Testing/PyOpenMS/Build.xml")
 endif()
 
 ## To build full html documentation with Tutorials.
@@ -504,7 +516,7 @@ if("$ENV{EXTERNAL_CODE_TESTS}" STREQUAL "ON")
 endif()
 
 ## Additionally builds full documentation.
-## TODO check if it actually is not executed twice. It probably is -.-
+## TODO check if the docu build is executed twice
 if("$ENV{PACKAGE_TEST}" STREQUAL "ON")
   include ( "${OPENMS_CMAKE_SCRIPT_PATH}/package_test.cmake" )
   backup_test_results("Package")
