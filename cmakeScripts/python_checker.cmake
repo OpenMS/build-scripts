@@ -50,9 +50,9 @@ if(NOT DEFINED DASHBOARD_MODEL)
 endif()
 
 if(NOT PYOPENMS_BUILT)
-  set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_PythonChecker")
+  set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_PyOpenMSChecker")
 endif()
-## else keep the build name 
+## else keep the build name (with PyOpenMS)
 
 # now we hack our own checker into cdash
 # we assume here that all tests have been build/run already
@@ -71,15 +71,15 @@ macro(CTEST_CHECKER)
 		OUTPUT_FILE
 		${CTEST_BINARY_DIRECTORY}/pychecker.log
 		WORKING_DIRECTORY
-		${CTEST_SOURCE_DIRECTORY})
-	# Where should CHECKER_LOG come from?
-	#safe_message("Finished checker with log in ${CHECKER_LOG}")
+		${CTEST_SOURCE_DIRECTORY}
+		RETURN_VALUE _pychecker_ret_value)
+	safe_message("Finished python checker with log in ${CTEST_BINARY_DIRECTORY}/pychecker.log")
 endmacro()
 
 # test again and execute checker, use Track to specify Track (Dart2) / Build group (Dart1)
 # in CDash
 if(NOT PYOPENMS_BUILT)
-  ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS-Checker)
+  ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMSChecker)
 	# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
 	# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash
 	# Otherwise skip update completely
@@ -92,11 +92,8 @@ endif()
 # ensure that we have the doxygen xml files. To check if everything is wrapped or so..
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "doc_xml" APPEND)
 
-# why do we need to execute test again? For the additional doc_xml target?
-# To create the actual Testing/TAG folder structure and so on?
-#ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}")
-
 # uses the macro in the beginning of the file to write a Test.xml to $CTEST_BIN/Testing/$LASTTAGDATE
+# based on either a Build.xml or another Test.xml file
 ctest_checker()
 
 if(CDASH_SUBMIT)
@@ -104,3 +101,8 @@ if(CDASH_SUBMIT)
 endif()
 
 restore_variables(required_variables)
+
+# indicate errors
+if(NOT ${_pychecker_ret_value} EQUAL 0)
+  file(WRITE "${CTEST_BINARY_DIRECTORY}/pychecker_failed" "see ${CTEST_BINARY_DIRECTORY}/pychecker.log")
+endif()
