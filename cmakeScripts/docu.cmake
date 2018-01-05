@@ -55,26 +55,15 @@ message("Starting documentation build:")
 ## this will generate the docu multiple times and waste resources.
 ## TODO prevent in parent script.
 CTEST_START (${DASHBOARD_MODEL} TRACK Documentation)
-CTEST_BUILD (BUILD TARGET doc APPEND)
-CTEST_BUILD (BUILD TARGET doc_tutorials APPEND)
+CTEST_BUILD (BUILD TARGET doc APPEND NUMBER_ERRORS _docu_build_errors)
+CTEST_BUILD (BUILD TARGET doc_tutorials APPEND NUMBER_ERRORS _docu_tut_build_errors)
 if(CDASH_SUBMIT)
   CTEST_SUBMIT (PARTS Build) # lets see if this works
 endif()
 
-# Copy the full docu to target destination
-# Commented for now. we will try to do this in the scripts. Might need ssh and so on.
-# if(EXISTS "${CTEST_BINARY_DIRECTORY}/doc/index.html")
-#   message(STATUS "cmake -E remove_directory ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/")
-#   execute_process(
-#     COMMAND cmake -E remove_directory ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/
-#     WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
-#   )
-
-#   message(STATUS "cmake -E copy_directory ${CTEST_BINARY_DIRECTORY}/doc/ ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/")
-#   execute_process(
-#     COMMAND cmake -E copy_directory ${CTEST_BINARY_DIRECTORY}/doc/ ${DOCU_TARGET_PATH}${OPENMS_BUILDNAME_PREFIX}documentation/
-#     WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
-#   )
-# endif()
+# indicate errors
+if(${_docu_build_errors} GREATER 0 OR ${_docu_tut_build_errors} GREATER 0)
+  file(WRITE "${CTEST_BINARY_DIRECTORY}/docu_failed" "docu failed with ${_docu_build_errors} errors. Tutorial docu failed with ${_docu_tut_build_errors} errors.")
+endif()
 
 restore_variables(required_variables)
