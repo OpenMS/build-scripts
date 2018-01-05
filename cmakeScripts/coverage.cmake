@@ -57,9 +57,14 @@ SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_Coverage")
 message("Starting coverage build:")
 
 CTEST_START (${DASHBOARD_MODEL} TRACK Coverage)
-CTEST_BUILD (BUILD TARGET OpenMS_coverage APPEND)
+CTEST_BUILD (BUILD TARGET OpenMS_coverage APPEND NUMBER_ERRORS _coverage_build_errors)
 if(CDASH_SUBMIT)
   CTEST_SUBMIT (PARTS Build) # lets see if this works
+endif()
+
+# indicate errors
+if(${_coverage_build_errors} GREATER 0)
+  file(WRITE "${CTEST_BINARY_DIRECTORY}/coverage_failed" "coverage_failed")
 endif()
 
 restore_variables(required_variables)
