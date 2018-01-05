@@ -30,9 +30,6 @@ else()
     safe_message(FATAL_ERROR "Unknown platform. None of the CMAKE variables WIN32, APPLE, UNIX set.")
 endif()
 
-# Not sure why this was needed. Evaluate removal.
-# SET( $ENV{PATH} "${CTEST_BINARY_DIRECTORY}/bin:$ENV{PATH}" )
-
 message("Starting package build:")
 # build the package and submit the results to cdash  
 CTEST_START   (${DASHBOARD_MODEL} TRACK Package)
@@ -44,7 +41,7 @@ if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
    CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
 endif()
 
-CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTORY=$ENV{SEARCH_ENGINES_DIRECTORY};-DSIGNING_IDENTITY=$ENV{SIGNING_IDENTITY}")
+CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTORY=$ENV{SEARCH_ENGINES_DIRECTORY};-DSIGNING_IDENTITY=$ENV{SIGNING_IDENTITY}" RETURN_VALUE _reconfig_package_ret_val)
 
 # The preinstall target that is called by "make package" will build the ALL target which includes
 # doc and doc_tutorial (if enabled)
@@ -59,10 +56,15 @@ else()
     set(PACKAGE_TARGET "dist")
   endif()
 endif()
-CTEST_BUILD(TARGET ${PACKAGE_TARGET} APPEND)
+CTEST_BUILD(TARGET ${PACKAGE_TARGET} APPEND NUMBER_ERRORS _package_build_errors)
 
 if(CDASH_SUBMIT)
     CTEST_SUBMIT  (PARTS Build)
 endif()
 
 restore_variables(required_variables)
+
+# indicate errors
+if(${_package_build_errors} GREATER 0 OR NOT ${_reconfig_package_ret_val} EQUAL 0)
+  file(WRITE "${CTEST_BINARY_DIRECTORY}/package_failed" "package_failed")
+endif()
