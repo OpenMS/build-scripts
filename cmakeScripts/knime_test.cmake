@@ -27,7 +27,7 @@ endif()
 
 CTEST_CONFIGURE(OPTIONS "-DENABLE_PREPARE_KNIME_PACKAGE=On;-DSEARCH_ENGINES_DIRECTORY=$ENV{SEARCH_ENGINES_DIRECTORY}" RETURN_VALUE _reconfig_knime_ret_val)
 
-CTEST_BUILD   (TARGET prepare_knime_package NUMBER_ERRORS knime_build_errors)
+CTEST_BUILD   (TARGET prepare_knime_package NUMBER_ERRORS _knime_build_errors)
 
 if(CDASH_SUBMIT)
   CTEST_SUBMIT(PARTS Build)
