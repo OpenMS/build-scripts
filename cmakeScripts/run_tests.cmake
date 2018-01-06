@@ -309,6 +309,12 @@ CMAKE_CXX_COMPILER:FILEPATH=$ENV{CXX}
   " )
 endif()
 
+if(DEFINED ENV{PYTHON_EXECUTABLE})
+  SET(INITIAL_CACHE "${INITIAL_CACHE}
+PYTHON_EXECUTABLE:FILEPATH=$ENV{PYTHON_EXECUTABLE}
+  " )
+endif()
+
 ## TODO make fatal_errors to stop building?
 ## Docu needs latex, packaging requires full docu (although it might be copied from somewhere with a custom script).
 ## This is a precheck before you build everything. During build it will be tested again.
