@@ -473,7 +473,7 @@ endif()
 
 # indicate errors
 if(${_general_openms_build_errors} GREATER 0 OR NOT ${_configure_ret_val} EQUAL 0)
-  file(WRITE "$ENV{SOURCE_DIRECTORY}/general_build_failed" "see CDash or Testing/General/Build.xml or Config.xml")
+  file(WRITE "$CTEST_BINARY_DIRECTORY/general_build_failed" "see CDash or Testing/General/Build.xml or Config.xml")
 endif()
 
 ## The python-checker tool only needs the class documentation in xml (target: doc_xml)
