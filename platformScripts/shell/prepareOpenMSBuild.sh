@@ -61,11 +61,13 @@ then
   command -v virtualenv >/dev/null 2>&1 || pip install --user -U virtualenv
   # Setup python for pyOpenMS. You have to start virtualenv when you want to use it.
   #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
-  virtualenv ./pyopenms_venv
-  chmod +x ./pyopenms_venv/bin/activat*
+  virtualenv $WORKSPACE/pyopenms_venv
+  # Activate is under bin on Unix and Script on Win
+  chmod +x $(find $WORKSPACE/pyopenms_venv -name "activate")
   #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
   #                               && pip install -U setuptools pip autowrap nose numpy wheel"
-  source ./pyopenms_venv/bin/activate
+  source $(find $WORKSPACE/pyopenms_venv -name "activate")
+  export PYTHON_EXECUTABLE=$(ls -A1 --file-type $WORKSPACE/pyopenms_venv/**/python* | grep -P "^.*python(\.exe)?$" | head -1)
   # We are in a virtualenv. We can install it without --user
   pip install -U setuptools pip autowrap nose Cython numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   if [ "$RUN_PYTHON_CHECKER" == "ON" ]
