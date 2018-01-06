@@ -72,7 +72,7 @@ macro(CTEST_CHECKER)
 		${CTEST_BINARY_DIRECTORY}/pychecker.log
 		WORKING_DIRECTORY
 		${CTEST_SOURCE_DIRECTORY}
-		RETURN_VALUE _pychecker_ret_value)
+		RESULT_VARIABLE _pychecker_ret_value)
 	safe_message("Finished python checker with log in ${CTEST_BINARY_DIRECTORY}/pychecker.log")
 endmacro()
 
