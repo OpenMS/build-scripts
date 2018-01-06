@@ -63,10 +63,10 @@ then
   #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
   virtualenv $WORKSPACE/pyopenms_venv
   # Activate is under bin on Unix and Script on Win
-  chmod +x $(find $WORKSPACE/pyopenms_venv -name "activate")
+  chmod +x $(/usr/bin/find $WORKSPACE/pyopenms_venv -name "activate")
   #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
   #                               && pip install -U setuptools pip autowrap nose numpy wheel"
-  source $(find $WORKSPACE/pyopenms_venv -name "activate")
+  source $(/usr/bin/find $WORKSPACE/pyopenms_venv -name "activate")
   export PYTHON_EXECUTABLE=$(ls -A1 --file-type $WORKSPACE/pyopenms_venv/**/python* | grep -P "^.*python(\.exe)?$" | head -1)
   # We are in a virtualenv. We can install it without --user
   pip install -U setuptools pip autowrap nose Cython numpy wheel > $LOG_PATH/pip_packages.log 2>&1
