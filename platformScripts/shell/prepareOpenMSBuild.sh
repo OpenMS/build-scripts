@@ -63,9 +63,9 @@ then
   #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
   if [ -z ${OPENMS_PYTHON+x} ]
   then
-    VIRTUALENVPARAM="-p ${OPENMS_PYTHON}"
-  else
     VIRTUALENVPARAM=""
+  else
+    VIRTUALENVPARAM="-p ${OPENMS_PYTHON}"
   fi
   virtualenv $VIRTUALENVPARAM $WORKSPACE/pyopenms_venv
   # Activate is under bin on Unix and Script on Win
