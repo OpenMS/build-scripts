@@ -54,11 +54,17 @@ if(NOT PYOPENMS_BUILT)
 endif()
 ## else keep the build name (with PyOpenMS)
 
+if(DEFINED ENV{PYTHON_EXECUTABLE})
+  SET(PYTHON_EXECUTABLE "$ENV{PYTHON_EXECUTABLE}")
+else()
+  SET(PYTHON_EXECUTABLE "python")
+endif()
+
 # now we hack our own checker into cdash
 # we assume here that all tests have been build/run already
 macro(CTEST_CHECKER)
 	execute_process(COMMAND
-		python
+		${PYTHON_EXECUTABLE}
 		${CTEST_SOURCE_DIRECTORY}/tools/PythonExtensionChecker.py
 		--src_path
 		${CTEST_SOURCE_DIRECTORY}
