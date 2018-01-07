@@ -61,7 +61,13 @@ then
   command -v virtualenv >/dev/null 2>&1 || pip install --user -U virtualenv
   # Setup python for pyOpenMS. You have to start virtualenv when you want to use it.
   #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
-  virtualenv $WORKSPACE/pyopenms_venv
+  if [ -z ${OPENMS_PYTHON+x} ]
+  then
+    VIRTUALENVPARAM="-p ${OPENMS_PYTHON}"
+  else
+    VIRTUALENVPARAM=""
+  fi
+  virtualenv $VIRTUALENVPARAM $WORKSPACE/pyopenms_venv
   # Activate is under bin on Unix and Script on Win
   chmod +x $(/usr/bin/find $WORKSPACE/pyopenms_venv -name "activate")
   #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
