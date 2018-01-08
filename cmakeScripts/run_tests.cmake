@@ -501,11 +501,10 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/python_checker.cmake" )
     endif()
     backup_test_results("PyOpenMS")
-endif()
-
-# indicate errors
-if(${_pyopenms_build_errors} GREATER 0)
-  file(WRITE "${CTEST_BINARY_DIRECTORY}/pyopenms_build_failed" "see CDash or Testing/PyOpenMS/Build.xml")
+    # indicate errors
+    if(${_pyopenms_build_errors} GREATER 0)
+      file(WRITE "${CTEST_BINARY_DIRECTORY}/pyopenms_build_failed" "see CDash or Testing/PyOpenMS/Build.xml")
+    endif()
 endif()
 
 ## To build full html documentation with Tutorials.
