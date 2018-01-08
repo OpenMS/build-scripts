@@ -84,17 +84,13 @@ macro(CTEST_CHECKER)
 	safe_message("Finished python checker with log in ${CTEST_BINARY_DIRECTORY}/pychecker.log")
 endmacro()
 
-# test again and execute checker, use Track to specify Track (Dart2) / Build group (Dart1)
-# in CDash
-if(NOT PYOPENMS_BUILT)
-  ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMSChecker)
+ctest_start(${DASHBOARD_MODEL} TRACK PyChecker)
 	# In version 3.1.0, CTEST_UPDATE_VERSION_ONLY was introduced.
 	# With this we can use the Jenkins Git plugin for the checkout and only get the version for CDash
 	# Otherwise skip update completely
-  if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
+if(NOT "${CMAKE_VERSION}" VERSION_LESS 3.1.0)
     set(CTEST_UPDATE_VERSION_ONLY On)
     ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}")
-  endif()
 endif()
 
 # ensure that we have the doxygen xml files. To check if everything is wrapped or so..
