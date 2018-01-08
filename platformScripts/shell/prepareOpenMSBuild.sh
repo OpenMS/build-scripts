@@ -63,16 +63,16 @@ then
   #sudo -Hu jenkins virtualenv /home/jenkins/pyopenms_venv
   if [ -z ${OPENMS_PYTHON+x} ]
   then
+    echo "Variable OPENMS_PYTHON not found, using the python that is associated with / shipped virtualenv for pyOpenMS."
     VIRTUALENVPARAM=""
   else
     VIRTUALENVPARAM="-p ${OPENMS_PYTHON}"
   fi
   virtualenv $VIRTUALENVPARAM $WORKSPACE/pyopenms_venv
-  # Activate is under bin on Unix and Script on Win
+  # Activate is under bin on Unix and Script on Win. It sets the python, pip etc. to the one in the venv.
   chmod +x $(/usr/bin/find $WORKSPACE/pyopenms_venv -name "activate")
-  #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
-  #                               && pip install -U setuptools pip autowrap nose numpy wheel"
   source $(/usr/bin/find $WORKSPACE/pyopenms_venv -name "activate")
+  # Basically a check if on Windows.
   ls $WORKSPACE/pyopenms_venv/bin/ > /dev/null 2>&1
   if [ $? -eq 0 ]; then
     export PYTHON_EXECUTABLE=$WORKSPACE/pyopenms_venv/bin/python
@@ -82,9 +82,34 @@ then
   
   # We are in a virtualenv. We can install it without --user
   pip install -U setuptools pip autowrap nose Cython numpy wheel > $LOG_PATH/pip_packages.log 2>&1
+  
   if [ "$RUN_PYTHON_CHECKER" == "ON" ]
   then
-    pip install -U breathe pyyaml >> $LOG_PATH/pip_packages.log 2>&1
+    if [ -z ${HELPER_PYTHON+x} ]
+    then
+      echo "Variable HELPER_PYTHON not found, using the python that is associated with / shipped virtualenv for helper scripts. Make sure that it is Python2"
+      VIRTUALENVPARAM_HELPER=""
+    else
+      VIRTUALENVPARAM_HELPER="-p ${HELPER_PYTHON}"
+    fi
+    # If it's the same as for pyopenms, use the old venv
+    if [ "$VIRTUALENVPARAM_HELPER" == "$VIRTUALENVPARAM" ]
+    then
+      export PYTHON_EXECUTABLE_HELPER=$PYTHON_EXECUTABLE
+      PIP_HELPER=pip  
+    else
+      # Create a new one
+      virtualenv $VIRTUALENVPARAM_HELPER $WORKSPACE/helper_python_venv
+      ls $WORKSPACE/pyopenms_venv/bin/ > /dev/null 2>&1
+      if [ $? -eq 0 ]; then
+        export PYTHON_EXECUTABLE_HELPER=$WORKSPACE/helper_python_venv/bin/python
+        PIP_HELPER=$WORKSPACE/helper_python_venv/bin/pip
+      else
+        export PYTHON_EXECUTABLE_HELPER=$WORKSPACE/helper_python_venv/Scripts/python.exe
+        PIP_HELPER=$WORKSPACE/helper_python_venv/Scripts/pip.exe
+      fi
+    fi
+    $PIP_HELPER install -U pip breathe pyyaml autowrap Cython >> $LOG_PATH/pip_packages.log 2>&1
     sourceHere $OPSYS/installDocuTools.sh
   fi
   tock
