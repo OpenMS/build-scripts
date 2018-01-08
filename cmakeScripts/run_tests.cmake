@@ -484,7 +484,7 @@ endif()
 
 ## The python-checker tool only needs the class documentation in xml (target: doc_xml)
 ## Otherwise it can be executed independently from building pyOpenMS
-## Nonetheless group the outputs into a single CDash submission entry when both are executed.
+## Nonetheless group it here.
 if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
     if("$ENV{PYOPENMS}" STREQUAL "ON")
@@ -496,11 +496,12 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     if(CDASH_SUBMIT)
       ctest_submit(PARTS Build)
     endif()
-    ## PyChecker needs the pyOpenMS test results to append to. Backup afterwards.
+    copy_test_results("PyOpenMS")
+    ## PyChecker needs the pyOpenMS test results to append to. Only copy.
     if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
         include ( "${OPENMS_CMAKE_SCRIPT_PATH}/python_checker.cmake" )
     endif()
-    backup_test_results("PyOpenMS")
+    backup_test_results("PyChecker")
     # indicate errors
     if(${_pyopenms_build_errors} GREATER 0)
       file(WRITE "${CTEST_BINARY_DIRECTORY}/pyopenms_build_failed" "see CDash or Testing/PyOpenMS/Build.xml")
