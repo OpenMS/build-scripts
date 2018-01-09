@@ -486,6 +486,8 @@ endif()
 ## Otherwise it can be executed independently from building pyOpenMS
 ## Nonetheless group it here.
 if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
+    set(OLD_CTEST_BUILD_NAME "${CTEST_BUILD_NAME}")
+    set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_PyOpenMS")
     ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
     if("$ENV{PYOPENMS}" STREQUAL "ON")
         safe_message("Building pyopenms...")
@@ -497,15 +499,18 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
       ctest_submit(PARTS Build)
     endif()
     copy_test_results("PyOpenMS")
-    ## PyChecker needs the pyOpenMS test results to append to. Only copy.
-    if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
-        include ( "${OPENMS_CMAKE_SCRIPT_PATH}/python_checker.cmake" )
-    endif()
-    backup_test_results("PyChecker")
     # indicate errors
     if(${_pyopenms_build_errors} GREATER 0)
       file(WRITE "${CTEST_BINARY_DIRECTORY}/pyopenms_build_failed" "see CDash or Testing/PyOpenMS/Build.xml")
     endif()
+    set(CTEST_BUILD_NAME "${OLD_CTEST_BUILD_NAME}")
+    
+    ## PyChecker needs the pyOpenMS test results to append to. Only copy.
+    if("$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
+        include ( "${OPENMS_CMAKE_SCRIPT_PATH}/python_checker.cmake" )
+	backup_test_results("PyChecker")
+    endif()
+
 endif()
 
 ## To build full html documentation with Tutorials.
