@@ -1,11 +1,4 @@
-CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
-
-## See https://itk.org/Bug/bug_relationship_graph.php?bug_id=9599&graph=dependency (to get rid of CMake warnings)
-if(COMMAND CMAKE_POLICY) # CMake 2.4 does not have this command
-  if(POLICY CMP0011)
-    cmake_policy(SET CMP0011 NEW)
-  endif(POLICY CMP0011)
-endif(COMMAND CMAKE_POLICY)
+CMAKE_MINIMUM_REQUIRED (VERSION 3.1)
 
 # Verbosity (off for now)
 set (CMAKE_VERBOSE_MAKEFILE OFF)
@@ -92,26 +85,23 @@ set (CTEST_CHECK_HTTP_ERROR   ON )
 set (CTEST_SITE               "$ENV{CTEST_SITE}")
 set (CTEST_SOURCE_DIRECTORY   "$ENV{SOURCE_PATH}" )
 set (CDASH_SUBMIT             "$ENV{CDASH_SUBMIT}" )
-## TODO remove next and always use ctest_binary_directory
-set (BUILD_DIRECTORY          "$ENV{BUILD_PATH}" )
 set (CTEST_BINARY_DIRECTORY   "$ENV{BUILD_PATH}" )
 set (CTEST_CMAKE_GENERATOR    "$ENV{GENERATOR}" )
 set (CTEST_CONFIGURATION_TYPE "$ENV{BUILD_TYPE}")
 ## Not sure if the next one is needed
 set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 ## Compiler identifier is e.g. MSVC10x64 or gcc4.9 or clang3.3
-SET (CTEST_BUILD_NAME "$ENV{OPENMS_BUILDNAME_PREFIX}-$ENV{SYSTEM_ID}-$ENV{COMPILER_ID}-$ENV{BUILD_TYPE}-$ENV{OPENMS_TARGET_ARCH}")
+set (CTEST_BUILD_NAME "$ENV{OPENMS_BUILDNAME_PREFIX}-$ENV{SYSTEM_ID}-$ENV{COMPILER_ID}-$ENV{BUILD_TYPE}-$ENV{OPENMS_TARGET_ARCH}")
 
-## Add contrib path to CMAKE_PREFIX_PATH to help in the search of libraries
-## TODO remove CONTRIB_PATH from prefix path so that it gets priority in OPENMS_CONTRIB_LIBS
-## Once the new flag is established.
-##set(CMAKE_PREFIX_PATH "$ENV{CONTRIB_PATH}\;$ENV{OPENMS_BREW_FOLDER}\;$ENV{QT_QMAKE_BIN_PATH}")
+## If using custom brew folder on Mac, add it to CMAKE_PREFIX_PATH to help in the search of libraries
 ## QT_QMAKE_BIN_PATH should in theory not be needed here. If it is set, QT_QMAKE_EXECUTABLE will
 ## be set to QT_QMAKE_BIN_PATH/qmake and this should be enough to find all the libraries.
-set(CMAKE_PREFIX_PATH "$ENV{CONTRIB_PATH}\;$ENV{OPENMS_BREW_FOLDER}")
-
+set(CMAKE_PREFIX_PATH "$ENV{OPENMS_BREW_FOLDER}")
+## Path to libraries of contrib build. Take precendence in OpenMS CMake.
 set(OPENMS_CONTRIB_LIBS "$ENV{CONTRIB_PATH}")
 safe_message("Using as CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+safe_message("Plus contrib libs at OPENMS_CONTRIB_LIBS: ${OPENMS_CONTRIB_LIBS}")
+
 # Platform specific setup:
 if(UNIX)
 	# Warn if it is not Makefiles or XCode
@@ -189,6 +179,7 @@ else()
       endif()
       get_filename_component(JAVA_BIN_DIR ${Java_JAVA_EXECUTABLE} DIRECTORY)
       safe_message("Adding ${JAVA_BIN_DIR} to path for Thirdparty tests.")
+      ## TODO not sure if it has to be set in all three environment variables.
       if(WIN32)
         SUBDIRLIST(SUBDIRS $ENV{SEARCH_ENGINES_DIRECTORY})
         FOREACH(subdir ${SUBDIRS})
@@ -364,7 +355,6 @@ endif()
 # Copy config file to customize errors (will be loaded later)
 file(COPY "${OPENMS_CMAKE_SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BINARY_DIRECTORY})
 
-
 ## Configuration finished!
 # This is the initial cache to use for the binary tree, be careful to escape
 # any quotes inside of this string if you use it
@@ -372,6 +362,10 @@ FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
 # Reads the previously copied CTestCustom.cmake (which e.g. contains excluded warnings)
 ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
+
+if("$ENV{ADDRESS_SANITIZER}" STREQUAL "ON")
+    set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}-ASan)
+endif()
 
 # If we are testing style, the usual test targets are replaced and we do not need to build (it instead
 # runs cppcheck/lint on every file and parses the output with a regex)
