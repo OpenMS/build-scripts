@@ -27,11 +27,9 @@ tick "Installing QT"
 sourceHere $OPSYS/installQT.sh
 tock
 
-## Skip if you already have it installed.
+
+tick "Installing other contrib libraries"
 if $DOWNLOAD_CONTRIB
-  then
-  tick "Installing other contrib libraries"
-  if ! $USE_DISTRO_CONTRIB
   then
     echo "Downloading full contrib build from archive $CONTRIB_URL..."
     curl -O $CONTRIB_URL > $LOG_PATH/contrib_setup.log 2>&1
@@ -39,14 +37,26 @@ if $DOWNLOAD_CONTRIB
     # force-local to allow usage of mixed POSIX/Win paths (e.g. starting with C:), otherwise interpreted as remote location
     tar ${force_local_flag:-} -xvzf contrib_build.tar.gz --directory $CONTRIB_PATH >> $LOG_PATH/contrib_setup.log 2>&1
     sourceHere $OPSYS/fixContribInstallNames.sh
+    echo "Checking extraction results of contrib..."
+    ls -la $CONTRIB_PATH || ( echo "Error: Could not find CONTRIB_PATH after download and extraction of contrib. Check logs." && exit 1)
+else
+  if ! $USE_DISTRO_CONTRIB
+  then ## Build contrib
+    if ! [ "$(ls -A $CONTRIB_SOURCE_PATH)" ] 
+    then
+      git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: CONTRIB_SOURCE_PATH is not set/empty/non-existent and no git submodule is present in the OpenMS sources of SOURCE_PATH." && exit 1) 
+      export CONTRIB_SOURCE_PATH=$SOURCE_PATH/contrib
+    fi
+    sourceHere $OPSYS/installContribBuildTools.sh
+    ## runNative is set in the inferSystemVariables.sh specifically for each platform
+    pushd $CONTRIB_PATH
+      runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE=ALL ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$CONTRIB_SOURCE_PATH\""
+    popd
   else
     # Install as much as possible from the package managers
-    # Build or download prebuild for the rest
+    # Build or download prebuild for the rest (TODO not finished yet)
     sourceHere $OPSYS/installDistroContrib.sh
-  fi
-  tock
-  echo "Checking extraction results of contrib..."
-  ls -la $CONTRIB_PATH || ( echo "Error: Could not find CONTRIB_PATH after download and extraction of contrib. Check logs." && exit 1)
+  fi 
 fi
 
 # PyOpenMS:
