@@ -42,15 +42,19 @@ if $DOWNLOAD_CONTRIB
 else
   if ! $USE_DISTRO_CONTRIB
   then ## Build contrib
-    [ "$(ls -A $CONTRIB_PATH)" ] || git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: Given CONTRIB_PATH is empty and no git submodule is present." && exit 1) 
+    if ! [ "$(ls -A $CONTRIB_SOURCE_PATH)" ] 
+    then
+      git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: CONTRIB_SOURCE_PATH is not set/empty/non-existent and no git submodule is present in the OpenMS sources of SOURCE_PATH." && exit 1) 
+      export CONTRIB_SOURCE_PATH=$SOURCE_PATH/contrib
+    fi
     sourceHere $OPSYS/installContribBuildTools.sh
     ## runNative is set in the inferSystemVariables.sh specifically for each platform
     pushd $CONTRIB_PATH
-    runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE=ALL ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$SOURCE_PATH/contrib\""
+      runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE=ALL ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$CONTRIB_SOURCE_PATH\""
     popd
   else
-      # Install as much as possible from the package managers
-    # Build or download prebuild for the rest
+    # Install as much as possible from the package managers
+    # Build or download prebuild for the rest (TODO not finished yet)
     sourceHere $OPSYS/installDistroContrib.sh
   fi 
 fi
