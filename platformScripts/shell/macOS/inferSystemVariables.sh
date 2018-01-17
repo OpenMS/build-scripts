@@ -7,7 +7,7 @@ export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openm
 if [ -z "${OPENMS_BREW_FOLDER+x}" ]
 then
   echo "OPENMS_BREW_FOLDER was not set. Using standard brew installation under /usr/local/Homebrew"
-  export OPENMS_BREW_FOLDER="/usr/local/Homebrew"
+  export OPENMS_BREW_FOLDER="/usr/local"
 fi
 export PATH="${PATH}:${OPENMS_BREW_FOLDER}/bin"
 export OPENMS_BREW="${OPENMS_BREW_FOLDER}/bin/brew"
