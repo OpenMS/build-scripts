@@ -6,7 +6,7 @@ export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openm
 ## Special for macOS to allow multiple brew installations
 if [ -z "${OPENMS_BREW_FOLDER+x}" ]
 then
-  echo "OPENMS_BREW_FOLDER was not set. Using standard brew installation under /usr/local/Homebrew"
+  echo "OPENMS_BREW_FOLDER was not set. Using standard brew installation under /usr/local"
   export OPENMS_BREW_FOLDER="/usr/local"
 fi
 export PATH="${PATH}:${OPENMS_BREW_FOLDER}/bin"
