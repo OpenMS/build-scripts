@@ -4,16 +4,10 @@ if [[ -z $QT_VERSIONS_PATH ]]
   echo "Please install or build QT there and name the subfolder like this: qt-\${QT_VERSION}-vs\${VS_YEAR}-(32|64)bit."
   echo "Then set the QT_VERSIONS_PATH on a slave level by configuring the slave in Jenkins. Please use mixed cygpath representation,"
   echo " e.g., C:/dev/qt-builds"
+  echo "For Qt5 you can also use the official installer and install to QT_VERSIONS_PATH/Qt5. Put checkmarks to the msvc compilers you want to use and they will be installed into appropriate subfolders."
 else
   echo "Searching for matching subfolder in $QT_VERSIONS_PATH"
-  if [[ ${GIT_BRANCH} =~ .*qt5.* ]]
-  then
-    ## We can be more specific in the future
-    QTVER=5
-  else
-    QTVER=4
-  fi
-  tmp_qt_path=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 1 -type d -name "qt*${QTVER}*-vs${VS_YEAR}-${ARCH_NO_BIT}bit" | head -1)
+  tmp_qt_path=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 3 -type d \( -wholename "*/qt*${QT_VERSION}*-vs${VS_YEAR}-${ARCH_NO_BIT}bit" -o -wholename "*/Qt${QT_VERSION}/${QT_VERSION}*/msvc${VS_YEAR}_${ARCH_NO_BIT}" \) | head -1)
   if [ ! -z "$tmp_qt_path" ]
   then
     export QT_QMAKE_BIN_PATH="${tmp_qt_path}/bin"
