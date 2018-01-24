@@ -63,7 +63,7 @@ endif()
 # we assume here that all tests have been build/run already
 macro(CTEST_CHECKER)
 	execute_process(COMMAND
-		${PYTHON_EXECUTABLE}
+		${PYTHON_EXECUTABLE_HELPER}
 		${CTEST_SOURCE_DIRECTORY}/tools/PythonExtensionChecker.py
 		--src_path
 		${CTEST_SOURCE_DIRECTORY}
