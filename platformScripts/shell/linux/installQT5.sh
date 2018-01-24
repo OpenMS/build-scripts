@@ -1,2 +1,2 @@
 sourceHere $DISTRO/installQT5.sh
-export QT_QMAKE_BIN_PATH=/usr/bin
+export QT_ROOT=/usr
