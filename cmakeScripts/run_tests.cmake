@@ -47,6 +47,10 @@ foreach(var IN LISTS not_required_bool)
   endif()
 endforeach()
 
+if (DEFINED ENV{QT_ROOT})
+  set(ENV{QT_QMAKE_BIN_PATH} $ENV{QT_ROOT}/bin)
+endif()
+
 if (UNIX)
   ## On Unix please always specify compiler to choose the right one.
   set (required_variables ${required_variables} CC CXX)
@@ -94,9 +98,7 @@ set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 set (CTEST_BUILD_NAME "$ENV{OPENMS_BUILDNAME_PREFIX}-$ENV{SYSTEM_ID}-$ENV{COMPILER_ID}-$ENV{BUILD_TYPE}-$ENV{OPENMS_TARGET_ARCH}")
 
 ## If using custom brew folder on Mac, add it to CMAKE_PREFIX_PATH to help in the search of libraries
-## QT_QMAKE_BIN_PATH should in theory not be needed here. If it is set, QT_QMAKE_EXECUTABLE will
-## be set to QT_QMAKE_BIN_PATH/qmake and this should be enough to find all the libraries.
-set(CMAKE_PREFIX_PATH "$ENV{OPENMS_BREW_FOLDER}")
+set(CMAKE_PREFIX_PATH "$ENV{QT_ROOT};$ENV{OPENMS_BREW_FOLDER}")
 ## Path to libraries of contrib build. Take precendence in OpenMS CMake.
 set(OPENMS_CONTRIB_LIBS "$ENV{CONTRIB_PATH}")
 safe_message("Using as CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
