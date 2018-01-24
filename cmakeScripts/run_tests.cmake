@@ -49,6 +49,7 @@ endforeach()
 
 if (DEFINED ENV{QT_ROOT})
   set(ENV{QT_QMAKE_BIN_PATH} $ENV{QT_ROOT}/bin)
+  message ("QT_ROOT found. Setting QT_QMAKE_BIN_PATH to $ENV{QT_ROOT}/bin")
 endif()
 
 if (UNIX)
@@ -219,7 +220,7 @@ if(WIN32)
   set (ENV{PATH} "${BINARY_DIR}\;$ENV{PATH}")
   set (ENV{Path} "${BINARY_DIR}\;$ENV{Path}")
 
-  # Setup additional environment variables for windows, so that dependencies are foudn during execution
+  # Setup additional environment variables for windows, so that dll-dependencies are found during execution (of e.g. TOPPDocumenter or tests)
   ## Add rest (e.g. QT, CONTRIB)
   set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{Path}")
   set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{PATH}")
