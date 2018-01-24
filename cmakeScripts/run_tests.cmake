@@ -251,7 +251,7 @@ set(CTEST_COMMAND "${CTEST_COMMAND} -D ${DASHBOARD_MODEL} -C $ENV{BUILD_TYPE} ")
 ################################# Set initial cache for the following ctest runs #########################################
 ## Add always
 SET(INITIAL_CACHE "${INITIAL_CACHE}
-CMAKE_PREFIX_PATH:STRING='${CMAKE_PREFIX_PATH}'
+CMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
 OPENMS_CONTRIB_LIBS:STRING=${OPENMS_CONTRIB_LIBS}
 CMAKE_BUILD_TYPE:STRING=$ENV{BUILD_TYPE}
 CMAKE_GENERATOR:INTERNAL=$ENV{GENERATOR}
@@ -361,7 +361,7 @@ file(COPY "${OPENMS_CMAKE_SCRIPT_PATH}/CTestCustom.cmake" DESTINATION ${CTEST_BI
 ## Configuration finished!
 # This is the initial cache to use for the binary tree, be careful to escape
 # any quotes inside of this string if you use it
-FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
+FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "${INITIAL_CACHE}")
 
 # Reads the previously copied CTestCustom.cmake (which e.g. contains excluded warnings)
 ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
