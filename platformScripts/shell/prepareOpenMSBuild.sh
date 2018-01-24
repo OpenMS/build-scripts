@@ -23,8 +23,17 @@ fi
 
 # Install OpenMS dependencies
 # QT is not in the contrib. Always download if possible.
+
+## Hack until QT5 is stabilized or we include the build-scripts into the OpenMS repo
+if [ "$(grep 'Qt 4' License.txt | wc -l )" -ge 1 ]
+then
+  export QT_VERSION=4
+else
+  export QT_VERSION=5
+fi
+
 tick "Installing QT"
-sourceHere $OPSYS/installQT.sh
+sourceHere $OPSYS/installQT$QT_VERSION.sh
 tock
 
 
