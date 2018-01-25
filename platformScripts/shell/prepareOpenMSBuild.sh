@@ -25,7 +25,7 @@ fi
 # QT is not in the contrib. Always download if possible.
 
 ## Hack until QT5 is stabilized or we include the build-scripts into the OpenMS repo
-if [ "$(grep 'Qt 4' $BUILD_PATH/License.txt | wc -l )" -ge 1 ]
+if [ "$(grep 'Qt 4' $SOURCE_PATH/License.txt | wc -l )" -ge 1 ]
 then
   export QT_VERSION=4
 else
