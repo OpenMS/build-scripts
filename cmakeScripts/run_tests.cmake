@@ -222,9 +222,9 @@ if(WIN32)
 
   # Setup additional environment variables for windows, so that dll-dependencies are found during execution (of e.g. TOPPDocumenter or tests)
   ## Add rest (e.g. QT, CONTRIB)
-  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{Path}")
-  set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{PATH}")
-  set (ENV{Path} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{Path}")
+  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{Path}")
+  set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{PATH}")
+  set (ENV{Path} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{Path}")
 else(WIN32)
   ## Multi config like Xcode?
   if("$ENV{GENERATOR}" STREQUAL "XCode")
