@@ -51,9 +51,10 @@ if $DOWNLOAD_CONTRIB
 else
   if ! $USE_DISTRO_CONTRIB
   then ## Build contrib
-    if ! [ "$(ls -A $CONTRIB_SOURCE_PATH)" ] 
+    if [ -z ${CONTRIB_SOURCE_PATH+x} ]
     then
-      git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: CONTRIB_SOURCE_PATH is not set/empty/non-existent and no git submodule is present in the OpenMS sources of SOURCE_PATH." && exit 1) 
+      echo "CONTRIB_SOURCE_PATH not set. Using git submodule of OpenMS source."
+      git -C "$SOURCE_PATH" submodule update --init contrib || ( echo "Error: No git submodule is present in the OpenMS sources of SOURCE_PATH." && exit 1) 
       export CONTRIB_SOURCE_PATH=$SOURCE_PATH/contrib
     fi
     sourceHere $OPSYS/installContribBuildTools.sh
