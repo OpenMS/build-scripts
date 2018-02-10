@@ -60,6 +60,18 @@ MACRO(SUBDIRLIST result curdir)
   SET(${result} ${dirlist})
 ENDMACRO()
 
+MACRO(ADD_DIR_TO_PATH dir)
+      if(WIN32)
+          set (CTEST_ENVIRONMENT "PATH=${dir}\;$ENV{PATH}" "Path=${dir}\;$ENV{Path}")
+          set (ENV{PATH} "${dir}\;$ENV{PATH}")
+          set (ENV{Path} "${dir}\;$ENV{Path}")
+      else()
+          set (CTEST_ENVIRONMENT "PATH=${dir}:$ENV{PATH}")
+          set (ENV{PATH} "${dir}:$ENV{PATH}")
+      endif()
+      safe_message("Added ${dir} to the PATH environment used by CMake and CTest.")
+ENDMACRO()
+
 ## !!! For Unix builds only
 #if(UNIX)
 #  include(${CTEST_SCRIPT_DIRECTORY}/unix_macros.cmake)
