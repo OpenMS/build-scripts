@@ -138,27 +138,42 @@ fi
 # For Thirdparty tests (e.g. MSGF+, LuciPhor)
 if ! [ -z ${SEARCH_ENGINES_DIRECTORY+x} ]
 then
-  tick "Installing JRE and Thirdparty binaries"
-  sourceHere $OPSYS/installJRE.sh
-  mkdir $SEARCH_ENGINES_DIRECTORY || true
-  ## Caution: with svn 1.8.8 the link /branches/master/ had to be substituted with /trunk/. Error seems to be relatively unknown on the internet.
-  ## First guess was: /branches/master/ first occurs if there are multiple branches. Probably not. I have no clue! It also seems to depend on the
-  ## recent changes.
-  ## Alternatives: 1) Git archive (does not work with github). 2) A "local" git repo mounted as volume.
-  ## For now, check both
-  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || \
-  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/branches/master/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || \
-  echo "Cloning of multiplatform Thirdparty binaries went wrong"
+  tick "Installing JRE for Thirdparty tests..."
+    sourceHere $OPSYS/installJRE.sh
+  tock
   
+  mkdir -p $SEARCH_ENGINES_DIRECTORY
+  ## To get the naming of the thirdparty subdirs
   opsysfirst=`echo $OPSYS|cut -c1|tr [a-z] [A-Z]`
   opsyssecond=`echo $OPSYS|cut -c2-`
   # ${OPSYS^} to make first letter uppercase only works in bash4+
-  
-  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || \
-  svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/branches/master/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || \
-  echo "Cloning of platform-specific Thirdparty binaries went wrong"
+    
+  if ! $USE_THIRDPARTY_SUBMODULE
+  then
+    tick "Downloading public Thirdparties via git svn"
+    ## Caution: with svn 1.8.8 the link /branches/master/ had to be substituted with /trunk/. Error seems to be relatively unknown on the internet.
+    ## First guess was: /branches/master/ first occurs if there are multiple branches. Probably not. I have no clue! It also seems to depend on the
+    ## recent changes.
+    ## Alternatives: 1) Git archive (does not work with github). 2) A "local" git repo mounted as volume.
+    ## For now, check both
+    svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || \
+    svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/branches/master/All $SEARCH_ENGINES_DIRECTORY > $LOG_PATH/thirdparty_git.log || \
+    echo "Cloning of multiplatform Thirdparty binaries went wrong"
 
-  tock
+    svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/trunk/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || \
+    svn export --non-interactive --trust-server-cert --force https://github.com/OpenMS/THIRDPARTY/branches/master/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit $SEARCH_ENGINES_DIRECTORY >> $LOG_PATH/thirdparty_git.log || \
+    echo "Cloning of platform-specific Thirdparty binaries went wrong"
+
+    tock
+  else
+    tick "Cloning and flattening Thirdparty submodule"
+    
+    git -C "$SOURCE_PATH" submodule update --init THIRDPARTY
+    cp -r $SOURCE_PATH/THIRDPARTY/All/* $SEARCH_ENGINES_DIRECTORY
+    cp -r $SOURCE_PATH/THIRDPARTY/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit/* $SEARCH_ENGINES_DIRECTORY
+
+    tock
+  fi
 fi
 
 # We need jar to zip binaries as jar for KNIME (otherwise jre-headless would be fine)
