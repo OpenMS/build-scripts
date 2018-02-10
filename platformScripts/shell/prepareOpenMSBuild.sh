@@ -176,6 +176,7 @@ then
   fi
   if ! [ -z ${PRIVATE_THIRDPARTY_DIRECTORY_CLONE+x} ]
   then
+    mkdir -p ${PRIVATE_THIRDPARTY_DIRECTORY}
     cp -r ${PRIVATE_THIRDPARTY_DIRECTORY_CLONE}/All/* ${PRIVATE_THIRDPARTY_DIRECTORY}
     cp -r ${PRIVATE_THIRDPARTY_DIRECTORY_CLONE}/${opsysfirst}${opsyssecond}/${ARCH_NO_BIT}bit/* ${PRIVATE_THIRDPARTY_DIRECTORY} || true
     ## arch. dep. tps not yet available
