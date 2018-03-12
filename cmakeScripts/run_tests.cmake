@@ -211,10 +211,11 @@ if(WIN32)
   set (ENV{Path} "${BINARY_DIR}\;$ENV{Path}")
 
   # Setup additional environment variables for windows, so that dll-dependencies are found during execution (of e.g. TOPPDocumenter or tests)
-  ## Add rest (e.g. QT, CONTRIB)
-  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{Path}")
+  ## Add rest (e.g. QT, QTPlugins [for Qt5], CONTRIB)
+  set (CTEST_ENVIRONMENT "PATH=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{PATH}" "Path=$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{Path}" "QT_QPA_PLATFORM_PLUGIN_PATH=$ENV{QT_QMAKE_BIN_PATH}/../plugins/platforms")
   set (ENV{PATH} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{PATH}")
   set (ENV{Path} "$ENV{QT_QMAKE_BIN_PATH}\;$ENV{CONTRIB_PATH}/lib\;$ENV{CONTRIB_PATH}/bin\;$ENV{Path}")
+  set (ENV{QT_QPA_PLATFORM_PLUGIN_PATH} "$ENV{QT_QMAKE_BIN_PATH}/../plugins/platforms")
 else(WIN32)
   ## Multi config like Xcode?
   if("$ENV{GENERATOR}" STREQUAL "XCode")
