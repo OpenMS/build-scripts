@@ -7,7 +7,7 @@ if [[ -z $QT_VERSIONS_PATH ]]
   echo "For Qt5 you can also use the official installer and install to QT_VERSIONS_PATH/Qt5. Put checkmarks to the msvc compilers you want to use and they will be installed into appropriate subfolders."
 else
   echo "Searching for matching subfolder in $QT_VERSIONS_PATH"
-  tmp_qt_path=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 3 -type d \( -wholename "*/qt*${QT_VERSION}*-vs${VS_YEAR}-${ARCH_NO_BIT}bit" -o -wholename "*/Qt${QT_VERSION}/${QT_VERSION}*/msvc${VS_YEAR}_${ARCH_NO_BIT}" \) | head -1)
+  tmp_qt_path=$(/usr/bin/find $(cygpath -m $QT_VERSIONS_PATH) -maxdepth 3 -type d \( -wholename "*/qt*${QT_VERSION}*-vs${VS_YEAR}-${ARCH_NO_BIT}bit" -o -wholename "*/Qt${QT_VERSION}/${QT_VERSION}*/msvc${VS_YEAR}_${ARCH_NO_BIT}" -o -wholename "*/Qt/${QT_VERSION}*/msvc${VS_YEAR}_${ARCH_NO_BIT}" \) | head -1)
   if [ ! -z "$tmp_qt_path" ]
   then
     export QT_ROOT="${tmp_qt_path}"
