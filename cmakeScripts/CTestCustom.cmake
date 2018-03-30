@@ -18,6 +18,8 @@ set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 10000)
 # suppressed here should be specific to certain system/compiler versions.
 # If you add anything then document what it does.
 
+##TODO maybe put into OpenMS sources and copy to build with configure
+##TODO maybe use different ones for different builds (e.g. pyopenms has different exceptions)
 set (CTEST_CUSTOM_WARNING_EXCEPTION
     # Suppress warnings imported from boost
     ".include/boost.*:.*"
@@ -32,9 +34,15 @@ set (CTEST_CUSTOM_WARNING_EXCEPTION
     ".*/contrib/build/[^/]+/include/.*$"
     )
 
-set(CTEST_CUSTOM_ERROR_EXCEPTION
-        "^.*QcMLFile: errorString.*$"
-        "^.*QcMLFile: error.*$")
+set (CTEST_CUSTOM_WARNING_MATCH
+    "^warning:.*$"
+    )
+
+set (CTEST_CUSTOM_ERROR_EXCEPTION
+    "^warning:.*$"
+    "^.*QcMLFile: errorString.*$"
+    "^.*QcMLFile: error.*$"
+    )
 
 
 
