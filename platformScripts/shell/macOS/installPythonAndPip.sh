@@ -1,7 +1,6 @@
-#python2.7 is std on Mac
-#append user installation to path (did not seem to work via Slave configuration)
-PATH=$PATH:~/Library/Python/2.7/bin
-echo "Using standard Python 2.7 preinstalled on Mac"
+#python2.7 is standard on Mac but uses openssl which cant connect to pip repos
+echo "Using first python in path. Use OPENMS_PYTHON to specify a specific one."
+echo "$(which python)"
 if ! [ -x "$(command -v pip)" ]
   then
   echo "Installing pip..."
