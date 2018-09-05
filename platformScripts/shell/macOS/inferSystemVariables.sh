@@ -11,6 +11,7 @@ then
 fi
 export PATH="${PATH}:${OPENMS_BREW_FOLDER}/bin"
 export OPENMS_BREW="${OPENMS_BREW_FOLDER}/bin/brew"
+security unlock-keychain -p $loginpw login.keychain
 ## Just pass and execute the arguments
 function runNative {
   echo "Running $*"
