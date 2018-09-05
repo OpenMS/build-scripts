@@ -11,7 +11,14 @@ then
 fi
 export PATH="${PATH}:${OPENMS_BREW_FOLDER}/bin"
 export OPENMS_BREW="${OPENMS_BREW_FOLDER}/bin/brew"
-security unlock-keychain -p $loginpw login.keychain
+
+if [ -z "${loginpw+x}" ]
+then
+else
+  echo "loginpw was set. Trying to unlock login keychain to access signing identities."
+  security unlock-keychain -p $loginpw login.keychain
+fi
+
 ## Just pass and execute the arguments
 function runNative {
   echo "Running $*"
