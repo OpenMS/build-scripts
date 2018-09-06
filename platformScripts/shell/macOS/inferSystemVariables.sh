@@ -14,6 +14,7 @@ export OPENMS_BREW="${OPENMS_BREW_FOLDER}/bin/brew"
 
 if [ -z "${loginpw+x}" ]
 then
+  echo "loginpw was not set. Keychain will not be unlocked."
 else
   echo "loginpw was set. Trying to unlock login keychain to access signing identities."
   security unlock-keychain -p $loginpw login.keychain
