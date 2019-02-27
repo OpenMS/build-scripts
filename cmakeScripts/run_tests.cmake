@@ -274,11 +274,12 @@ if(DEFINED ENV{OPENMS_INSTALL_DIR})
   message("Warning: CMAKE_INSTALL_PREFIX cache variable for following CMake calls is overwritten/set to $ENV{OPENMS_INSTALL_DIR}.")
 endif()
 
-## On win, we use unity builds
+## On win, we use unity builds and the 64bit toolchain if available
 ## On unixes, we try not to link boost statically (mostly because of OSX)
 if(WIN32)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     ENABLE_UNITYBUILD=$ENV{ENABLE_UNITYBUILD}
+    CMAKE_GENERATOR_TOOLSET=host=$ENV{ARCH}
   " )
 else(WIN32)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
