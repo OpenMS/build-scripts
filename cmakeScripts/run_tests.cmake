@@ -205,7 +205,7 @@ endif()
 # Setup Paths for the tests to where the binaries will be generated (e.g. for ExecutePipeline test)
 if(WIN32)
   ## VS is always multiconf
-  set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/${BUILD_TYPE}")
+  set (BINARY_DIR "${CTEST_BINARY_DIRECTORY}/bin/$ENV{BUILD_TYPE}")
   set (CTEST_ENVIRONMENT "PATH=${BINARY_DIR}\;$ENV{PATH}" "Path=${BINARY_DIR}\;$ENV{Path}")
   set (ENV{PATH} "${BINARY_DIR}\;$ENV{PATH}")
   set (ENV{Path} "${BINARY_DIR}\;$ENV{Path}")
