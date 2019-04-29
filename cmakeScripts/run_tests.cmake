@@ -285,6 +285,11 @@ else(WIN32)
   SET(INITIAL_CACHE "${INITIAL_CACHE}
     BOOST_USE_STATIC=Off
   " )
+  if(APPLE)
+    SET(INITIAL_CACHE "${INITIAL_CACHE}
+      CMAKE_DEPLOYMENT_TARGET=10.10
+    " )
+  endif(APPLE)
 endif(WIN32)
 
 ## If you set a custom compiler, pass it to the CMake calls
