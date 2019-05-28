@@ -142,6 +142,10 @@ then
     sourceHere $OPSYS/installJRE.sh
   tock
   
+  tick "Installing mono for RawfileParser Thirdparty tests..."
+    sourceHere $OPSYS/installMono.sh
+  tock
+  
   mkdir -p $SEARCH_ENGINES_DIRECTORY
   ## To get the naming of the thirdparty subdirs
   opsysfirst=`echo $OPSYS|cut -c1|tr [a-z] [A-Z]`
