@@ -36,6 +36,14 @@ function runNative {
       varsetupcommand="$vssetup ${OPENMS_TARGET_ARCH}"
     else
       vcpath=$("$PROGRAMFILES/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath)
+       if [ -z "$vcpath" ]
+       then
+         ## If vcpath still empty, it was installed to x86 folder
+         ## Git bash cannot access the ProgramFiles(x86) variable because of the invalid characters
+         ## So we hope that the x86 folder is as usual just appended with " (x86)"
+         vcpath=$("$PROGRAMFILES (x86)/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath)
+       fi
+
       vcpathcyg=$(cygpath -m "$vcpath")/Common7/Tools
       vssetup="\"$vcpathcyg/VsDevCmd.bat\" -arch=${OPENMS_TARGET_ARCH_VS2017}"
       varsetupcommand=$vssetup
