@@ -41,7 +41,7 @@ function runNative {
          ## If vcpath still empty, it was installed to x86 folder
          ## Git bash cannot access the ProgramFiles(x86) variable because of the invalid characters
          ## So we hope that the x86 folder is as usual just appended with " (x86)"
-         vcpath=$("$PROGRAMFILES (x86)/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath)
+         vcpath=$("$PROGRAMFILES (x86)/Microsoft Visual Studio/Installer/vswhere" -all -property installationPath | grep $VS_YEAR)
        fi
 
       vcpathcyg=$(cygpath -m "$vcpath")/Common7/Tools
