@@ -129,7 +129,7 @@ endif()
 ## CTEST_BUILD_FLAGS will be used in later ctest_build()'s
 if(DEFINED ENV{NUMBER_THREADS})
   if(WIN32) ## and MSVC Generator
-    set(CTEST_BUILD_FLAGS "/maxcpucount:$ENV{NUMBER_THREADS}")
+    set(CTEST_BUILD_FLAGS "/maxcpucount:$ENV{NUMBER_THREADS} /m")
   elseif(${GENERATOR} MATCHES "XCode") ## and Darwin
     set(CTEST_BUILD_FLAGS "-jobs" "$ENV{NUMBER_THREADS}")
   else() ## Unix and Makefiles
@@ -406,7 +406,7 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
 
     ## i.e. make all target
     safe_message("Building the all target...")
-    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS _general_openms_build_errors)
+    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" FLAGS ${CTEST_BUILD_FLAGS} NUMBER_ERRORS _general_openms_build_errors)
 
     if(WIN32)
         # Reset project name
@@ -456,7 +456,7 @@ else()
 
     ## make only OpenMS target
     safe_message("Building OpenMS target...")
-    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" TARGET OpenMS NUMBER_ERRORS _general_openms_build_errors)
+    ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" TARGET OpenMS FLAGS ${CTEST_BUILD_FLAGS} NUMBER_ERRORS _general_openms_build_errors)
 
     if(WIN32)
         # Reset project name
@@ -485,7 +485,7 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
     ctest_start(${DASHBOARD_MODEL} TRACK PyOpenMS)
     if("$ENV{PYOPENMS}" STREQUAL "ON")
         safe_message("Building pyopenms...")
-        ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms NUMBER_ERRORS _pyopenms_build_errors)
+        ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET pyopenms FLAGS ${CTEST_BUILD_FLAGS} NUMBER_ERRORS _pyopenms_build_errors)
         set(PYOPENMS_BUILT On)
 	safe_message("Finished building pyopenms...")
     endif()
