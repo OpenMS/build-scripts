@@ -16,7 +16,7 @@ else
   export GENERATOR_ARCH_SUFFIX=" Win64"
 fi
 
-export SUBDISTRO_VERSION=$(systeminfo | grep '(^OS\ Name|^Betriebssystemname)' | egrep -o "(XP|Vista|7|8|10)")
+export SUBDISTRO_VERSION=$(systeminfo | egrep -o '^(OS\ Name|Betriebssystemname).*' | egrep -o "(XP|Vista|7|8|10)")
 export SUBDISTRO_NAME="Windows"
 ## On Windows, only the visual studio version and the architecture should matter.
 export REMOTE_CONTRIB_FOLDER="contrib/$OPSYS/$OPENMS_TARGET_ARCH/$COMPILER"
