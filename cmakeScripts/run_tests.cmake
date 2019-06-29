@@ -129,7 +129,7 @@ endif()
 ## CTEST_BUILD_FLAGS will be used in later ctest_build()'s
 if(DEFINED ENV{NUMBER_THREADS})
   if(WIN32) ## and MSVC Generator
-    set(CTEST_BUILD_FLAGS "/maxcpucount:$ENV{NUMBER_THREADS} /m")
+    set(CTEST_BUILD_FLAGS "-maxcpucount:$ENV{NUMBER_THREADS}")
   elseif(${GENERATOR} MATCHES "XCode") ## and Darwin
     set(CTEST_BUILD_FLAGS "-jobs" "$ENV{NUMBER_THREADS}")
   else() ## Unix and Makefiles
