@@ -419,7 +419,10 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     # E.g. for use with Jenkins or other Dashboards you can disable submission
     if(CDASH_SUBMIT)
         # Submit all
-        ctest_submit()
+        ctest_submit(
+	  RETRY_COUNT 5
+          RETRY_DELAY 60
+	)
     endif()
     backup_test_results("General")
     
@@ -466,7 +469,10 @@ else()
     # E.g. for use with Jenkins or other Dashboards you can disable submission
     if(CDASH_SUBMIT)
         # Submit all
-        ctest_submit()
+        ctest_submit(
+	  RETRY_COUNT 5
+          RETRY_DELAY 60
+	)
     endif()
     backup_test_results("General")
 endif()
@@ -490,7 +496,11 @@ if("$ENV{PYOPENMS}" STREQUAL "ON" OR "$ENV{RUN_PYTHON_CHECKER}" STREQUAL "ON")
 	safe_message("Finished building pyopenms...")
     endif()
     if(CDASH_SUBMIT)
-      ctest_submit(PARTS Build)
+      ctest_submit(
+          PARTS Build
+      	  RETRY_COUNT 5
+          RETRY_DELAY 60
+      )
     endif()
     copy_test_results("PyOpenMS")
     # indicate errors
