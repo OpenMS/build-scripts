@@ -36,12 +36,17 @@ set (CTEST_CUSTOM_WARNING_EXCEPTION
 
 set (CTEST_CUSTOM_WARNING_MATCH
     "^warning:.*$"
+    # From building docu. Don't know if serious. Seems not. Therefore warn instead of error.
+    "^.*process 6387: D-Bus library appears to be incorrectly set up; failed to read machine uuid: Failed to open.*$"
+    "^.*QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to.*$"
     )
 
 set (CTEST_CUSTOM_ERROR_EXCEPTION
     "^warning:.*$"
     "^.*QcMLFile: errorString.*$"
     "^.*QcMLFile: error.*$"
+    # From building docu. Don't know if serious. Seems not.
+    "^.*process 6387: D-Bus library appears to be incorrectly set up; failed to read machine uuid: Failed to open.*$"
     )
 
 
