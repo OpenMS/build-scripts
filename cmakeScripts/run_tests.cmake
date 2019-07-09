@@ -420,8 +420,8 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     if(CDASH_SUBMIT)
         # Submit all
         ctest_submit(
-	  RETRY_COUNT 5
-          RETRY_DELAY 60
+	  RETRY_COUNT 3
+          RETRY_DELAY 180
 	)
     endif()
     backup_test_results("General")
@@ -470,8 +470,8 @@ else()
     if(CDASH_SUBMIT)
         # Submit all
         ctest_submit(
-	  RETRY_COUNT 5
-          RETRY_DELAY 60
+	  RETRY_COUNT 3
+          RETRY_DELAY 180
 	)
     endif()
     backup_test_results("General")
