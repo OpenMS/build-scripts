@@ -5,8 +5,8 @@
 # ------------------------------------------------------------
 
 ## customize reporting of errors in CDash
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 10000)
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 10000)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 1000)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
 
 # ------------------------------------------------------------
 # Suppress certain warnings.
