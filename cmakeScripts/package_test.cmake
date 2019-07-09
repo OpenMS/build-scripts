@@ -8,6 +8,7 @@ if(NOT DEFINED CDASH_SUBMIT)
     set(CDASH_SUBMIT Off)
 endif()
 
+## TODO this variable is currently not passed from the parent script. Need to FIX
 if(NOT DEFINED DASHBOARD_MODEL)
     set(DASHBOARD_MODEL Experimental)
 endif()
