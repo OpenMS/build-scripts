@@ -23,7 +23,7 @@ sudo $(which tlmgr) install oberdiek amsmath babel carlisle ec geometry lm marvo
 
 # This is because tabu (used by doxygen) broke in recent Latex dists (December18) https://github.com/doxygen/doxygen/issues/6769
 pushd /usr/local/texlive/texmf-dist/tex/latex/tabu/
-  mv tabu.sty tabu.sty.bup
+  sudo mv tabu.sty tabu.sty.bup
   # TODO store it in the repo here until the doxygen fix (which is already pushed) is released
-  wget https://raw.githubusercontent.com/tabu-issues-for-future-maintainer/tabu/master/tabu.sty
+  sudo wget https://raw.githubusercontent.com/tabu-issues-for-future-maintainer/tabu/master/tabu.sty
 popd
