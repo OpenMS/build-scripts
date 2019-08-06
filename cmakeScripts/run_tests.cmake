@@ -419,10 +419,10 @@ if("$ENV{ENABLE_TOPP_TESTING}" STREQUAL "ON" OR "$ENV{ENABLE_CLASS_TESTING}" STR
     # E.g. for use with Jenkins or other Dashboards you can disable submission
     if(CDASH_SUBMIT)
         # Submit all
-        ctest_submit(
-	  RETRY_COUNT 3
-          RETRY_DELAY 180
-	)
+        ctest_submit()
+	# Due to timeouts I tried the following, but then it submits everything 4 times....
+	#RETRY_COUNT 3 
+        #RETRY_DELAY 180
     endif()
     backup_test_results("General")
     
