@@ -1,5 +1,9 @@
 export SUBDISTRO_NAME="macOS"
 export SUBDISTRO_VERSION=$(sw_vers -productVersion)
+## Caution: the next line is necessary for the ".app"s to run on older macOS
+## even thought the code is backwards-compatible and runs from the command line.
+## Caution2: this might interfere with the system libraries that are linked, if
+## we ever consider building with e.g. GCC on macOS
 export MACOSX_DEPLOYMENT_TARGET="10.9"
 export OPENMS_TARGET_ARCH=${ARCH}
 export REMOTE_CONTRIB_FOLDER="contrib/$OPSYS/$SUBDISTRO_VERSION/$OPENMS_TARGET_ARCH/$COMPILER/"
