@@ -21,9 +21,10 @@ sudo $(which tlmgr) install oberdiek amsmath babel carlisle ec geometry lm marvo
   latex latex-bin fancyhdr graphics float colortbl xcolor xtab newtx fontaxes xkeyval etoolbox kastrup \
   tex-gyre tools hyperref listings url parskip tocloft > $LOG_PATH/texpackages.log 2>&1
 
+# This should not be needed anymore with doxygen 1.8.16
 # This is because tabu (used by doxygen) broke in recent Latex dists (December18) https://github.com/doxygen/doxygen/issues/6769
-pushd /usr/local/texlive/texmf-dist/tex/latex/tabu/
-  sudo mv tabu.sty tabu.sty.bup
-  # TODO store it in the repo here until the doxygen fix (which is already pushed) is released
-  sudo wget https://raw.githubusercontent.com/tabu-issues-for-future-maintainer/tabu/master/tabu.sty
-popd
+#pushd /usr/local/texlive/texmf-dist/tex/latex/tabu/
+#  sudo mv tabu.sty tabu.sty.bup
+#  # TODO store it in the repo here until the doxygen fix (which is already pushed) is released
+#  sudo wget https://raw.githubusercontent.com/tabu-issues-for-future-maintainer/tabu/master/tabu.sty
+#popd
