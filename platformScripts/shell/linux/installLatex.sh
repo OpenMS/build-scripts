@@ -19,7 +19,7 @@ rm $TL.tar.gz && rm -r $TL
 # sudo uses different path. Therefore the which.
 sudo $(which tlmgr) install oberdiek amsmath babel carlisle ec geometry lm marvosym graphics-def \
   latex latex-bin listofitems fancyhdr graphics float colortbl xcolor xtab newtx fontaxes xkeyval etoolbox kastrup \
-  tex-gyre tools hyperref listings url parskip tocloft > $LOG_PATH/texpackages.log 2>&1
+  tex-gyre tools hyperref listings ulem url parskip tocloft > $LOG_PATH/texpackages.log 2>&1
 
 # This should not be needed anymore with doxygen 1.8.16
 # This is because tabu (used by doxygen) broke in recent Latex dists (December18) https://github.com/doxygen/doxygen/issues/6769
