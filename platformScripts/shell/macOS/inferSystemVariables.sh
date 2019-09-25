@@ -28,7 +28,7 @@ fi
 ## Just pass and execute the arguments
 function runNative {
   echo "Running $*"
-  bash -c "$*"
+  (eval "$*")
 }
 
 sourceHere ./updatePackageManager.sh
