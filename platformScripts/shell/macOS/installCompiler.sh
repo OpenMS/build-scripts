@@ -3,19 +3,24 @@
 if [[ $1 =~ ^appleclang.*$ ]]
   then
   export COMPILER_ID="$1"
-  export CXX=$(which clang++)
-  export CC=$(which clang)
+  # We do not use the full paths, because the wrappers under
+  # /usr/bin/ always have the correct sysroot paths included.
+  # Use xcode-select if you want to switch to another installed appleclang.
+  #export CXX=$(which clang++)
+  #export CC=$(which clang)
+  export CXX=/usr/bin/clang++
+  export CC=/usr/bin/clang
+  
+  # For now only Unix Makefiles are supported. XCode should be not much work though.
   export GENERATOR="Unix Makefiles"
   ## If you have multiple compilers installed you should set a correct
-  ## sysroot to find the right stdlibs for example
-  ##
-  echo ${SYSROOT-}
-  if [[ -n ${SYSROOT+x} ]]
-    then
-    export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-} -DCMAKE_OSX_SYSROOT=${SYSROOT-}"
-  else
-    export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-}"
-  fi
+  ## sysroot to find the right stdlibs for example. Not necessary for now.
+  #if [[ -n ${SYSROOT+x} ]]
+  #  then
+  #  export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-} -DCMAKE_OSX_SYSROOT=${SYSROOT-}"
+  #else
+  #  export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-}"
+  #fi
   echo "Installed $COMPILER_ID"
 elif [[ $1 =~ ^g\+\+.*$ ]]
     then
