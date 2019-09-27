@@ -22,6 +22,11 @@ export SUBDISTRO_NAME="Windows"
 export REMOTE_CONTRIB_FOLDER="contrib/$OPSYS/$OPENMS_TARGET_ARCH/$COMPILER"
 export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/$REMOTE_CONTRIB_FOLDER/contrib_build.tar.gz"
 
+## If the CMAKE variable is set, e.g. in Jenkins config, we add this to the path to choose the correct cmake
+if [ ! -z "$CMAKE" ]
+then
+  export PATH=$CMAKE:$PATH
+fi
 ## Only needed on Windows to escape C: when using tar. Only supported by gnutar. Not usable on Mac.
 export force_local_flag=--force-local
 
