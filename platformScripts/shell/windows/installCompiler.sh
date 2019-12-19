@@ -24,7 +24,6 @@ then
     # on each machine
     export GENERATOR_ARCH_SUFFIX=""
   fi
-  ((VS_YEAR=VS_NR+2000+offset))
   export VS_YEAR
   export COMPILER_ID=$1
   
