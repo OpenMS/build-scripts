@@ -7,7 +7,7 @@ cp openmsdocu_texlive.profile $TL/
 wget -nv -O $TL.tar.gz http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
 tar -xzf $TL.tar.gz -C $TL --strip-components=1
 pushd $TL
-  sudo ./install-tl --persistent-downloads --profile openmsdocu_texlive.profile > $LOG_PATH/texlive.log 2>&1
+  sudo ./install-tl --persistent-downloads -profile openmsdocu_texlive.profile -repository ftp://ftp.fu-berlin.de/tex/CTAN/systems/texlive/tlnet > $LOG_PATH/texlive.log 2>&1
 popd
 sudo ln -s /usr/local/texlive/bin/x86_64-linux /opt/texbin
 # TODO think about putting this in etc/profile.d/
