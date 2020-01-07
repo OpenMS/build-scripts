@@ -4,16 +4,16 @@
 if [[ $OS_LABEL =~ ^win.*32$ ]]
 then
   export ARCH=x86
+  export CMAKE_ARCH_NAME=Win32
   export OPENMS_TARGET_ARCH=x86
-  export OPENMS_TARGET_ARCH_VS2017=x86
+  export VS_WHERE_ARCH=x86
   export ARCH_NO_BIT=32
-  export GENERATOR_ARCH_SUFFIX=""
 else
   export ARCH=x64
+  export CMAKE_ARCH_NAME=x64
   export OPENMS_TARGET_ARCH=x64
-  export OPENMS_TARGET_ARCH_VS2017=amd64
+  export VS_WHERE_ARCH=amd64
   export ARCH_NO_BIT=64
-  export GENERATOR_ARCH_SUFFIX=" Win64"
 fi
 
 export SUBDISTRO_VERSION=$(systeminfo | egrep -o '^(OS\ Name|Betriebssystemname).*' | egrep -o "(XP|Vista|7|8|10)")
@@ -50,7 +50,7 @@ function runNative {
        fi
 
       vcpathcyg=$(cygpath -m "$vcpath")/Common7/Tools
-      vssetup="\"$vcpathcyg/VsDevCmd.bat\" -arch=${OPENMS_TARGET_ARCH_VS2017}"
+      vssetup="\"$vcpathcyg/VsDevCmd.bat\" -arch=${VS_WHERE_ARCH}"
       varsetupcommand=$vssetup
     fi
     
