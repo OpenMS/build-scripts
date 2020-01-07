@@ -23,7 +23,8 @@ then
   export COMPILER_ID=$1
   
   export GENERATOR="Visual Studio ${VS_NR} ${VS_YEAR}"
-  echo "Using GENERATOR=$GENERATOR"
+  export ADDITIONAL_CMAKE_ARGUMENTS="${ADDITIONAL_CMAKE_ARGUMENTS-} -A ${CMAKE_ARCH_NAME}"
+  echo "Using GENERATOR=$GENERATOR with ADDITIONAL_CMAKE_ARGUMENTS=$ADDITIONAL_CMAKE_ARGUMENTS"
 else
   echo "Unsupported compiler $1 on windows."
 fi
