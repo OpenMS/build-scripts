@@ -18,16 +18,11 @@ then
     then
     export VS_NR=16
     VS_YEAR=2019
-    # By default it builds for the current arch. Which is fine.
-    # If we need to change it in the future we need to use the
-    # -A option of CMake or better introduce CMake toolchain files
-    # on each machine
-    export GENERATOR_ARCH_SUFFIX=""
   fi
   export VS_YEAR
   export COMPILER_ID=$1
   
-  export GENERATOR="Visual Studio ${VS_NR} ${VS_YEAR}${GENERATOR_ARCH_SUFFIX}"
+  export GENERATOR="Visual Studio ${VS_NR} ${VS_YEAR}"
   echo "Using GENERATOR=$GENERATOR"
 else
   echo "Unsupported compiler $1 on windows."
