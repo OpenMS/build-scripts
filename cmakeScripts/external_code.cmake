@@ -36,7 +36,8 @@ SET (CTEST_BINARY_DIRECTORY ${CTEST_BINARY_TESTEXTERNAL_DIRECTORY})
 
 SET (CTEST_PROJECT_NAME "OpenMS_external_code_test")
 
-CTEST_EMPTY_BINARY_DIRECTORY (${CTEST_BINARY_DIRECTORY})
+## Not sure why this was needed. It actually fails most of the time. With clean checkouts I think this is not needed.
+## CTEST_EMPTY_BINARY_DIRECTORY (${CTEST_BINARY_DIRECTORY})
 
 FILE(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" ${INITIAL_CACHE})
 
