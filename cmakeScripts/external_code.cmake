@@ -25,8 +25,9 @@ SET (CTEST_ENVIRONMENT "OPENMS_BUILD_TREE=${CTEST_BINARY_DIRECTORY}")
 
 ## extend initial cache with references to
 ## the OpenMS directory
-## TODO Figure out, why only on Mac, OpenMS_DIR:PATH=${CTEST_BINARY_DIRECTORY}/cmake is added.
+## Make double sure, that OpenMSConfig.cmake is found
 SET(INITIAL_CACHE "${INITIAL_CACHE}
+  OpenMS_DIR:PATH=${CTEST_BINARY_DIRECTORY}/cmake
 ")
 
 ## (re)define build name and test directories
@@ -34,6 +35,7 @@ SET (CTEST_BUILD_NAME "${CTEST_BUILD_NAME}_External")
 SET (CTEST_SOURCE_DIRECTORY ${CTEST_SOURCE_TESTEXTERNAL_DIRECTORY})
 SET (CTEST_BINARY_DIRECTORY ${CTEST_BINARY_TESTEXTERNAL_DIRECTORY})
 
+## From here on, CTEST_BINARY_DIRECTORY changes!
 SET (CTEST_PROJECT_NAME "OpenMS_external_code_test")
 
 ## Not sure why this was needed. It actually fails most of the time. With clean checkouts I think this is not needed.
