@@ -21,13 +21,13 @@ SET (CTEST_BINARY_TESTEXTERNAL_DIRECTORY "${CTEST_BINARY_DIRECTORY}/src/tests/ex
 file(COPY "${CTEST_SOURCE_DIRECTORY}/CTestConfig.cmake" DESTINATION "${CTEST_BINARY_TESTEXTERNAL_DIRECTORY}")
 
 SET (CTEST_ENVIRONMENT "OPENMS_BUILD_TREE=${CTEST_BINARY_DIRECTORY}")
-SET (OpenMS_DIR "${CTEST_BINARY_DIRECTORY}/cmake")
+SET (OpenMS_DIR "${CTEST_BINARY_DIRECTORY}")
 
 ## extend initial cache with references to
 ## the OpenMS directory
 ## Make double sure, that OpenMSConfig.cmake is found
 SET(INITIAL_CACHE "${INITIAL_CACHE}
-  OpenMS_DIR:PATH=${CTEST_BINARY_DIRECTORY}/cmake
+  OpenMS_DIR:PATH=${CTEST_BINARY_DIRECTORY}
 ")
 
 ## (re)define build name and test directories
