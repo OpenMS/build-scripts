@@ -28,7 +28,7 @@ SET (OpenMS_DIR "${CTEST_BINARY_DIRECTORY}")
 ## Make double sure, that OpenMSConfig.cmake is found
 SET(INITIAL_CACHE "${INITIAL_CACHE}
   OpenMS_DIR:PATH=${CTEST_BINARY_DIRECTORY}
-  CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}"
+  CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
 ")
 
 ## (re)define build name and test directories
