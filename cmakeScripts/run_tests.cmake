@@ -166,7 +166,7 @@ endif()
 
 ## Package dependent requirements
 ## TODO Actually KNIME_TEST needs full Java SDK because of jar.exe.
-find_package(Java)
+find_package(Java 11)
 if(NOT DEFINED ENV{SEARCH_ENGINES_DIRECTORY})
   if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON" OR "$ENV{PACKAGE_TEST}" STREQUAL "ON")
     safe_message(FATAL_ERROR "Trying to build a package or KNIME plugin without setting the path to the Thirdparty binaries (SEARCH_ENGINES_DIRECTORY)")
