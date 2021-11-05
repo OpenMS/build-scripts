@@ -5,8 +5,8 @@
 # ------------------------------------------------------------
 
 ## customize reporting of errors in CDash
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 1000)
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 200)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 200)
 
 # ------------------------------------------------------------
 # Suppress certain warnings.
@@ -26,7 +26,9 @@ set (CTEST_CUSTOM_WARNING_EXCEPTION
     ".*boost_static_assert_typedef_575.*"
     ".*boost_static_assert_typedef_628.*"
     ".*BOOST_STATIC_ASSERT.*"
-    # Suppress warnings imported from seqan
+    # Suppress warnings imported from seqan and thirdparties
+    ".*thirdparty.MIToolbox.*"
+    ".*thirdparty.IsoSpec.*"
     ".include/seqan.*:.*"
     ".*seqan.*[-Wunused-local-typedefs]"
     ".*qsharedpointer_impl.h:595:43.*"
