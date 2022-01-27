@@ -28,8 +28,6 @@ SET (OpenMS_DIR "${CTEST_BINARY_DIRECTORY}")
 ## Make double sure, that OpenMSConfig.cmake is found
 SET(INITIAL_CACHE "${INITIAL_CACHE}
   OpenMS_DIR:PATH=${CTEST_BINARY_DIRECTORY}
-  CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-  OPENMS_CONTRIB_LIBS=${OPENMS_CONTRIB_LIBS}
 ")
 
 ## (re)define build name and test directories
@@ -55,14 +53,14 @@ CTEST_START (${DASHBOARD_MODEL} TRACK ExternalCode)
 ##  CTEST_UPDATE(SOURCE "${CTEST_SOURCE_DIRECTORY}")
 ## endif()
 
+# We need to escape seimcolons since CMAKE_PREFIX_PATH can be a list
 string(JOIN ";" CPP_JOIN ${CMAKE_PREFIX_PATH})
-string(REPLACE ";" "\\\\\\;" CPP_REP "${CPP_JOIN}")
+string(REPLACE ";" "\\\\;" CPP_REP "${CPP_JOIN}")
 set(MYOPTIONS
- -DCMAKE_PREFIX_PATH_OPT=${CMAKE_PREFIX_PATH}
+ -DCMAKE_PREFIX_PATH_OPT=${CPP_REP}
  -DOPENMS_CONTRIB_LIBS_OPT=${OPENMS_CONTRIB_LIBS}
 )
-message(${MYOPTIONS})
-message("${MYOPTIONS}")
+message("Will pass the following options to the External testing CMake: ${MYOPTIONS}")
 CTEST_CONFIGURE (BUILD "${CTEST_BINARY_TESTEXTERNAL_DIRECTORY}" OPTIONS "${MYOPTIONS}" RETURN_VALUE _ext_config_ret_val)
 CTEST_BUILD     (BUILD "${CTEST_BINARY_TESTEXTERNAL_DIRECTORY}" NUMBER_ERRORS _ext_build_errors)
 CTEST_TEST      (BUILD "${CTEST_BINARY_TESTEXTERNAL_DIRECTORY}")
