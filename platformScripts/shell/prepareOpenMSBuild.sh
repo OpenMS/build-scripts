@@ -102,7 +102,7 @@ then
   
   # We are in a virtualenv. We can install it without --user
   #pip install -U setuptools pip==9.0.3 autowrap nose Cython numpy pandas wheel > $LOG_PATH/pip_packages.log 2>&1
-  pip install -U setuptools pip autowrap nose Cython numpy pandas wheel > $LOG_PATH/pip_packages.log 2>&1
+  pip install -U setuptools pip autowrap nose pytest Cython numpy pandas wheel > $LOG_PATH/pip_packages.log 2>&1
   
   if [ "$RUN_PYTHON_CHECKER" == "ON" ]
   then
