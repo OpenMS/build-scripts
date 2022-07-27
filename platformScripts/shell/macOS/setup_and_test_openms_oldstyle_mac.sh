@@ -97,10 +97,10 @@ then
     virtualenv ~/pyopenms_venv
     chmod +x ~/pyopenms_venv/bin/activat*
     sourceHere ~/pyopenms_venv/bin/activate \
-    pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
+    pip install -U setuptools pip autowrap nose pytest pandas numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   else
     #Just install system wide
-    sudo pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
+    sudo pip install -U setuptools pip autowrap nose pytest pandas numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   fi
   echo "Setting up pyOpenMS dependencies and pip packages took (s):"
   tock
