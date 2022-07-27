@@ -82,10 +82,10 @@ then
     #sudo -Hu jenkins /bin/bash -c "sourceHere /home/jenkins/pyopenms_venv/bin/activate \
     #                               && pip install -U setuptools pip autowrap nose numpy wheel"
     sourceHere /home/jenkins/pyopenms_venv/bin/activate \
-    pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
+    pip install -U setuptools pip autowrap nose pytest numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   else
     #Just install system wide
-    sudo pip install -U setuptools pip autowrap nose numpy wheel > $LOG_PATH/pip_packages.log 2>&1
+    sudo pip install -U setuptools pip autowrap nose pytest numpy wheel > $LOG_PATH/pip_packages.log 2>&1
   fi
   echo "Setting up pyOpenMS dependencies and pip packages took (s):"
   tock
