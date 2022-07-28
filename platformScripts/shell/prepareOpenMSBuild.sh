@@ -189,7 +189,7 @@ then
 fi
 
 ## Potential Sirius login
-if [ -z ${SIRIUSPW+x}]
+if ! [ -z ${SIRIUSPW+x} ]
 then
   if [ -d ${SEARCH_ENGINES_DIRECTORY}/Sirius ]
   then
