@@ -188,6 +188,23 @@ then
   fi
 fi
 
+## Potential Sirius login
+if [ -z ${SIRIUSPW+x}]
+then
+  if [ -d ${SEARCH_ENGINES_DIRECTORY}/Sirius ]
+  then
+    VERSIONLINE=$(./sirius --version 2>&1 | grep "You run SIRIUS")
+    ## Starting from Sirius 5 you have to login for WebAPI functionality
+    if [[ $VERSIONLINE =~ ".* [5-9]\.[0-9]+\.[0-9]+$" ]]
+      sirius login --email="$SIRIUSUSER" --password="$SIRIUSPW"
+    fi
+  else
+    echo "WARNING: Sirius not found. Check THIRDPARTY structure."
+  fi
+else
+  echo "WARNING: No password for SIRIUS found. Skipping login. This might fail tests with Sirius online functionality."
+fi
+
 # We need jar to zip binaries as jar for KNIME (otherwise jre-headless would be fine)
 if [ "${ENABLE_PREPARE_KNIME_PACKAGE}" == "ON" ]
 then
