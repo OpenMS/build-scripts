@@ -197,7 +197,8 @@ then
     ## Starting from Sirius 5 you have to login for WebAPI functionality
     if [[ $VERSIONLINE =~ ".* [5-9]\.[0-9]+\.[0-9]+$" ]]
     then
-      sirius login --email="$SIRIUSUSER" --password="$SIRIUSPW"
+      echo "Logging in Sirius..."
+      ./${SEARCH_ENGINES_DIRECTORY}/Sirius/sirius login --email="$SIRIUSUSER" --password="$SIRIUSPW" || echo "Login failed."
     fi
   else
     echo "WARNING: Sirius not found. Check THIRDPARTY structure."
