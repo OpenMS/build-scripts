@@ -193,12 +193,14 @@ if ! [ -z ${SIRIUSPW+x} ]
 then
   if [ -d ${SEARCH_ENGINES_DIRECTORY}/Sirius ]
   then
-    VERSIONLINE=$(./${SEARCH_ENGINES_DIRECTORY}/Sirius/sirius --version 2>&1 | grep "You run SIRIUS")
+    VERSIONLINE=$(${SEARCH_ENGINES_DIRECTORY}/Sirius/sirius --version 2>&1 | grep "You run SIRIUS")
     ## Starting from Sirius 5 you have to login for WebAPI functionality
     if [[ $VERSIONLINE =~ ".* [5-9]\.[0-9]+\.[0-9]+$" ]]
     then
       echo "Logging in Sirius..."
-      ./${SEARCH_ENGINES_DIRECTORY}/Sirius/sirius login --email="$SIRIUSUSER" --password="$SIRIUSPW" || echo "Login failed."
+      ${SEARCH_ENGINES_DIRECTORY}/Sirius/sirius login --email="$SIRIUSUSER" --password="$SIRIUSPW" || echo "Login failed."
+    else
+      echo "Sirius 4 does not need a login."
     fi
   else
     echo "WARNING: Sirius not found. Check THIRDPARTY structure."
