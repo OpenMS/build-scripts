@@ -240,7 +240,9 @@ endif()
 set(CTEST_COMMAND "${CTEST_COMMAND} -D ${DASHBOARD_MODEL} -C $ENV{BUILD_TYPE} ")
 
 # temporarily disable SIRIUS tests
-set(ENABLE_SIRIUS_TESTS "OFF")
+SET(INITIAL_CACHE "${INITIAL_CACHE}
+    ENABLE_SIRIUS_TESTS:BOOL=OFF
+")
 
 ################################# Set initial cache for the following ctest runs #########################################
 ## Add always
