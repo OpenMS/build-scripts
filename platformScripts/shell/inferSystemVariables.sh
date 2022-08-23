@@ -1,7 +1,7 @@
 OPSYS_detect
 export ARCH=$(uname -m | sed 's/x86_/x/;s/i[3-6]86/x86/')
 export ARCH_NO_BIT=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-export ARCHIVE_URL_PREFIX="https://abibuilder.informatik.uni-tuebingen.de/archive"
+export ARCHIVE_URL_PREFIX="https://abibuilder.cs.uni-tuebingen.de/archive"
 sourceHere $OPSYS/inferSystemVariables.sh
 ## Should work on almost all distros
 export SYSTEM_ID=${SUBDISTRO_NAME}_${SUBDISTRO_VERSION}_${ARCH}
