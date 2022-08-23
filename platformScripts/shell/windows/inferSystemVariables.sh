@@ -20,7 +20,7 @@ export SUBDISTRO_VERSION=$(systeminfo | egrep -o '^(OS\ Name|Betriebssystemname)
 export SUBDISTRO_NAME="Windows"
 ## On Windows, only the visual studio version and the architecture should matter.
 export REMOTE_CONTRIB_FOLDER="contrib/$OPSYS/$OPENMS_TARGET_ARCH/$COMPILER"
-export CONTRIB_URL="https://abibuilder.informatik.uni-tuebingen.de/archive/openms/$REMOTE_CONTRIB_FOLDER/contrib_build.tar.gz"
+export CONTRIB_URL="${ARCHIVE_URL_PREFIX}/openms/${REMOTE_CONTRIB_FOLDER}/contrib_build.tar.gz"
 
 ## If the CMAKE variable is set, e.g. in Jenkins config, we add this to the path to choose the correct cmake
 if [ ! -z "$CMAKE" ]

@@ -148,7 +148,7 @@ then
   wget -nv -O $TL.tar.gz http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
   tar -xzf $TL.tar.gz -C $TL --strip-components=1
   cd $TL
-    wget https://abibuilder.informatik.uni-tuebingen.de/archive/contrib/os_support/openmsdocu_texlive.profile
+    wget ${ARCHIVE_URL_PREFIX}/contrib/os_support/openmsdocu_texlive.profile
     sudo ./install-tl --persistent-downloads --profile openmsdocu_texlive.profile > $LOG_PATH/texlive.log 2>&1
   cd ..
   sudo ln -s /usr/local/texlive/bin/x86_64-linux /opt/texbin
