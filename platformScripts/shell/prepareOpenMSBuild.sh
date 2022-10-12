@@ -47,7 +47,7 @@ if $DOWNLOAD_CONTRIB
     tar ${force_local_flag:-} -xvzf contrib_build.tar.gz --directory $CONTRIB_PATH >> $LOG_PATH/contrib_setup.log 2>&1
     sourceHere $OPSYS/fixContribInstallNames.sh
     
-    if [ "$OPSYS" == "Linux" ]
+    if [ "$OPSYS" == "linux" ]
     then 
       find $CONTRIB_PATH -name "sqlite*" -exec rm -r {} \;
     fi
@@ -64,7 +64,7 @@ else
     fi
     sourceHere $OPSYS/installContribBuildTools.sh
     ## On Linux QSql links to the shared system Sqlite. If we do not do the same, our Sqlwrapper will crash. 
-    if [ "$OPSYS" == "Linux" ]
+    if [ "$OPSYS" == "linux" ]
     then 
       BUILD_TYPE="BZIP2;ZLIB;LIBSVM;XERCESC;BOOST;COINOR;EIGEN;HDF5"
     else
