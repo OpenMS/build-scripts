@@ -66,13 +66,13 @@ else
     ## On Linux QSql links to the shared system Sqlite. If we do not do the same, our Sqlwrapper will crash. 
     if [ "$OPSYS" == "linux" ]
     then 
-      BUILD_TYPE="BZIP2;ZLIB;LIBSVM;XERCESC;BOOST;COINOR;EIGEN;HDF5"
+      CONTRIB_BUILD_TYPE="BZIP2;ZLIB;LIBSVM;XERCESC;BOOST;COINOR;EIGEN;HDF5"
     else
-      BUILD_TYPE="ALL"
+      CONTRIB_BUILD_TYPE="ALL"
     fi
     ## runNative is set in the inferSystemVariables.sh specifically for each platform
     pushd $CONTRIB_PATH
-      runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE="\"$BUILD_TYPE\"" ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$CONTRIB_SOURCE_PATH\""
+      runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE="\"$CONTRIB_BUILD_TYPE\"" ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$CONTRIB_SOURCE_PATH\""
     popd
   else
     # Install as much as possible from the package managers
