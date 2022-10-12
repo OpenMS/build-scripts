@@ -46,6 +46,11 @@ if $DOWNLOAD_CONTRIB
     # force-local to allow usage of mixed POSIX/Win paths (e.g. starting with C:), otherwise interpreted as remote location
     tar ${force_local_flag:-} -xvzf contrib_build.tar.gz --directory $CONTRIB_PATH >> $LOG_PATH/contrib_setup.log 2>&1
     sourceHere $OPSYS/fixContribInstallNames.sh
+    
+    if [ "$OPSYS" == "Linux" ]
+    then 
+      find $CONTRIB_PATH -name "sqlite*" -exec rm -r {} \;
+    fi
     echo "Checking extraction results of contrib..."
     ls -la $CONTRIB_PATH || ( echo "Error: Could not find CONTRIB_PATH after download and extraction of contrib. Check logs." && exit 1)
 else
@@ -58,9 +63,16 @@ else
       export CONTRIB_SOURCE_PATH=$SOURCE_PATH/contrib
     fi
     sourceHere $OPSYS/installContribBuildTools.sh
+    ## On Linux QSql links to the shared system Sqlite. If we do not do the same, our Sqlwrapper will crash. 
+    if [ "$OPSYS" == "Linux" ]
+    then 
+      BUILD_TYPE="BZIP2;ZLIB;LIBSVM;XERCESC;BOOST;COINOR;EIGEN;HDF5"
+    else
+      BUILD_TYPE="ALL"
+    fi
     ## runNative is set in the inferSystemVariables.sh specifically for each platform
     pushd $CONTRIB_PATH
-      runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE=ALL ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$CONTRIB_SOURCE_PATH\""
+      runNative cmake -G "\"$GENERATOR\"" -DBUILD_TYPE="\"$BUILD_TYPE\"" ${ADDITIONAL_CMAKE_ARGUMENTS-} "\"$CONTRIB_SOURCE_PATH\""
     popd
   else
     # Install as much as possible from the package managers
