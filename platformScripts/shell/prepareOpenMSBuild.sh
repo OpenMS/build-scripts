@@ -49,7 +49,7 @@ if $DOWNLOAD_CONTRIB
     
     if [ "$OPSYS" == "linux" ]
     then 
-      find $CONTRIB_PATH -name "sqlite*" -exec rm -r {} \;
+      find $CONTRIB_PATH -name "*sqlite*" -exec rm -r {} \;
     fi
     echo "Checking extraction results of contrib..."
     ls -la $CONTRIB_PATH || ( echo "Error: Could not find CONTRIB_PATH after download and extraction of contrib. Check logs." && exit 1)
