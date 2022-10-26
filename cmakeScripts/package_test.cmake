@@ -48,7 +48,7 @@ CTEST_CONFIGURE(OPTIONS "-DPACKAGE_TYPE=${MY_PACK_TYPE};-DSEARCH_ENGINES_DIRECTO
 # doc and doc_tutorial (if enabled)
 #CTEST_BUILD    (TARGET doc)
 #CTEST_BUILD    (TARGET doc_tutorials APPEND)
-if (APPLE AND DEFINED CMAKE_VERSION AND "${CMAKE_VERSION}" VERSION_LESS "3.5")
+if (APPLE)
   set(PACKAGE_TARGET "finalized_dist")
 else()
   if(WIN32) ## Always try to sign on Mac b/c of Gatekeeper issues. You will get an error if you did not set a signing identity.
