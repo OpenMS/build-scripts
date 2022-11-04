@@ -93,6 +93,10 @@ set (CDASH_SUBMIT             "$ENV{CDASH_SUBMIT}" )
 set (CTEST_BINARY_DIRECTORY   "$ENV{BUILD_PATH}" )
 set (CTEST_CMAKE_GENERATOR    "$ENV{GENERATOR}" )
 set (CTEST_CONFIGURATION_TYPE "$ENV{BUILD_TYPE}")
+
+# cdash server (fu-berlin) SSL certificate sometimes is revoked. Keeps CI running.
+set (CTEST_CURL_OPTIONS       CURLOPT_SSL_VERIFYHOST_OFF )
+
 ## Not sure if the next one is needed
 set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
 ## Compiler identifier is e.g. MSVC10x64 or gcc4.9 or clang3.3
