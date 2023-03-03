@@ -95,7 +95,7 @@ set (CTEST_CMAKE_GENERATOR    "$ENV{GENERATOR}" )
 set (CTEST_CONFIGURATION_TYPE "$ENV{BUILD_TYPE}")
 
 # cdash server (fu-berlin) SSL certificate sometimes is revoked. Keeps CI running.
-# set (CTEST_CURL_OPTIONS       CURLOPT_SSL_VERIFYHOST_OFF CURLOPT_SSL_VERIFYPEER_OFF ) # recently fails for unknown reasons
+set (CTEST_CURL_OPTIONS       CURLOPT_SSL_VERIFYHOST_OFF CURLOPT_SSL_VERIFYPEER_OFF ) # recently fails for unknown reasons
 
 ## Not sure if the next one is needed
 set (CTEST_BINARY_TEST_DIRECTORY "${CTEST_BINARY_DIRECTORY}/source/TEST/")
