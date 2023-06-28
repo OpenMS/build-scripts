@@ -5,9 +5,9 @@
 # ------------------------------------------------------------
 
 ## customize reporting of errors in CDash
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 200)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 50)
 set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 200)
-set(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 2048)
+set(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 8192)
 set(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 10)
 
 # ------------------------------------------------------------
