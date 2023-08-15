@@ -230,14 +230,14 @@ SET(CTEST_CUSTOM_TESTS_IGNORE
   TOPP_PeptideIndexer_2_out
   TOPP_PeptideIndexer_3_out
   TOPP_PeptideIndexer_4_out
-  UTILS_ImageCreator_1_out1
-  UTILS_ImageCreator_2_out1
-  UTILS_IDSplitter_1_out1
-  UTILS_IDSplitter_1_out2
-  UTILS_MassCalculator_1_out1
-  UTILS_MassCalculator_2_out1
-  UTILS_INIUpdater_1_out
-  UTILS_INIUpdater_3_out
+  TOPP_ImageCreator_1_out1
+  TOPP_ImageCreator_2_out1
+  TOPP_IDSplitter_1_out1
+  TOPP_IDSplitter_1_out2
+  TOPP_MassCalculator_1_out1
+  TOPP_MassCalculator_2_out1
+  TOPP_INIUpdater_1_out
+  TOPP_INIUpdater_3_out
   # and the section name tests
   TOPPWRITEINI_AdditiveSeries_SectionName
   TOPPWRITEINI_BaselineFilter_SectionName
