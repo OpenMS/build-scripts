@@ -553,7 +553,7 @@ if("$ENV{PACKAGE_TEST}" STREQUAL "ON")
   backup_test_results("Package")
 endif()
 
-## Relatively independent from the rest. Needs THIRDPARTY binaries and TOPP, UTILS.
+## Relatively independent from the rest. Needs THIRDPARTY binaries and TOPP
 if("$ENV{ENABLE_PREPARE_KNIME_PACKAGE}" STREQUAL "ON")
   include ( "${OPENMS_CMAKE_SCRIPT_PATH}/knime_test.cmake" )
   backup_test_results("KNIMEPackage")
